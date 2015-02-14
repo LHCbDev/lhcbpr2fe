@@ -17,7 +17,7 @@
   },
   {
     "text": "Job Descriptions",
-    "sref": "app.lhcbpr_job_descriptions",
+    "sref": "app.job_descriptions",
     "icon": "icon-grid",
     "alert": "new"
   },

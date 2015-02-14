@@ -4,7 +4,8 @@
  =========================================================*/
 App
   .constant('LHCBPR_PARAMS', {
-      "api": "http://127.0.0.1:8000/api"
+      "api": "http://127.0.0.1:8000/api",
+      "api1": "http://lhcbpr-api.ngrok.com/api"
   })
   .constant('APP_COLORS', {
     'primary':                '#5d9cec',

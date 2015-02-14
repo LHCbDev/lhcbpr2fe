@@ -2,7 +2,7 @@
  * Module:lhcbpr-job-descriptions.js
  * Provides a simple demo for typeahead
  =========================================================*/
-App.controller('LHCbPRJobDescriptionsController', 
+App.controller('JobDescriptionsController', 
      ["$scope", "$q", "lhcbprResources", function ($scope, $q, lhcbprResources) {
     $scope.is_loading = true;
     lhcbprResources.Application.query().$promise.then(
@@ -10,4 +10,9 @@ App.controller('LHCbPRJobDescriptionsController',
             $scope.apps = apps;
         }
     )
+}]);
+
+App.controller('JobDescriptionController', 
+     ["$scope", "$q", "lhcbprResources", function ($scope, $q, lhcbprResources) {
+    
 }]);

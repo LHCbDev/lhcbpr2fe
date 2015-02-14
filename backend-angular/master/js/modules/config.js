@@ -65,11 +65,17 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
         controller: 'NullController',
         resolve: helper.resolveFor('loadGoogleMapsJS', function() { return loadGoogleMaps(); }, 'google-map')
     })
-    .state('app.lhcbpr_job_descriptions', {
-        url: '/lhcbpr-job-descriptions',
+    .state('app.job_descriptions', {
+        url: '/job-descriptions',
         title: 'Job Descriptions',
-        templateUrl: helper.basepath('lhcbpr-job-descriptions.html'),
-        controller: 'LHCbPRJobDescriptionsController'
+        templateUrl: helper.basepath('job-descriptions.html'),
+        controller: 'JobDescriptionsController'
+    })
+    .state('app.job_descriptions_add', {
+        url: '/job-descriptions/add',
+        title: 'Add job Description',
+        templateUrl: helper.basepath('job-description.html'),
+        controller: 'NullController'
     })
     .state('app.buttons', {
         url: '/buttons',

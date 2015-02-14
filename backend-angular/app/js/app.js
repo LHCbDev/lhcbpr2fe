@@ -119,11 +119,17 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
         controller: 'NullController',
         resolve: helper.resolveFor('loadGoogleMapsJS', function() { return loadGoogleMaps(); }, 'google-map')
     })
-    .state('app.lhcbpr_job_descriptions', {
-        url: '/lhcbpr-job-descriptions',
+    .state('app.job_descriptions', {
+        url: '/job-descriptions',
         title: 'Job Descriptions',
-        templateUrl: helper.basepath('lhcbpr-job-descriptions.html'),
-        controller: 'LHCbPRJobDescriptionsController'
+        templateUrl: helper.basepath('job-descriptions.html'),
+        controller: 'JobDescriptionsController'
+    })
+    .state('app.job_descriptions_add', {
+        url: '/job-descriptions/add',
+        title: 'Add job Description',
+        templateUrl: helper.basepath('job-description.html'),
+        controller: 'NullController'
     })
     .state('app.buttons', {
         url: '/buttons',
@@ -565,7 +571,8 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
  =========================================================*/
 App
   .constant('LHCBPR_PARAMS', {
-      "api": "http://127.0.0.1:8000/api"
+      "api": "http://127.0.0.1:8000/api",
+      "api1": "http://lhcbpr-api.ngrok.com/api"
   })
   .constant('APP_COLORS', {
     'primary':                '#5d9cec',
@@ -2427,7 +2434,7 @@ App.controller('FormxEditableController', ['$scope', 'editableOptions', 'editabl
  * Module:lhcbpr-job-descriptions.js
  * Provides a simple demo for typeahead
  =========================================================*/
-App.controller('LHCbPRJobDescriptionsController', 
+App.controller('JobDescriptionsController', 
      ["$scope", "$q", "lhcbprResources", function ($scope, $q, lhcbprResources) {
     $scope.is_loading = true;
     lhcbprResources.Application.query().$promise.then(
@@ -2435,6 +2442,11 @@ App.controller('LHCbPRJobDescriptionsController',
             $scope.apps = apps;
         }
     )
+}]);
+
+App.controller('JobDescriptionController', 
+     ["$scope", "$q", "lhcbprResources", function ($scope, $q, lhcbprResources) {
+    
 }]);
 /**=========================================================
  * Module: demo-pagination.js
