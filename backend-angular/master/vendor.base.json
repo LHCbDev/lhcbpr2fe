@@ -1,5 +1,6 @@
 [
   "bower_components/jquery/dist/jquery.js",
+  "bower_components/lodash/dist/lodash.js",
   "bower_components/angular/angular.js",
   "bower_components/angular-route/angular-route.js",
   "bower_components/angular-cookies/angular-cookies.js",
@@ -16,5 +17,6 @@
   "bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js",
   "bower_components/oclazyload/dist/ocLazyLoad.js",
   "bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
-  "bower_components/angular-loading-bar/build/loading-bar.js"
+  "bower_components/angular-loading-bar/build/loading-bar.js",
+  "bower_components/restangular/dist/restangular.js"
 ]

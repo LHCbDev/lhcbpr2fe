@@ -1,5 +1,5 @@
 h3 Add  Job Description
-  small LHCbPR
+  small.text-muted LHCbPR
 
 // START panel
 .panel.panel-default
@@ -33,7 +33,11 @@ h3 Add  Job Description
                 .form-group
                   label Application name
                   .controls
-                    input.form-control(type='text', name='username', data-parsley-group="step1", placeholder='Your nick here', required)
+                    .input-group
+                       input.form-control(type='text', name='username', data-parsley-group="step1", placeholder='Name here', required)
+                       span.input-group-btn
+                         button.btn.btn-default(type='button')
+                           em.icon-plus
               .col-md-4
                 .form-group
                   label Version

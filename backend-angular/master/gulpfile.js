@@ -73,6 +73,7 @@ var source = {
     app:    [ 'js/app.init.js',
               'js/modules/*.js',
               'js/modules/controllers/*.js',
+              'js/modules/controllers/lhcbpr/*.js',
               'js/modules/directives/*.js',
               'js/modules/services/*.js',
               'js/modules/filters/*.js',

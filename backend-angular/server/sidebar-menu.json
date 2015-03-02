@@ -1,4 +1,20 @@
 [
+ {
+    "text": "LHCbPR",
+    "heading": "true"
+  },
+  {
+    "text": "Job Descriptions",
+    "sref": "app.job_descriptions.list",
+    "icon": "icon-grid",
+    "alert": "new"
+  },
+  {
+    "text": "Jobs",
+    "sref": "app.jobs.list",
+    "icon": "icon-grid",
+    "alert": "new"
+  },
   {
     "text": "Main Navigation",
     "heading": "true",
@@ -16,18 +32,13 @@
     "translate": "sidebar.nav.DASHBOARD"
   },
   {
-    "text": "Job Descriptions",
-    "sref": "app.job_descriptions",
-    "icon": "icon-grid",
-    "alert": "new"
-  },
-  {
     "text": "Widgets",
     "sref": "app.widgets",
     "icon": "icon-grid",
     "alert": "30",
     "translate": "sidebar.nav.WIDGETS"
   },
+ 
   {
     "text": "Components",
     "heading": "true",

@@ -4,8 +4,8 @@
  =========================================================*/
 App
   .constant('LHCBPR_PARAMS', {
-      "api": "http://127.0.0.1:8000/api",
-      "api1": "http://lhcbpr-api.ngrok.com/api"
+      "api1": "/amazurov/lhcbpr-dev/api",
+      "api": "http://127.0.0.1:8000"
   })
   .constant('APP_COLORS', {
     'primary':                '#5d9cec',
@@ -103,7 +103,8 @@ App
       'fullcalendar':       ['vendor/fullcalendar/dist/fullcalendar.min.js',
                              'vendor/fullcalendar/dist/fullcalendar.css'],
       'gcal':               ['vendor/fullcalendar/dist/gcal.js'],
-      'nestable':           ['vendor/nestable/jquery.nestable.js']
+      'nestable':           ['vendor/nestable/jquery.nestable.js'],
+      'chartjs':            ['vendor/Chart.js/Chart.js']
     },
     // Angular based script (use the right module name)
     modules: [

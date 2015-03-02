@@ -68,14 +68,56 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
     .state('app.job_descriptions', {
         url: '/job-descriptions',
         title: 'Job Descriptions',
-        templateUrl: helper.basepath('job-descriptions.html'),
+        abstract: true,
+        template: '<ui-view/>',
         controller: 'JobDescriptionsController'
     })
-    .state('app.job_descriptions_add', {
-        url: '/job-descriptions/add',
+     .state('app.job_descriptions.list', {
+        url: '/list',
+        title: 'Job Descriptions',
+        templateUrl: helper.basepath('lhcbpr/job-descriptions.html'),
+        controller: 'JobDescriptionsListController'
+    })
+    .state('app.job_descriptions.add', {
+        url: '/add',
         title: 'Add job Description',
-        templateUrl: helper.basepath('job-description.html'),
+        templateUrl: helper.basepath('lhcbpr/job-description.html'),
+        controller: 'JobDescriptionsAddController'
+    })
+    .state('app.jobs', {
+        url: '/jobs',
+        title: 'Jobs',
+        abstract: true,
+        template: '<ui-view/>',
+        controller: 'JobsController'
+    })
+    .state('app.jobs.list', {
+        url: '/list',
+        title: 'Jobs',
+        templateUrl: helper.basepath('lhcbpr/jobs.html'),
+        controller: 'JobsListController',
+        resolve: helper.resolveFor('ngTable')
+    })
+    .state('app.jobs.detail', {
+        url: '/detail/:job',
+        title: 'Jobs',
+        templateUrl: helper.basepath('lhcbpr/job.html'),
+        controller: 'JobsDetailController',
+        resolve: helper.resolveFor('ngTable')
+    })
+    .state('app.trends', {
+        url: '/trends',
+        title: 'Trends',
+		abstract: true,
+        template: '<ui-view/>',
         controller: 'NullController'
+    })
+    .state('app.trends.chart', {
+        url: '/option/:option/attribute/:attribute',
+        title: 'Trend',
+        templateUrl: helper.basepath('lhcbpr/trends.chart.html'),
+        controller: 'TrendsChartController',
+        resolve: helper.resolveFor('chartjs')
     })
     .state('app.buttons', {
         url: '/buttons',

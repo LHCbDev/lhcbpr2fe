@@ -1,8 +1,9 @@
 h3 Job Descriptions
-  small LHCbPR
+  small.text-muted LHCbPR
 .row.traditional
   .col-lg-12
-    button.mb-sm.btn.btn-primary(type='button' ui-sref='app.job_descriptions_add') Add Job Description ...
+    button.mb-sm.btn.btn-primary(type='button' ui-sref='app.job_descriptions.add') Add Job Description ...
+hr
 .row.traditional(ng-class="csspinner" ng-repeat="app in apps")
   .col-lg-12
     // START panel
@@ -15,8 +16,6 @@ h3 Job Descriptions
         .panel.widget
           .row.row-table.row-flush
             .col-xs-12.align-middle.p-lg
-              .h3
-                strong Job Descriptions
               .h4(ng-repeat-start="ver in app.versions")
                 {{ver.version}}
               ul(ng-repeat-end)

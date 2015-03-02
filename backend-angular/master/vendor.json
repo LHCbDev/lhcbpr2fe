@@ -78,5 +78,5 @@
   "bower_components/ng-img-crop/compile/unminified/ng-img-crop.js",
   "bower_components/ng-img-crop/compile/unminified/ng-img-crop.css",
   "bower_components/angular-ui-select/dist/select.js",
-  "bower_components/angular-ui-select/dist/select.css"
+  "bower_components/Chart.js/Chart.js"
 ]

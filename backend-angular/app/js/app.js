@@ -14,7 +14,7 @@ if (typeof $ === 'undefined') { throw new Error('This application\'s JavaScript 
 // APP START
 // ----------------------------------- 
 
-var App = angular.module('angle', ['ngRoute', 'ngAnimate', 'ngStorage', 'ngCookies', 'pascalprecht.translate', 'ui.bootstrap', 'ui.router', 'oc.lazyLoad', 'cfp.loadingBar', 'ngSanitize', 'ngResource'])
+var App = angular.module('angle', ['ngRoute', 'ngAnimate', 'ngStorage', 'ngCookies', 'pascalprecht.translate', 'ui.bootstrap', 'ui.router', 'oc.lazyLoad', 'cfp.loadingBar', 'ngSanitize', 'ngResource', 'restangular'])
           .run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache', function ($rootScope, $state, $stateParams, $window, $templateCache) {
               // Set reference to access them from any scope
               $rootScope.$state = $state;
@@ -122,14 +122,56 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
     .state('app.job_descriptions', {
         url: '/job-descriptions',
         title: 'Job Descriptions',
-        templateUrl: helper.basepath('job-descriptions.html'),
+        abstract: true,
+        template: '<ui-view/>',
         controller: 'JobDescriptionsController'
     })
-    .state('app.job_descriptions_add', {
-        url: '/job-descriptions/add',
+     .state('app.job_descriptions.list', {
+        url: '/list',
+        title: 'Job Descriptions',
+        templateUrl: helper.basepath('lhcbpr/job-descriptions.html'),
+        controller: 'JobDescriptionsListController'
+    })
+    .state('app.job_descriptions.add', {
+        url: '/add',
         title: 'Add job Description',
-        templateUrl: helper.basepath('job-description.html'),
+        templateUrl: helper.basepath('lhcbpr/job-description.html'),
+        controller: 'JobDescriptionsAddController'
+    })
+    .state('app.jobs', {
+        url: '/jobs',
+        title: 'Jobs',
+        abstract: true,
+        template: '<ui-view/>',
+        controller: 'JobsController'
+    })
+    .state('app.jobs.list', {
+        url: '/list',
+        title: 'Jobs',
+        templateUrl: helper.basepath('lhcbpr/jobs.html'),
+        controller: 'JobsListController',
+        resolve: helper.resolveFor('ngTable')
+    })
+    .state('app.jobs.detail', {
+        url: '/detail/:job',
+        title: 'Jobs',
+        templateUrl: helper.basepath('lhcbpr/job.html'),
+        controller: 'JobsDetailController',
+        resolve: helper.resolveFor('ngTable')
+    })
+    .state('app.trends', {
+        url: '/trends',
+        title: 'Trends',
+		abstract: true,
+        template: '<ui-view/>',
         controller: 'NullController'
+    })
+    .state('app.trends.chart', {
+        url: '/option/:option/attribute/:attribute',
+        title: 'Trend',
+        templateUrl: helper.basepath('lhcbpr/trends.chart.html'),
+        controller: 'TrendsChartController',
+        resolve: helper.resolveFor('chartjs')
     })
     .state('app.buttons', {
         url: '/buttons',
@@ -571,8 +613,8 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
  =========================================================*/
 App
   .constant('LHCBPR_PARAMS', {
-      "api": "http://127.0.0.1:8000/api",
-      "api1": "http://lhcbpr-api.ngrok.com/api"
+      "api1": "/amazurov/lhcbpr-dev/api",
+      "api": "http://127.0.0.1:8000"
   })
   .constant('APP_COLORS', {
     'primary':                '#5d9cec',
@@ -670,7 +712,8 @@ App
       'fullcalendar':       ['vendor/fullcalendar/dist/fullcalendar.min.js',
                              'vendor/fullcalendar/dist/fullcalendar.css'],
       'gcal':               ['vendor/fullcalendar/dist/gcal.js'],
-      'nestable':           ['vendor/nestable/jquery.nestable.js']
+      'nestable':           ['vendor/nestable/jquery.nestable.js'],
+      'chartjs':            ['vendor/Chart.js/Chart.js']
     },
     // Angular based script (use the right module name)
     modules: [
@@ -703,6 +746,7 @@ App
 
   })
 ;
+
 /**=========================================================
  * Module: access-login.js
  * Demo for login api
@@ -2431,24 +2475,6 @@ App.controller('FormxEditableController', ['$scope', 'editableOptions', 'editabl
 
 }]);
 /**=========================================================
- * Module:lhcbpr-job-descriptions.js
- * Provides a simple demo for typeahead
- =========================================================*/
-App.controller('JobDescriptionsController', 
-     ["$scope", "$q", "lhcbprResources", function ($scope, $q, lhcbprResources) {
-    $scope.is_loading = true;
-    lhcbprResources.Application.query().$promise.then(
-        function(apps) {
-            $scope.apps = apps;
-        }
-    )
-}]);
-
-App.controller('JobDescriptionController', 
-     ["$scope", "$q", "lhcbprResources", function ($scope, $q, lhcbprResources) {
-    
-}]);
-/**=========================================================
  * Module: demo-pagination.js
  * Provides a simple demo for pagination
  =========================================================*/
@@ -4106,6 +4132,182 @@ App.controller('VectorMapController', ['$scope', function($scope) {
 }]);
 
 /**=========================================================
+ * Module:lhcbpr-job-descriptions.js
+ * Provides a simple demo for typeahead
+ =========================================================*/
+
+App.controller('JobDescriptionsController', 
+     ["$scope", function ($scope) {
+ 
+ }]);
+
+
+App.controller('JobDescriptionsListController', 
+     ["$scope", "lhcbprResources", function ($scope, lhcbprResources) {
+	lhcbprResources.all('applications').getList()  // GET: /users
+	.then(function(apps) {
+  		$scope.apps = apps;
+	})
+}]);
+
+App.controller('JobDescriptionsAddController', 
+     ["$scope", "$q", "lhcbprResources", function ($scope, $q, lhcbprResources) {
+    
+}]);
+/**=========================================================
+ * Module:lhcbpr-job-descriptions.js
+ * Provides a simple demo for typeahead
+ =========================================================*/
+
+App.controller('JobsController', 
+     ["$scope", function ($scope) {
+ 
+ }]);
+
+
+App.controller('JobsListController', 
+     ["$scope", "$filter", "$q", "ngTableParams", "lhcbprResources", function ($scope, $filter, $q, ngTableParams, lhcbprResources) {
+    var createTable = function(data) {
+		$scope.tableParams = new ngTableParams({
+        	page: 1,            // show first page
+        	count: 10          // count per page
+    	}, {
+        	total: data.length, // length of data
+        	getData: function($defer, params) {
+	            // use build-in angular filter
+	            var orderedData = params.sorting() ?
+	                    $filter('orderBy')(data, params.orderBy()) :
+	                    data;
+	    
+	            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        	}
+    	});
+    }
+
+	lhcbprResources.all('jobs').getList()
+	.then(function(jobs) {
+		createTable(jobs);
+ 	});
+
+	$scope.showResults = function(job) {
+		console.log(job.resource_uri);
+	};
+
+}]);
+
+App.controller('JobsDetailController', ["$scope", "$filter", "$stateParams", "ngTableParams", "lhcbprResources", 
+	function($scope, $filter, $stateParams, ngTableParams, lhcbprResources) {
+
+    var createTable = function(data) {
+    	console.log(data);
+		$scope.tableParams = new ngTableParams({
+        	page: 1,            // show first page
+        	count: 10          // count per page
+    	}, {
+        	total: data.length, // length of data
+        	getData: function($defer, params) {
+	            // use build-in angular filter
+	            var orderedData = params.sorting() ?
+	                    $filter('orderBy')(data, params.orderBy()) :
+	                    data;
+	    
+	            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        	}
+    	});
+    }
+
+	lhcbprResources.one("jobs", $stateParams.job).get().then(function(job){
+		$scope.job = job;
+		createTable(job.results);
+	});
+}]);
+
+
+App.controller('TrendsChartController',
+	["$scope", "$filter", "$stateParams", "$q", "lhcbprResources", 
+	function($scope,  $filter, $stateParams, $q, lhcbprResources) {
+		var option = $stateParams.option;
+		var attr = $stateParams.attribute;
+		var option1 = lhcbprResources.one('options',$stateParams.option).get();
+		var attr1 = lhcbprResources.one('attributes',$stateParams.attribute).get();
+
+		$q.all([option1, attr1]).then(function(result) {
+			$scope.option = result[0].valueOf()
+			$scope.attr = result[1].valueOf();
+			
+			lhcbprResources.all(
+			"result_by_opt_and_attr/" + option + '_' + attr + '/').getList().then(
+				function(results) {
+					var labels = results.map(function(result){
+						var version = result.job.job_description.application_version
+						return version.application.name + " " + version.version
+
+					});
+					var data = results.map(function(result){
+						return result.val_float;
+					});
+					var upper = [];
+					var down = [];
+					var threshold = $filter("filter")($scope.option.thresholds, {"attribute": {"id": $scope.attr.id}})
+					if (threshold.length) {
+						for(var i=0; i < labels.length; ++i) {
+							upper.push(threshold[0].up_value);
+							down.push(threshold[0].down_value);
+						}
+					}
+					chart(data, labels, upper, down);
+				}
+			);  
+		});
+		var chart = function(data, labels, upper, down) {
+			var datasets =  [
+			        {
+			          label: $scope.attr.name,
+			          fillColor : 'rgba(0,255,0,0)',
+			          strokeColor : 'green',
+			          pointColor : 'green',
+			          pointStrokeColor : '#fff',
+			          pointHighlightFill : '#fff',
+			          pointHighlightStroke : 'green',
+			          data : data
+			        },
+			        {
+			          label: 'Upper threshold',
+			          fillColor : 'rgba(35,183,229,0)',
+			          strokeColor : 'red',
+			          pointColor : 'red',
+			          pointStrokeColor : '#fff',
+			          pointHighlightFill : '#fff',
+			          pointHighlightStroke : 'red',
+			          data : upper
+        			},
+        			{
+			          label: 'Down threshold',
+			          fillColor : 'rgba(35,183,229,0)',
+			          strokeColor : 'blue',
+			          pointColor : 'blue',
+			          pointStrokeColor : '#fff',
+			          pointHighlightFill : '#fff',
+			          pointHighlightStroke : 'blue',
+			          data : down
+        			}
+			];
+
+			if (!upper.length) {
+				delete datasets[2];
+				delete datasets[3];
+			}
+			$scope.lineData = {
+			      labels : labels,
+			      datasets: datasets
+			      
+	    	};
+		};
+		
+		  
+}]);
+
+/**=========================================================
  * Module: anchor.js
  * Disables null anchor behavior
  =========================================================*/
@@ -4143,6 +4345,108 @@ App.directive("animateEnabled", ["$animate", function ($animate) {
     }
   };
 }]);
+/**=========================================================
+ * Module: chart.js
+ * Wrapper directive for chartJS. 
+ * Based on https://gist.github.com/AndreasHeiberg/9837868
+ =========================================================*/
+
+var ChartJS = function (type) {
+    return {
+        restrict: "A",
+        scope: {
+            data: "=",
+            options: "=",
+            id: "@",
+            width: "=",
+            height: "=",
+            resize: "=",
+            chart: "@",
+            segments: "@",
+            responsive: "=",
+            tooltip: "=",
+            legend: "="
+        },
+        link: function ($scope, $elem) {
+            var ctx = $elem[0].getContext("2d");
+            var autosize = false;
+
+            $scope.size = function () {
+                if ($scope.width <= 0) {
+                    $elem.width($elem.parent().width());
+                    ctx.canvas.width = $elem.width();
+                } else {
+                    ctx.canvas.width = $scope.width || ctx.canvas.width;
+                    autosize = true;
+                }
+
+                if($scope.height <= 0){
+                    $elem.height($elem.parent().height());
+                    ctx.canvas.height = ctx.canvas.width / 2;
+                } else {
+                    ctx.canvas.height = $scope.height || ctx.canvas.height;
+                    autosize = true;
+                }
+            };
+
+            $scope.$watch("data", function (newVal, oldVal) {
+                if(chartCreated)
+                    chartCreated.destroy();
+
+                // if data not defined, exit
+                if (!newVal) {
+                    return;
+                }
+                if ($scope.chart) { type = $scope.chart; }
+
+                if(autosize){
+                    $scope.size();
+                    chart = new Chart(ctx);
+                }
+
+                if($scope.responsive || $scope.resize)
+                    $scope.options.responsive = true;
+
+                if($scope.responsive !== undefined)
+                    $scope.options.responsive = $scope.responsive;
+
+                chartCreated = chart[type]($scope.data, $scope.options);
+                chartCreated.update();
+                if($scope.legend)
+                    angular.element($elem[0]).parent().before( chartCreated.generateLegend() );
+            }, true);
+
+            $scope.$watch("tooltip", function (newVal, oldVal) {
+                if (chartCreated)
+                    chartCreated.draw();
+                if(newVal===undefined || !chartCreated.segments)
+                    return;
+                if(!isFinite(newVal) || newVal >= chartCreated.segments.length || newVal < 0)
+                    return;
+                var activeSegment = chartCreated.segments[newVal];
+                activeSegment.save();
+                activeSegment.fillColor = activeSegment.highlightColor;
+                chartCreated.showTooltip([activeSegment]);
+                activeSegment.restore();
+            }, true);
+
+            $scope.size();
+            var chart = new Chart(ctx);
+            var chartCreated;
+        }
+    };
+};
+
+/* Aliases for various chart types */
+App.directive("chartjs",       function () { return ChartJS(); });
+App.directive("linechart",     function () { return ChartJS("Line"); });
+App.directive("barchart",      function () { return ChartJS("Bar"); });
+App.directive("radarchart",    function () { return ChartJS("Radar"); });
+App.directive("polarchart",    function () { return ChartJS("PolarArea"); });
+App.directive("piechart",      function () { return ChartJS("Pie"); });
+App.directive("doughnutchart", function () { return ChartJS("Doughnut"); });
+App.directive("donutchart",    function () { return ChartJS("Doughnut"); });
+
 /**=========================================================
  * Module: classy-loader.js
  * Enable use of classyloader directly from data attributes
@@ -6059,31 +6363,18 @@ App.service('gmap', function() {
     }
   };
 });
-App.service('lhcbprResources', ["$resource", "LHCBPR_PARAMS", 
-function($resource, lhcbpr_params) {
+App.service('lhcbprResources', ["Restangular", "LHCBPR_PARAMS", 
+function(Restangular, lhcbpr_params) {
     var url = lhcbpr_params.api;
-
-    var options = { 
-            method: 'JSONP', 
-            params: {format: 'jsonp', callback: 'JSON_CALLBACK'}
-    };
-
-    var options_arr = angular.copy(options);
-    options_arr.isArray = true;
-
-    var Application = $resource(url + '/applications/:appId', 
-        {appId:'@id'}, 
-        {
-          get: options,
-          query: options_arr
-        }
-    );
-
-    return {
-        Application: Application
-    };
+    Restangular.setBaseUrl(url);
+    Restangular.setJsonp(true)
+    Restangular.setDefaultRequestParams('jsonp', {format: 'jsonp', callback: 'JSON_CALLBACK'});
+    Restangular.setDefaultHttpFields({cache: true});
+ 
+    return Restangular;
 }]
 );
+
 /**=========================================================
  * Module: nav-search.js
  * Services to share navbar search functions

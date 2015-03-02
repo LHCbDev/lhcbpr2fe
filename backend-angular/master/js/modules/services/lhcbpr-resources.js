@@ -1,25 +1,11 @@
-App.service('lhcbprResources', ["$resource", "LHCBPR_PARAMS", 
-function($resource, lhcbpr_params) {
+App.service('lhcbprResources', ["Restangular", "LHCBPR_PARAMS", 
+function(Restangular, lhcbpr_params) {
     var url = lhcbpr_params.api;
-
-    var options = { 
-            method: 'JSONP', 
-            params: {format: 'jsonp', callback: 'JSON_CALLBACK'}
-    };
-
-    var options_arr = angular.copy(options);
-    options_arr.isArray = true;
-
-    var Application = $resource(url + '/applications/:appId', 
-        {appId:'@id'}, 
-        {
-          get: options,
-          query: options_arr
-        }
-    );
-
-    return {
-        Application: Application
-    };
+    Restangular.setBaseUrl(url);
+    Restangular.setJsonp(true)
+    Restangular.setDefaultRequestParams('jsonp', {format: 'jsonp', callback: 'JSON_CALLBACK'});
+    Restangular.setDefaultHttpFields({cache: true});
+ 
+    return Restangular;
 }]
 );

@@ -1,0 +1,25 @@
+h3 Jobs
+  small.text-muted LHCbPR
+.row.traditional(ng-class="csspinner")
+  .col-lg-6
+    table.table.table-striped.table-bordered.table-hover(ng-table="tableParams")
+        thead
+          th Job description
+          th Host
+          th Status
+          th Start
+          th End
+          th 
+        tr(ng-repeat="job in $data")
+          td {{job.job_description.application_version.application.name}}
+             {{job.job_description.application_version.version}},
+             {{job.job_description.option.content}}
+          td {{job.host.hostname}}, {{job.platform.cmtconfig}}
+          td {{job.status}}
+          td {{job.time_start | date:'yyyy-MM-dd HH:mm:ss Z'}}
+          td {{job.time_end | date:'yyyy-MM-dd HH:mm:ss Z'}}
+          td 
+            a.button.btn.btn-sm.btn-info(ui-sref="app.jobs.detail({job:job.id})") Results
+
+
+
