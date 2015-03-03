@@ -14,7 +14,7 @@ if (typeof $ === 'undefined') { throw new Error('This application\'s JavaScript 
 // APP START
 // ----------------------------------- 
 
-var App = angular.module('angle', ['ngRoute', 'ngAnimate', 'ngStorage', 'ngCookies', 'pascalprecht.translate', 'ui.bootstrap', 'ui.router', 'oc.lazyLoad', 'cfp.loadingBar', 'ngSanitize', 'ngResource', 'restangular'])
+var App = angular.module('angle', ['ngRoute', 'ngAnimate', 'ngStorage', 'ngCookies', 'pascalprecht.translate', 'ui.bootstrap', 'ui.router', 'oc.lazyLoad', 'cfp.loadingBar', 'ngSanitize', 'ngResource', 'restangular', 'checklist-model'])
           .run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache', function ($rootScope, $state, $stateParams, $window, $templateCache) {
               // Set reference to access them from any scope
               $rootScope.$state = $state;
@@ -151,6 +151,12 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
         templateUrl: helper.basepath('lhcbpr/jobs.html'),
         controller: 'JobsListController',
         resolve: helper.resolveFor('ngTable')
+    })
+    .state('app.jobs.example', {
+        url: '/example',
+        title: 'Example',
+        templateUrl: helper.basepath('lhcbpr/jobs.example.html'),
+        controller: 'JobsExampleController'
     })
     .state('app.jobs.detail', {
         url: '/detail/:job',
@@ -4132,182 +4138,6 @@ App.controller('VectorMapController', ['$scope', function($scope) {
 }]);
 
 /**=========================================================
- * Module:lhcbpr-job-descriptions.js
- * Provides a simple demo for typeahead
- =========================================================*/
-
-App.controller('JobDescriptionsController', 
-     ["$scope", function ($scope) {
- 
- }]);
-
-
-App.controller('JobDescriptionsListController', 
-     ["$scope", "lhcbprResources", function ($scope, lhcbprResources) {
-	lhcbprResources.all('applications').getList()  // GET: /users
-	.then(function(apps) {
-  		$scope.apps = apps;
-	})
-}]);
-
-App.controller('JobDescriptionsAddController', 
-     ["$scope", "$q", "lhcbprResources", function ($scope, $q, lhcbprResources) {
-    
-}]);
-/**=========================================================
- * Module:lhcbpr-job-descriptions.js
- * Provides a simple demo for typeahead
- =========================================================*/
-
-App.controller('JobsController', 
-     ["$scope", function ($scope) {
- 
- }]);
-
-
-App.controller('JobsListController', 
-     ["$scope", "$filter", "$q", "ngTableParams", "lhcbprResources", function ($scope, $filter, $q, ngTableParams, lhcbprResources) {
-    var createTable = function(data) {
-		$scope.tableParams = new ngTableParams({
-        	page: 1,            // show first page
-        	count: 10          // count per page
-    	}, {
-        	total: data.length, // length of data
-        	getData: function($defer, params) {
-	            // use build-in angular filter
-	            var orderedData = params.sorting() ?
-	                    $filter('orderBy')(data, params.orderBy()) :
-	                    data;
-	    
-	            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-        	}
-    	});
-    }
-
-	lhcbprResources.all('jobs').getList()
-	.then(function(jobs) {
-		createTable(jobs);
- 	});
-
-	$scope.showResults = function(job) {
-		console.log(job.resource_uri);
-	};
-
-}]);
-
-App.controller('JobsDetailController', ["$scope", "$filter", "$stateParams", "ngTableParams", "lhcbprResources", 
-	function($scope, $filter, $stateParams, ngTableParams, lhcbprResources) {
-
-    var createTable = function(data) {
-    	console.log(data);
-		$scope.tableParams = new ngTableParams({
-        	page: 1,            // show first page
-        	count: 10          // count per page
-    	}, {
-        	total: data.length, // length of data
-        	getData: function($defer, params) {
-	            // use build-in angular filter
-	            var orderedData = params.sorting() ?
-	                    $filter('orderBy')(data, params.orderBy()) :
-	                    data;
-	    
-	            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-        	}
-    	});
-    }
-
-	lhcbprResources.one("jobs", $stateParams.job).get().then(function(job){
-		$scope.job = job;
-		createTable(job.results);
-	});
-}]);
-
-
-App.controller('TrendsChartController',
-	["$scope", "$filter", "$stateParams", "$q", "lhcbprResources", 
-	function($scope,  $filter, $stateParams, $q, lhcbprResources) {
-		var option = $stateParams.option;
-		var attr = $stateParams.attribute;
-		var option1 = lhcbprResources.one('options',$stateParams.option).get();
-		var attr1 = lhcbprResources.one('attributes',$stateParams.attribute).get();
-
-		$q.all([option1, attr1]).then(function(result) {
-			$scope.option = result[0].valueOf()
-			$scope.attr = result[1].valueOf();
-			
-			lhcbprResources.all(
-			"result_by_opt_and_attr/" + option + '_' + attr + '/').getList().then(
-				function(results) {
-					var labels = results.map(function(result){
-						var version = result.job.job_description.application_version
-						return version.application.name + " " + version.version
-
-					});
-					var data = results.map(function(result){
-						return result.val_float;
-					});
-					var upper = [];
-					var down = [];
-					var threshold = $filter("filter")($scope.option.thresholds, {"attribute": {"id": $scope.attr.id}})
-					if (threshold.length) {
-						for(var i=0; i < labels.length; ++i) {
-							upper.push(threshold[0].up_value);
-							down.push(threshold[0].down_value);
-						}
-					}
-					chart(data, labels, upper, down);
-				}
-			);  
-		});
-		var chart = function(data, labels, upper, down) {
-			var datasets =  [
-			        {
-			          label: $scope.attr.name,
-			          fillColor : 'rgba(0,255,0,0)',
-			          strokeColor : 'green',
-			          pointColor : 'green',
-			          pointStrokeColor : '#fff',
-			          pointHighlightFill : '#fff',
-			          pointHighlightStroke : 'green',
-			          data : data
-			        },
-			        {
-			          label: 'Upper threshold',
-			          fillColor : 'rgba(35,183,229,0)',
-			          strokeColor : 'red',
-			          pointColor : 'red',
-			          pointStrokeColor : '#fff',
-			          pointHighlightFill : '#fff',
-			          pointHighlightStroke : 'red',
-			          data : upper
-        			},
-        			{
-			          label: 'Down threshold',
-			          fillColor : 'rgba(35,183,229,0)',
-			          strokeColor : 'blue',
-			          pointColor : 'blue',
-			          pointStrokeColor : '#fff',
-			          pointHighlightFill : '#fff',
-			          pointHighlightStroke : 'blue',
-			          data : down
-        			}
-			];
-
-			if (!upper.length) {
-				delete datasets[2];
-				delete datasets[3];
-			}
-			$scope.lineData = {
-			      labels : labels,
-			      datasets: datasets
-			      
-	    	};
-		};
-		
-		  
-}]);
-
-/**=========================================================
  * Module: anchor.js
  * Disables null anchor behavior
  =========================================================*/
@@ -6783,4 +6613,272 @@ myApp.directive('oneOfMyOwnDirectives', function() {
 
 myApp.config(["$stateProvider", function($stateProvider /* ... */) {
   /* specific routes here (see file config.js) */
+}]);
+/**=========================================================
+ * Module:lhcbpr-job-descriptions.js
+ * Provides a simple demo for typeahead
+ =========================================================*/
+
+App.controller('JobDescriptionsController', 
+     ["$scope", function ($scope) {
+ 
+ }]);
+
+
+App.controller('JobDescriptionsListController', 
+     ["$scope", "lhcbprResources", function ($scope, lhcbprResources) {
+	lhcbprResources.all('applications').getList()  // GET: /users
+	.then(function(apps) {
+  		$scope.apps = apps;
+	})
+}]);
+
+App.controller('JobDescriptionsAddController', 
+     ["$scope", "$q", "lhcbprResources", function ($scope, $q, lhcbprResources) {
+    
+}]);
+App.controller('JobsExampleController', 
+     ["$scope",function ($scope) {
+  
+
+	$scope.onJobsFound = function(jobs) {
+		$scope.jobs = jobs;	
+	};
+
+	//createTable();
+}]);
+
+/**=========================================================
+ * Module:lhcbpr-job-descriptions.js
+ * Provides a simple demo for typeahead
+ =========================================================*/
+
+App.controller('JobsController', 
+     ["$scope", function ($scope) {
+ 
+ }]);
+
+
+App.controller('JobsListController', 
+     ["$scope", "$filter", "$q", "ngTableParams", "lhcbprResources", function ($scope, $filter, $q, ngTableParams, lhcbprResources) {
+    
+    $scope.jobs = [];
+	$scope.tableParams = new ngTableParams({
+        	page: 1,            // show first page
+        	count: 10          // count per page
+    	}, {
+        	total: $scope.jobs.length, // length of data
+        	getData: function($defer, params) {
+	            // use build-in angular filter
+	            var orderedData = params.sorting() ?
+	                    $filter('orderBy')($scope.jobs, params.orderBy()) :
+	                    $scope.jobs;
+	    
+	            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        	}
+    	});
+
+	// Fix bug in ng-table
+	$scope.tableParams.settings().$scope = $scope;
+ 
+
+	$scope.showResults = function(job) {
+		console.log(job.resource_uri);
+	};
+
+	$scope.onJobsFound = function(jobs) {
+		console.log("IN", jobs);
+		$scope.jobs = jobs;	
+		$scope.tableParams.reload();
+	};
+
+}]);
+
+App.controller('JobsDetailController', ["$scope", "$filter", "$stateParams", "ngTableParams", "lhcbprResources", 
+	function($scope, $filter, $stateParams, ngTableParams, lhcbprResources) {
+
+    var createTable = function(data) {
+    	console.log(data);
+		$scope.tableParams = new ngTableParams({
+        	page: 1,            // show first page
+        	count: 10          // count per page
+    	}, {
+        	total: data.length, // length of data
+        	getData: function($defer, params) {
+	            // use build-in angular filter
+	            var orderedData = params.sorting() ?
+	                    $filter('orderBy')(data, params.orderBy()) :
+	                    data;
+	    
+	            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        	}
+    	});
+    }
+
+	lhcbprResources.one("jobs", $stateParams.job).get().then(function(job){
+		$scope.job = job;
+		createTable(job.results);
+	});
+}]);
+
+
+App.controller('TrendsChartController',
+	["$scope", "$filter", "$stateParams", "$q", "lhcbprResources", 
+	function($scope,  $filter, $stateParams, $q, lhcbprResources) {
+		var option = $stateParams.option;
+		var attr = $stateParams.attribute;
+		var option1 = lhcbprResources.one('options',$stateParams.option).get();
+		var attr1 = lhcbprResources.one('attributes',$stateParams.attribute).get();
+
+		$q.all([option1, attr1]).then(function(result) {
+			$scope.option = result[0].valueOf()
+			$scope.attr = result[1].valueOf();
+			
+			lhcbprResources.all(
+			"result_by_opt_and_attr/" + option + '_' + attr + '/').getList().then(
+				function(results) {
+					var labels = results.map(function(result){
+						var version = result.job.job_description.application_version
+						return version.application.name + " " + version.version
+
+					});
+					var data = results.map(function(result){
+						return result.val_float;
+					});
+					var upper = [];
+					var down = [];
+					var threshold = $filter("filter")($scope.option.thresholds, {"attribute": {"id": $scope.attr.id}})
+					if (threshold.length) {
+						for(var i=0; i < labels.length; ++i) {
+							upper.push(threshold[0].up_value);
+							down.push(threshold[0].down_value);
+						}
+					}
+					chart(data, labels, upper, down);
+				}
+			);  
+		});
+		var chart = function(data, labels, upper, down) {
+			var datasets =  [
+			        {
+			          label: $scope.attr.name,
+			          fillColor : 'rgba(0,255,0,0)',
+			          strokeColor : 'green',
+			          pointColor : 'green',
+			          pointStrokeColor : '#fff',
+			          pointHighlightFill : '#fff',
+			          pointHighlightStroke : 'green',
+			          data : data
+			        },
+			        {
+			          label: 'Upper threshold',
+			          fillColor : 'rgba(35,183,229,0)',
+			          strokeColor : 'red',
+			          pointColor : 'red',
+			          pointStrokeColor : '#fff',
+			          pointHighlightFill : '#fff',
+			          pointHighlightStroke : 'red',
+			          data : upper
+        			},
+        			{
+			          label: 'Down threshold',
+			          fillColor : 'rgba(35,183,229,0)',
+			          strokeColor : 'blue',
+			          pointColor : 'blue',
+			          pointStrokeColor : '#fff',
+			          pointHighlightFill : '#fff',
+			          pointHighlightStroke : 'blue',
+			          data : down
+        			}
+			];
+
+			if (!upper.length) {
+				delete datasets[2];
+				delete datasets[3];
+			}
+			$scope.lineData = {
+			      labels : labels,
+			      datasets: datasets
+			      
+	    	};
+		};
+		
+		  
+}]);
+
+/**=========================================================
+ * Module: lhcbpr/search-jobs.js
+ * Search jobs
+ =========================================================*/
+
+App.directive('searchJobs', ["lhcbprResources", function(lhcbprResources){
+	return {
+		templateUrl: ('app/views/lhcbpr/search-jobs.html'),
+    	scope: {onJobsFound: '&'},
+		link: function(scope, element, attrs) {
+			scope.versionsIds = [];
+			scope.applicationIds = [];
+			scope.optionsIds = []
+
+			lhcbprResources.all("active/applications").getList().then(
+				function(apps){
+					scope.apps = apps;
+				}
+			);
+
+			scope.$watch("app", function(newApp) {
+				if (newApp) {
+					scope.applicationIds = [newApp.id]
+					lhcbprResources.all(
+						"active/applications/" + newApp.id +'/versions/'
+					).getList().then(
+						function(versions){
+							cleanVersionsIds();	
+							scope.versions = versions;
+							scope.versionChanged();
+						}
+					);
+				}
+			});
+
+			scope.versionChanged = function(){
+				lhcbprResources.all("active/applications/" + scope.app.id + "/options").getList(
+					{versions: scope.versionsIds.join()}
+				).then(function(options){
+					scope.options = options;
+					scope.allOptionsIds = getAllIds(options);
+					console.log(scope.allOptionsIds, scope.optionsIds);
+					scope.optionsIds = scope.optionsIds.filter(function(el){
+						return scope.allOptionsIds.indexOf(el) != -1;
+					});
+					searchJobs();
+				});
+			};
+
+			scope.optionChanged = function() {
+				searchJobs();
+			};
+
+			var cleanVersionsIds = function() {
+				scope.versionsIds = []
+			};
+
+			var getAllIds = function(objs) {
+				return objs.map(function(obj) { return obj.id;})
+			};
+
+			var searchJobs = function() {
+				lhcbprResources.all("search-jobs").getList(
+					{
+						application: scope.applicationIds.join(),
+						versions: scope.versionsIds.join(),
+						options: scope.optionsIds.join()
+					}
+					).then(function(jobs){
+					scope.onJobsFound({jobs:jobs});
+				});
+			};
+			searchJobs();
+		}
+	}
 }]);

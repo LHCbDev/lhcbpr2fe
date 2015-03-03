@@ -86,10 +86,11 @@
     "angular-ui-select": "~0.9.6",
     "angular-ui-codemirror": "~0.2.2",
 
-    "lodash" : "3.3.1",
+    "lodash" : "2.4.1",
     "restangular": "1.4.0",
 
-    "Chart.js": "~1.0.1"
+    "Chart.js": "~1.0.1",
+    "checklist-model": "0.2.4"
   },
   "resolutions": {
     "jquery-ui": "1.11.1",

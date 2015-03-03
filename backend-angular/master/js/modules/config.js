@@ -98,6 +98,12 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
         controller: 'JobsListController',
         resolve: helper.resolveFor('ngTable')
     })
+    .state('app.jobs.example', {
+        url: '/example',
+        title: 'Example',
+        templateUrl: helper.basepath('lhcbpr/jobs.example.html'),
+        controller: 'JobsExampleController'
+    })
     .state('app.jobs.detail', {
         url: '/detail/:job',
         title: 'Jobs',

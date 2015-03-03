@@ -14,9 +14,13 @@ insert_final_newline = true
 charset = utf-8
 
 # 4 space indentation
-[*.{py,jade}]
+[*.py]
 indent_style = space
 indent_size = 4
+
+[*.jade]
+indent_style = space
+indent_size = 2
 
 # Tab indentation (no size specified)
 [*.js]
