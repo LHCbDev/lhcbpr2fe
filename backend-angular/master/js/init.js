@@ -60,5 +60,6 @@ var App = angular.module('angle', ['ngRoute',
 								job:      'ng-Dev',
 								picture:  'app/img/user/02.jpg'
 							};
+							$rootScope.menuItems = [];
 						}
 					]);

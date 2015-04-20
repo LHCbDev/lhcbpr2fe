@@ -60,6 +60,7 @@ var App = angular.module('angle', ['ngRoute',
 								job:      'ng-Dev',
 								picture:  'app/img/user/02.jpg'
 							};
+							$rootScope.menuItems = [];
 						}
 					]);
 
@@ -3321,21 +3322,23 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$locatio
              (isActive(item) ? ' active' : '') ;
     };
 
-    $scope.loadSidebarMenu = function() {
+    // $scope.loadSidebarMenu = function() {
+    // 	if(undefined === $rootScope.menuItems)
+    // 		$rootScope.menuItems = [];
+    //   var menuJson = 'server/sidebar-menu.json',
+    //       menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
+    //   $http.get(menuURL)
+    //     .success(function(items) {
+    //     	items.forEach(function(item){
+    //       	$rootScope.menuItems.push(item);
+    //     	});
+    //     })
+    //     .error(function(data, status, headers, config) {
+    //       alert('Failure loading menu');
+    //     });
+    //  };
 
-      var menuJson = 'server/sidebar-menu.json',
-          menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
-      $http.get(menuURL)
-        .success(function(items) {
-           $rootScope.menuItems = items;
-        })
-        .error(function(data, status, headers, config) {
-          alert('Failure loading menu');
-        });
-     };
-
-     $scope.loadSidebarMenu();
-    console.log('menu items : ', $rootScope.menuItems);
+    //  $scope.loadSidebarMenu();
 
     // Handle sidebar collapse items
     // ----------------------------------- 
@@ -6550,6 +6553,30 @@ App.constant('LHCBPR_PARAMS', {
 	"api1": "/amazurov/lhcbpr-dev/api",
 	"api": "http://127.0.0.1:8000"
 });
+
+App.run(["$rootScope", function($rootScope){
+	var menu = [
+		{
+			text: "LHCbPR",
+			heading: "true"
+		},
+		{
+			text: "Job Descriptions",
+			sref: "app.job_descriptions.list",
+			icon: "icon-grid",
+			alert: "new"
+		},
+		{
+			text: "Jobs",
+			sref: "app.jobs.list",
+			icon: "icon-grid",
+			alert: "new"
+		}
+	];
+	menu.forEach(function(item){
+		$rootScope.menuItems.push(item);
+	});
+}]);
 
 App.config([ '$stateProvider', 'RouteHelpersProvider',
 function ($stateProvider, helper) {

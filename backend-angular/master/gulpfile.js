@@ -80,7 +80,7 @@ var source = {
 							'js/filters/*.js',
 							'modules/**/*.js',
 						],
-		watch: ['js/**/*.js']
+		watch: ['js/**/*.js', 'modules/**/*.js']
 	},
 	templates: {
 		app: {

@@ -53,21 +53,23 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$locatio
              (isActive(item) ? ' active' : '') ;
     };
 
-    $scope.loadSidebarMenu = function() {
+    // $scope.loadSidebarMenu = function() {
+    // 	if(undefined === $rootScope.menuItems)
+    // 		$rootScope.menuItems = [];
+    //   var menuJson = 'server/sidebar-menu.json',
+    //       menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
+    //   $http.get(menuURL)
+    //     .success(function(items) {
+    //     	items.forEach(function(item){
+    //       	$rootScope.menuItems.push(item);
+    //     	});
+    //     })
+    //     .error(function(data, status, headers, config) {
+    //       alert('Failure loading menu');
+    //     });
+    //  };
 
-      var menuJson = 'server/sidebar-menu.json',
-          menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
-      $http.get(menuURL)
-        .success(function(items) {
-           $rootScope.menuItems = items;
-        })
-        .error(function(data, status, headers, config) {
-          alert('Failure loading menu');
-        });
-     };
-
-     $scope.loadSidebarMenu();
-    console.log('menu items : ', $rootScope.menuItems);
+    //  $scope.loadSidebarMenu();
 
     // Handle sidebar collapse items
     // ----------------------------------- 
