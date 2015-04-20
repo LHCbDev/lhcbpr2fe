@@ -21,6 +21,7 @@ var gulp        = require('gulp'),
     gulpsync    = require('gulp-sync')(gulp),
     ngAnnotate  = require('gulp-ng-annotate'),
     sourcemaps  = require('gulp-sourcemaps'),
+    connect			= require('gulp-connect'),
     PluginError = gutil.PluginError;
 
 // LiveReload port. Change it only if there's a conflict
@@ -293,13 +294,22 @@ gulp.task('templates:views', function() {
         ;
 });
 
+// CONNECT
+gulp.task('connect', function() {
+  connect.server({
+    root: '../',
+    port: '9000',
+    livereload: true
+  });
+});
+
 //---------------
 // WATCH
 //---------------
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
-  livereload.listen();
+//  livereload.listen();
 
   gulp.watch(source.scripts.watch,           ['scripts:app']);
   gulp.watch(source.styles.app.watch,        ['styles:app', 'styles:app:rtl']);
@@ -315,7 +325,8 @@ gulp.task('watch', function() {
 
   ]).on('change', function(event) {
 
-      livereload.changed( event.path );
+      // livereload.changed( event.path );
+      connect.reload();
 
   });
 
@@ -355,6 +366,7 @@ gulp.task('start',[
           'templates:app',
           'templates:pages',
           'templates:views',
+          'connect',
           'watch'
         ]);
 

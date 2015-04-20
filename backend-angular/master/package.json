@@ -10,6 +10,7 @@
     "gulp-angular-htmlify": "^0.4.0",
     "gulp-changed": "^1.1.0",
     "gulp-concat": "^2.4.1",
+    "gulp-connect": "^2.2.0",
     "gulp-css-flip": "^0.4.0",
     "gulp-expect-file": "0.0.7",
     "gulp-filter": "^1.0.2",
