@@ -3,10 +3,6 @@
  * Define constants to inject across the application
  =========================================================*/
 App
-  .constant('LHCBPR_PARAMS', {
-      "api1": "/amazurov/lhcbpr-dev/api",
-      "api": "http://127.0.0.1:8000"
-  })
   .constant('APP_COLORS', {
     'primary':                '#5d9cec',
     'success':                '#27c24c',

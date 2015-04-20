@@ -67,6 +67,7 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$locatio
      };
 
      $scope.loadSidebarMenu();
+    console.log('menu items : ', $rootScope.menuItems);
 
     // Handle sidebar collapse items
     // ----------------------------------- 

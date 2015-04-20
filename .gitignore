@@ -28,3 +28,7 @@ node_modules
 
 bower_components
 vendor/
+
+# Sublime Text project files
+LHCbPR-www.sublime-project
+LHCbPR-www.sublime-workspace

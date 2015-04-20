@@ -1,9 +1,0 @@
-#!/usr/bin/env python
-import SimpleHTTPServer
-import SocketServer
-
-Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-httpd = SocketServer.TCPServer(("", 8001), Handler)
- 
-print "Server running on localhost:8001"
-httpd.serve_forever()

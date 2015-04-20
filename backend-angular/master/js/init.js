@@ -10,7 +10,6 @@
 
 if (typeof $ === 'undefined') { throw new Error('This application\'s JavaScript requires jQuery'); }
 
-
 // APP START
 // ----------------------------------- 
 
@@ -43,8 +42,8 @@ var App = angular.module('angle', ['ngRoute',
 							// Scope Globals
 							// ----------------------------------- 
 							$rootScope.app = {
-								name: 'Angle',
-								description: 'Angular Bootstrap Admin Template',
+								name: 'LHCbPR',
+								description: 'Some description here',
 								year: ((new Date()).getFullYear()),
 								layout: {
 									isFixed: true,

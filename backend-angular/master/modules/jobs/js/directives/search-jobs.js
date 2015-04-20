@@ -5,7 +5,7 @@
 
 App.directive('searchJobs', ["lhcbprResources", function(lhcbprResources){
 	return {
-		templateUrl: ('app/views/lhcbpr/search-jobs.html'),
+		templateUrl: ('app/views/jobs/views/search-jobs.html'),
     	scope: {onJobsFound: '&'},
 		link: function(scope, element, attrs) {
 			scope.versionsIds = [];

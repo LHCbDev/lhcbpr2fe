@@ -10,47 +10,58 @@
 
 if (typeof $ === 'undefined') { throw new Error('This application\'s JavaScript requires jQuery'); }
 
-
 // APP START
 // ----------------------------------- 
 
-var App = angular.module('angle', ['ngRoute', 'ngAnimate', 'ngStorage', 'ngCookies', 'pascalprecht.translate', 'ui.bootstrap', 'ui.router', 'oc.lazyLoad', 'cfp.loadingBar', 'ngSanitize', 'ngResource', 'restangular', 'checklist-model'])
-          .run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache', function ($rootScope, $state, $stateParams, $window, $templateCache) {
-              // Set reference to access them from any scope
-              $rootScope.$state = $state;
-              $rootScope.$stateParams = $stateParams;
-              $rootScope.$storage = $window.localStorage;
+var App = angular.module('angle', ['ngRoute', 
+					'ngAnimate', 
+					'ngStorage', 
+					'ngCookies', 
+					'pascalprecht.translate', 
+					'ui.bootstrap', 
+					'ui.router', 
+					'oc.lazyLoad', 
+					'cfp.loadingBar', 
+					'ngSanitize', 
+					'ngResource', 
+					'restangular', 
+					'checklist-model'])
+					.run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache', function ($rootScope, $state, $stateParams, $window, $templateCache) {
+							// Set reference to access them from any scope
+							$rootScope.$state = $state;
+							$rootScope.$stateParams = $stateParams;
+							$rootScope.$storage = $window.localStorage;
 
-              // Uncomment this to disables template cache
-              /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-                  if (typeof(toState) !== 'undefined'){
-                    $templateCache.remove(toState.templateUrl);
-                  }
-              });*/
+							// Uncomment this to disables template cache
+							/*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+									if (typeof(toState) !== 'undefined'){
+										$templateCache.remove(toState.templateUrl);
+									}
+							});*/
 
-              // Scope Globals
-              // ----------------------------------- 
-              $rootScope.app = {
-                name: 'Angle',
-                description: 'Angular Bootstrap Admin Template',
-                year: ((new Date()).getFullYear()),
-                layout: {
-                  isFixed: true,
-                  isCollapsed: false,
-                  isBoxed: false,
-                  isRTL: false
-                },
-                useFullLayout: false,
-                hiddenFooter: false,
-                viewAnimation: 'ng-fadeInUp'
-              };
-              $rootScope.user = {
-                name:     'John',
-                job:      'ng-Dev',
-                picture:  'app/img/user/02.jpg'
-              };
-            }
-          ]);
+							// Scope Globals
+							// ----------------------------------- 
+							$rootScope.app = {
+								name: 'LHCbPR',
+								description: 'Some description here',
+								year: ((new Date()).getFullYear()),
+								layout: {
+									isFixed: true,
+									isCollapsed: false,
+									isBoxed: false,
+									isRTL: false
+								},
+								useFullLayout: false,
+								hiddenFooter: false,
+								viewAnimation: 'ng-fadeInUp'
+							};
+							$rootScope.user = {
+								name:     'John',
+								job:      'ng-Dev',
+								picture:  'app/img/user/02.jpg'
+							};
+						}
+					]);
 
 /**=========================================================
  * Module: config.js
@@ -119,52 +130,7 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
         controller: 'NullController',
         resolve: helper.resolveFor('loadGoogleMapsJS', function() { return loadGoogleMaps(); }, 'google-map')
     })
-    .state('app.job_descriptions', {
-        url: '/job-descriptions',
-        title: 'Job Descriptions',
-        abstract: true,
-        template: '<ui-view/>',
-        controller: 'JobDescriptionsController'
-    })
-     .state('app.job_descriptions.list', {
-        url: '/list',
-        title: 'Job Descriptions',
-        templateUrl: helper.basepath('lhcbpr/job-descriptions.html'),
-        controller: 'JobDescriptionsListController'
-    })
-    .state('app.job_descriptions.add', {
-        url: '/add',
-        title: 'Add job Description',
-        templateUrl: helper.basepath('lhcbpr/job-description.html'),
-        controller: 'JobDescriptionsAddController'
-    })
-    .state('app.jobs', {
-        url: '/jobs',
-        title: 'Jobs',
-        abstract: true,
-        template: '<ui-view/>',
-        controller: 'JobsController'
-    })
-    .state('app.jobs.list', {
-        url: '/list',
-        title: 'Jobs',
-        templateUrl: helper.basepath('lhcbpr/jobs.html'),
-        controller: 'JobsListController',
-        resolve: helper.resolveFor('ngTable')
-    })
-    .state('app.jobs.example', {
-        url: '/example',
-        title: 'Example',
-        templateUrl: helper.basepath('lhcbpr/jobs.example.html'),
-        controller: 'JobsExampleController'
-    })
-    .state('app.jobs.detail', {
-        url: '/detail/:job',
-        title: 'Jobs',
-        templateUrl: helper.basepath('lhcbpr/job.html'),
-        controller: 'JobsDetailController',
-        resolve: helper.resolveFor('ngTable')
-    })
+
     .state('app.trends', {
         url: '/trends',
         title: 'Trends',
@@ -618,10 +584,6 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
  * Define constants to inject across the application
  =========================================================*/
 App
-  .constant('LHCBPR_PARAMS', {
-      "api1": "/amazurov/lhcbpr-dev/api",
-      "api": "http://127.0.0.1:8000"
-  })
   .constant('APP_COLORS', {
     'primary':                '#5d9cec',
     'success':                '#27c24c',
@@ -3373,6 +3335,7 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$locatio
      };
 
      $scope.loadSidebarMenu();
+    console.log('menu items : ', $rootScope.menuItems);
 
     // Handle sidebar collapse items
     // ----------------------------------- 
@@ -6583,37 +6546,64 @@ App.service('vectorMap', function() {
         }
   };
 });
-// To run this code, edit file 
-// index.html or index.jade and change
-// html data-ng-app attribute from
-// angle to myAppName
-// ----------------------------------- 
-
-var myApp = angular.module('myAppName', ['angle']);
-
-myApp.run(["$log", function($log) {
-
-  $log.log('I\'m a line from custom.js');
-
-}]);
-
-myApp.config(["RouterHelpersProvider", function(RouterHelpersProvider) {
-
-  // Custom Route definition
-  
-}]);
-
-myApp.controller('oneOfMyOwnController', ["$scope", function($scope) {
-  /* controller code */
-}]);
-
-myApp.directive('oneOfMyOwnDirectives', function() {
-  /*directive code*/
+App.constant('LHCBPR_PARAMS', {
+	"api1": "/amazurov/lhcbpr-dev/api",
+	"api": "http://127.0.0.1:8000"
 });
 
-myApp.config(["$stateProvider", function($stateProvider /* ... */) {
-  /* specific routes here (see file config.js) */
+App.config([ '$stateProvider', 'RouteHelpersProvider',
+function ($stateProvider, helper) {
+  'use strict';
+
+$stateProvider
+	  .state('app.job_descriptions', {
+		url: '/job-descriptions',
+		title: 'Job Descriptions',
+		abstract: true,
+		template: '<ui-view/>',
+		controller: 'JobDescriptionsController'
+	})
+	 .state('app.job_descriptions.list', {
+		url: '/list',
+		title: 'Job Descriptions',
+		templateUrl: helper.basepath('jobs/views/job-descriptions.html'),
+		controller: 'JobDescriptionsListController'
+	})
+	.state('app.job_descriptions.add', {
+		url: '/add',
+		title: 'Add job Description',
+		templateUrl: helper.basepath('jobs/views/job-description.html'),
+		controller: 'JobDescriptionsAddController'
+	})
+	.state('app.jobs', {
+		url: '/jobs',
+		title: 'Jobs',
+		abstract: true,
+		template: '<ui-view/>',
+		controller: 'JobsController'
+	})
+	.state('app.jobs.list', {
+		url: '/list',
+		title: 'Jobs',
+		templateUrl: helper.basepath('jobs/views/jobs.html'),
+		controller: 'JobsListController',
+		resolve: helper.resolveFor('ngTable')
+	})
+	.state('app.jobs.example', {
+		url: '/example',
+		title: 'Example',
+		templateUrl: helper.basepath('jobs/views/jobs.example.html'),
+		controller: 'JobsExampleController'
+	})
+	.state('app.jobs.detail', {
+		url: '/detail/:job',
+		title: 'Jobs',
+		templateUrl: helper.basepath('jobs/views/job.html'),
+		controller: 'JobsDetailController',
+		resolve: helper.resolveFor('ngTable')
+	});
 }]);
+
 /**=========================================================
  * Module:lhcbpr-job-descriptions.js
  * Provides a simple demo for typeahead
@@ -6813,7 +6803,7 @@ App.controller('TrendsChartController',
 
 App.directive('searchJobs', ["lhcbprResources", function(lhcbprResources){
 	return {
-		templateUrl: ('app/views/lhcbpr/search-jobs.html'),
+		templateUrl: ('app/views/jobs/views/search-jobs.html'),
     	scope: {onJobsFound: '&'},
 		link: function(scope, element, attrs) {
 			scope.versionsIds = [];
