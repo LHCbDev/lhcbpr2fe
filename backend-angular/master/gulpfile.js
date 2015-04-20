@@ -89,7 +89,7 @@ var source = {
 		},
 		views: {
 				files : ['jade/views/*.jade', 'jade/views/**/*.jade', 'modules/*/views/*.jade', 'modules/*/views/**/*.jade', ignored_files],
-				watch: ['jade/views/**/*.jade']
+				watch: ['jade/views/**/*.jade', 'modules/*/views/**/*.jade']
 		},
 		pages: {
 				files : ['jade/pages/*.jade'],

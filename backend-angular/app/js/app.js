@@ -6557,7 +6557,7 @@ App.constant('LHCBPR_PARAMS', {
 App.run(["$rootScope", function($rootScope){
 	var menu = [
 		{
-			text: "LHCbPR",
+			text: "LHCbPR Jobs",
 			heading: "true"
 		},
 		{
@@ -6628,6 +6628,37 @@ $stateProvider
 		templateUrl: helper.basepath('jobs/views/job.html'),
 		controller: 'JobsDetailController',
 		resolve: helper.resolveFor('ngTable')
+	});
+}]);
+
+App.run(["$rootScope", function($rootScope){
+	var menu = [
+		{
+			text: "LHCbPR Test Module",
+			heading: "true"
+		},
+		{
+			text: "Test",
+			sref: "app.test",
+			icon: "icon-grid",
+			alert: "new"
+		}
+	];
+	menu.forEach(function(item){
+		$rootScope.menuItems.push(item);
+	});
+}]);
+
+App.config([ '$stateProvider', 'RouteHelpersProvider',
+function ($stateProvider, helper) {
+  'use strict';
+
+$stateProvider
+	.state('app.test', {
+		url: '/test',
+		title: 'Test',
+		templateUrl: helper.basepath('test/views/test.html'),
+		controller: 'TestController'
 	});
 }]);
 
@@ -6898,4 +6929,9 @@ App.directive('searchJobs', ["lhcbprResources", function(lhcbprResources){
 			searchJobs();
 		}
 	}
+}]);
+
+App.controller('TestController', 
+	["$scope", function ($scope) {
+		$scope.msg = 'Well I am working !';
 }]);
