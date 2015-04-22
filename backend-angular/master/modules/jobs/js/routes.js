@@ -48,5 +48,19 @@ $stateProvider
 		templateUrl: helper.basepath('jobs/views/job.html'),
 		controller: 'JobsDetailController',
 		resolve: helper.resolveFor('ngTable')
-	});
+	})
+	.state('app.trends', {
+        url: '/trends',
+        title: 'Trends',
+		abstract: true,
+        template: '<ui-view/>',
+        controller: 'NullController'
+    })
+    .state('app.trends.chart', {
+        url: '/option/:option/attribute/:attribute',
+        title: 'Trend',
+        templateUrl: helper.basepath('jobs/views/trends.chart.html'),
+        controller: 'TrendsChartController',
+        resolve: helper.resolveFor('chartjs')
+    });
 }]);

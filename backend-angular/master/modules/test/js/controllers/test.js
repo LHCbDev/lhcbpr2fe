@@ -1,16 +1,21 @@
 App.controller('TestController', 
 	["$scope", function ($scope) {
 
-		$scope.attrs = []; // list of attributes of selected jobs
+		$scope.attrs = {}; // list of attributes of selected jobs
 		$scope.selectedAttrIds = []; // list of ids of selected attributes
 
 		$scope.handleJobs = function(jobs){
+			if(undefined === jobs || undefined === jobs.length || 0 === jobs.length)
+				return;
 			// console.log(jobs);
-			$scope.attrs = []; // clearing attributes
+			$scope.attrs = {}; // clearing attributes
 			jobs.forEach(function(job){
+				if(undefined === job || undefined === job.results)
+					return;
 				job.results.forEach(function(result){
 					if( undefined === $scope.attrs[result.attr.id])
 						$scope.attrs[result.attr.id] = {
+							id: result.attr.id,
 							name: result.attr.name,
 							dtype: result.attr.dtype,
 							values: []
@@ -18,6 +23,7 @@ App.controller('TestController',
 					var a = $scope.attrs[result.attr.id];
 					var value = {
 						jobId: job.id,
+						time: job.time_start,
 						value: result[ 'val_' + a.dtype ],
 						downValue: null,
 						upValue: null
@@ -32,6 +38,59 @@ App.controller('TestController',
 					a.values.push(value);
 				});
 			});
+			// Sorting values of all attributes by job starting time
+			for (var id in $scope.attrs){
+				if ($scope.attrs.hasOwnProperty(id)){
+					var attr = $scope.attrs[id];
+					attr.values.sort(function(x, y){
+						return x.time - y.time;
+					});
+				}
+			}
+			$scope.makeAttrsLineData();
 			console.log('attrs:', $scope.attrs);
-		}
+		};
+
+		$scope.makeAttrsLineData = function(){
+			for (var id in $scope.attrs){
+				if ($scope.attrs.hasOwnProperty(id)){
+					var attr = $scope.attrs[id];
+					attr.lineData = {
+						labels: attr.values.map(function(value) { return value.time; }),
+						datasets: [
+					        {
+								label: 'value',
+								fillColor : 'rgba(0,255,0,0)',
+								strokeColor : 'green',
+								pointColor : 'green',
+								pointStrokeColor : '#fff',
+								pointHighlightFill : '#fff',
+								pointHighlightStroke : 'green',
+								data : attr.values.map(function(value) { return value.value; })
+					        },
+					        {
+								label: 'Upper threshold',
+								fillColor : 'rgba(35,183,229,0)',
+								strokeColor : 'red',
+								pointColor : 'red',
+								pointStrokeColor : '#fff',
+								pointHighlightFill : '#fff',
+								pointHighlightStroke : 'red',
+								data : attr.values.map(function(value) { return value.upValue; })
+							},
+							{
+								label: 'Down threshold',
+								fillColor : 'rgba(35,183,229,0)',
+								strokeColor : 'blue',
+								pointColor : 'blue',
+								pointStrokeColor : '#fff',
+								pointHighlightFill : '#fff',
+								pointHighlightStroke : 'blue',
+								data : attr.values.map(function(value) { return value.downValue; })
+							}
+						]
+					};
+				}
+			}
+		};
 }]);

@@ -7,23 +7,22 @@ App.controller('TrendsChartController',
 		var attr1 = lhcbprResources.one('attributes',$stateParams.attribute).get();
 
 		$q.all([option1, attr1]).then(function(result) {
-			$scope.option = result[0].valueOf()
+			$scope.option = result[0].valueOf();
 			$scope.attr = result[1].valueOf();
 			
 			lhcbprResources.all(
 			"result_by_opt_and_attr/" + option + '_' + attr + '/').getList().then(
 				function(results) {
 					var labels = results.map(function(result){
-						var version = result.job.job_description.application_version
-						return version.application.name + " " + version.version
-
+						var version = result.job.job_description.application_version;
+						return version.application.name + " " + version.version;
 					});
 					var data = results.map(function(result){
 						return result.val_float;
 					});
 					var upper = [];
 					var down = [];
-					var threshold = $filter("filter")($scope.option.thresholds, {"attribute": {"id": $scope.attr.id}})
+					var threshold = $filter("filter")($scope.option.thresholds, {"attribute": {"id": $scope.attr.id}});
 					if (threshold.length) {
 						for(var i=0; i < labels.length; ++i) {
 							upper.push(threshold[0].up_value);
@@ -75,8 +74,8 @@ App.controller('TrendsChartController',
 			$scope.lineData = {
 			      labels : labels,
 			      datasets: datasets
-			      
 	    	};
+	    	console.log($scope.lineData);
 		};
 		
 		  

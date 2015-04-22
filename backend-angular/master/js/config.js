@@ -66,20 +66,6 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
         resolve: helper.resolveFor('loadGoogleMapsJS', function() { return loadGoogleMaps(); }, 'google-map')
     })
 
-    .state('app.trends', {
-        url: '/trends',
-        title: 'Trends',
-		abstract: true,
-        template: '<ui-view/>',
-        controller: 'NullController'
-    })
-    .state('app.trends.chart', {
-        url: '/option/:option/attribute/:attribute',
-        title: 'Trend',
-        templateUrl: helper.basepath('lhcbpr/trends.chart.html'),
-        controller: 'TrendsChartController',
-        resolve: helper.resolveFor('chartjs')
-    })
     .state('app.buttons', {
         url: '/buttons',
         title: 'Buttons',

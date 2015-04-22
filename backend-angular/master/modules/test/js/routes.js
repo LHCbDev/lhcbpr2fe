@@ -7,6 +7,7 @@ $stateProvider
 		url: '/test',
 		title: 'Test',
 		templateUrl: helper.basepath('test/views/test.html'),
-		controller: 'TestController'
+		controller: 'TestController',
+		resolve: helper.resolveFor('chartjs')
 	});
 }]);
