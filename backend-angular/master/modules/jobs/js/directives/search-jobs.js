@@ -52,11 +52,11 @@ App.directive('searchJobs', ["lhcbprResources", function(lhcbprResources){
 			};
 
 			var cleanVersionsIds = function() {
-				scope.versionsIds = []
+				scope.versionsIds = [];
 			};
 
 			var getAllIds = function(objs) {
-				return objs.map(function(obj) { return obj.id;})
+				return objs.map(function(obj) { return obj.id;});
 			};
 
 			var searchJobs = function() {
