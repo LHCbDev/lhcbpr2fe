@@ -1,4 +1,4 @@
-App.controller('TestController', 
+App.controller('AttributesController', 
 	["$scope", function ($scope) {
 
 		$scope.attrs = {}; // list of attributes of selected jobs
@@ -13,6 +13,8 @@ App.controller('TestController',
 				if(undefined === job || undefined === job.results)
 					return;
 				job.results.forEach(function(result){
+					if( 'string' === result.attr.dtype )
+						return;
 					if( undefined === $scope.attrs[result.attr.id])
 						$scope.attrs[result.attr.id] = {
 							id: result.attr.id,

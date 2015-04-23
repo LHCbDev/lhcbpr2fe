@@ -1,14 +1,13 @@
 App.run(["$rootScope", function($rootScope){
 	var menu = [
 		{
-			text: "LHCbPR Test Module",
+			text: "LHCbPR Attributes Module",
 			heading: "true"
 		},
 		{
-			text: "Test",
-			sref: "app.test",
-			icon: "icon-grid",
-			alert: "new"
+			text: "Attributes",
+			sref: "app.attributes",
+			icon: "icon-grid"
 		}
 	];
 	menu.forEach(function(item){

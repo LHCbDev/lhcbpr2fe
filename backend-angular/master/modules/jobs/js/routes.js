@@ -8,59 +8,104 @@ $stateProvider
 		title: 'Job Descriptions',
 		abstract: true,
 		template: '<ui-view/>',
-		controller: 'JobDescriptionsController'
+		controller: 'JobDescriptionsController',
+		resolve: {
+			loadModule: ['$ocLazyLoad', function($ocLL) {
+		        return $ocLL.load('app/modules/jobs.js');
+		    }]
+		}
 	})
 	 .state('app.job_descriptions.list', {
 		url: '/list',
 		title: 'Job Descriptions',
 		templateUrl: helper.basepath('jobs/views/job-descriptions.html'),
-		controller: 'JobDescriptionsListController'
+		controller: 'JobDescriptionsListController',
+		resolve: {
+			loadModule: ['$ocLazyLoad', function($ocLL) {
+		        return $ocLL.load('app/modules/jobs.js');
+		    }]
+		}
 	})
 	.state('app.job_descriptions.add', {
 		url: '/add',
 		title: 'Add job Description',
 		templateUrl: helper.basepath('jobs/views/job-description.html'),
-		controller: 'JobDescriptionsAddController'
+		controller: 'JobDescriptionsAddController',
+		resolve: {
+			loadModule: ['$ocLazyLoad', function($ocLL) {
+		        return $ocLL.load('app/modules/jobs.js');
+		    }]
+		}
 	})
 	.state('app.jobs', {
 		url: '/jobs',
 		title: 'Jobs',
 		abstract: true,
 		template: '<ui-view/>',
-		controller: 'JobsController'
+		controller: 'JobsController',
+		resolve: {
+			loadModule: ['$ocLazyLoad', function($ocLL) {
+		        return $ocLL.load('app/modules/jobs.js');
+		    }]
+		}
 	})
 	.state('app.jobs.list', {
 		url: '/list',
 		title: 'Jobs',
 		templateUrl: helper.basepath('jobs/views/jobs.html'),
 		controller: 'JobsListController',
-		resolve: helper.resolveFor('ngTable')
+		resolve: {
+			deps: (helper.resolveFor('ngTable')).deps,
+			loadModule: ['$ocLazyLoad', function($ocLL) {
+		        return $ocLL.load('app/modules/jobs.js');
+		    }]
+		}
 	})
 	.state('app.jobs.example', {
 		url: '/example',
 		title: 'Example',
 		templateUrl: helper.basepath('jobs/views/jobs.example.html'),
-		controller: 'JobsExampleController'
+		controller: 'JobsExampleController',
+		resolve: {
+			loadModule: ['$ocLazyLoad', function($ocLL) {
+		        return $ocLL.load('app/modules/jobs.js');
+		    }]
+		}
 	})
 	.state('app.jobs.detail', {
 		url: '/detail/:job',
 		title: 'Jobs',
 		templateUrl: helper.basepath('jobs/views/job.html'),
 		controller: 'JobsDetailController',
-		resolve: helper.resolveFor('ngTable')
+		resolve: {
+			deps: (helper.resolveFor('ngTable')).deps,
+			loadModule: ['$ocLazyLoad', function($ocLL) {
+		        return $ocLL.load('app/modules/jobs.js');
+		    }]
+		}
 	})
 	.state('app.trends', {
         url: '/trends',
         title: 'Trends',
 		abstract: true,
         template: '<ui-view/>',
-        controller: 'NullController'
+        controller: 'NullController',
+        resolve: {
+			loadModule: ['$ocLazyLoad', function($ocLL) {
+		        return $ocLL.load('app/modules/jobs.js');
+		    }]
+		}
     })
     .state('app.trends.chart', {
         url: '/option/:option/attribute/:attribute',
         title: 'Trend',
         templateUrl: helper.basepath('jobs/views/trends.chart.html'),
         controller: 'TrendsChartController',
-        resolve: helper.resolveFor('chartjs')
+        resolve: {
+			deps: (helper.resolveFor('chartjs')).deps,
+			loadModule: ['$ocLazyLoad', function($ocLL) {
+		        return $ocLL.load('app/modules/jobs.js');
+		    }]
+		}
     });
 }]);

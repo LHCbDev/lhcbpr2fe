@@ -6,7 +6,6 @@ var gulp        = require('gulp'),
 		path        = require('path'),
 		livereload  = require('gulp-livereload'), // Livereload plugin needed: https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei
 		marked      = require('marked'), // For :markdown filter in jade
-		path        = require('path'),
 		changed     = require('gulp-changed'),
 		prettify    = require('gulp-html-prettify'),
 		w3cjs       = require('gulp-w3cjs'),
@@ -21,7 +20,9 @@ var gulp        = require('gulp'),
 		gulpsync    = require('gulp-sync')(gulp),
 		ngAnnotate  = require('gulp-ng-annotate'),
 		sourcemaps  = require('gulp-sourcemaps'),
-		connect			= require('gulp-connect'),
+		connect		= require('gulp-connect'),
+		fs 			= require('fs'),
+		merge 		= require('merge-stream'),
 		PluginError = gutil.PluginError;
 
 // LiveReload port. Change it only if there's a conflict
@@ -72,14 +73,14 @@ var vendor = {
 var source = {
 	scripts: {
 		app:    [ 'js/init.js',
-							'js/*.js',
-							'js/controllers/*.js',
-							'js/controllers/lhcbpr/*.js',
-							'js/directives/*.js',
-							'js/services/*.js',
-							'js/filters/*.js',
-							'modules/**/*.js',
-						],
+					'js/*.js',
+					'js/controllers/*.js',
+					'js/controllers/lhcbpr/*.js',
+					'js/directives/*.js',
+					'js/services/*.js',
+					'js/filters/*.js',
+					'modules/*/js/{menu,routes}.js',
+				],
 		watch: ['js/**/*.js', 'modules/**/*.js']
 	},
 	templates: {
@@ -303,6 +304,26 @@ gulp.task('connect', function() {
 	});
 });
 
+// MODULES SCRIPTS
+gulp.task('modules:scripts', function() {
+	var modulesPath = 'modules';
+	var folders = fs.readdirSync(modulesPath)
+		.filter(function(file) {
+			return fs.statSync(path.join(modulesPath, file)).isDirectory();
+		});
+
+	var tasks = folders.map(function(folder) {
+		return gulp.src(['modules/' + folder + '/**/*.js', '!modules/' + folder + '/js/{menu,routes}.js'])
+			.pipe(concat(folder + '.js'))
+//			.pipe(gulp.dest(modulesPath))
+//			.pipe(uglify())
+			.pipe(rename(folder + '.js'))
+			.pipe(gulp.dest('../app/modules'));
+   });
+
+   return merge(tasks);
+});
+
 //---------------
 // WATCH
 //---------------
@@ -367,6 +388,7 @@ gulp.task('start',[
 					'templates:pages',
 					'templates:views',
 					'connect',
+					'modules:scripts',
 					'watch'
 				]);
 
