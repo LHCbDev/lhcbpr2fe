@@ -9,7 +9,10 @@ $stateProvider
 		templateUrl: helper.basepath('attributes/views/attributes.html'),
 		controller: 'AttributesController',
 		resolve: {
-			deps: (helper.resolveFor('chartjs')).deps,
+			vendors: (helper.resolveFor('chartjs')).deps,
+			deps: ['$ocLazyLoad', function($ocLL) {
+		        return $ocLL.load('app/modules/jobs.js');
+		    }],
 			loadModule: ['$ocLazyLoad', function($ocLL) {
 		        return $ocLL.load('app/modules/attributes.js');
 		    }]
