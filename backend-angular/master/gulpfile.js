@@ -73,13 +73,14 @@ var vendor = {
 var source = {
 	scripts: {
 		app:    [ 'js/init.js',
+					'js/classes/deps.js',
+					'js/classes/module.js',
 					'js/*.js',
 					'js/controllers/*.js',
-					'js/controllers/lhcbpr/*.js',
 					'js/directives/*.js',
 					'js/services/*.js',
 					'js/filters/*.js',
-					'modules/*/js/{menu,routes}.js',
+					'modules/*/js/init.js',
 				],
 		watch: ['js/**/*.js', 'modules/**/*.js']
 	},
@@ -99,9 +100,9 @@ var source = {
 	},
 	styles: {
 		app: {
-			main: ['less/app.less', '!less/themes/*.less', 'modules/**/*.less'],
+			main: ['less/app.less', '!less/themes/*.less'],
 			dir:  'less',
-			watch: ['less/*.less', 'less/**/*.less', '!less/themes/*.less', 'modules/**/*.less']
+			watch: ['less/*.less', 'less/**/*.less', '!less/themes/*.less']
 		},
 		themes: {
 			main: ['less/themes/*.less', ignored_files],
@@ -313,16 +314,39 @@ gulp.task('modules:scripts', function() {
 		});
 
 	var tasks = folders.map(function(folder) {
-		return gulp.src(['modules/' + folder + '/**/*.js', '!modules/' + folder + '/js/{menu,routes}.js'])
-			.pipe(concat(folder + '.js'))
+		return gulp.src(['modules/' + folder + '/**/*.js', '!modules/' + folder + '/js/init.js'])
+			.pipe(concat('all.js'))
 //			.pipe(gulp.dest(modulesPath))
 //			.pipe(uglify())
-			.pipe(rename(folder + '.js'))
-			.pipe(gulp.dest('../app/modules'));
+			.pipe(rename('all.js'))
+			.pipe(gulp.dest('../app/modules/' + folder));
    });
 
    return merge(tasks);
 });
+
+// MODULES STYLES
+gulp.task('modules:styles', function() {
+	var modulesPath = 'modules';
+	var folders = fs.readdirSync(modulesPath)
+		.filter(function(file) {
+			return fs.statSync(path.join(modulesPath, file)).isDirectory();
+		});
+
+	var tasks = folders.map(function(folder) {
+		return gulp.src('modules/' + folder + '/less/style.less')
+			.pipe(less({
+				paths: ['modules/' + folder + '/less']
+			}))
+//			.pipe(gulp.dest(modulesPath))
+//			.pipe(uglify())
+			.pipe(rename('style.css'))
+			.pipe(gulp.dest('../app/modules/' + folder));
+   });
+
+   return merge(tasks);
+});
+
 
 //---------------
 // WATCH
@@ -339,6 +363,8 @@ gulp.task('watch', function() {
 	gulp.watch(source.templates.pages.watch,   ['templates:pages']);
 	gulp.watch(source.templates.views.watch,   ['templates:views']);
 	gulp.watch(source.templates.app.watch,     ['templates:app']);
+	gulp.watch('modules/**/*.js', ['modules.scripts']);
+	gulp.watch('modules/**/*.less', ['modules:styles']);
 
 	gulp.watch([
 
@@ -389,6 +415,7 @@ gulp.task('start',[
 					'templates:views',
 					'connect',
 					'modules:scripts',
+					'modules:styles',
 					'watch'
 				]);
 

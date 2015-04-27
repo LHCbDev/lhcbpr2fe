@@ -24,6 +24,10 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
     modules: appRequires.modules
   });
 
+  Deps.all.libraries = appRequires.scripts;
+  Deps.all.angularModules = appRequires.modules.map(function(m){
+  	return m.name;
+  });
 
   // defaults to dashboard
   $urlRouterProvider.otherwise('/app/dashboard');
