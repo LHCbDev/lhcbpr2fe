@@ -1,0 +1,13 @@
+div(search-jobs on-jobs-found="handleJobs(jobs)")
+.panel.panel-primary
+  .panel-heading Select Jobs
+  .panel-wrapper
+    .panel-body
+      form(role='form')
+        .form-group
+          .checkbox.c-checkbox.needsclick
+            label.checkbox.needsclick(ng-repeat="job in jobs")
+              br
+              input(type="checkbox", checklist-model="selectedIds", checklist-value="job.id", checklist-change="selectionChanged()")
+              span.fa.fa-check 
+              | {{job.id}} -- {{job.time_end}}

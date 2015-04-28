@@ -5,10 +5,10 @@ App.controller('AttributesController',
 		$scope.selectedAttrIds = []; // list of ids of selected attributes
 
 		$scope.handleJobs = function(jobs){
+			$scope.attrs = {}; // clearing attributes
 			if(undefined === jobs || undefined === jobs.length || 0 === jobs.length)
 				return;
 			// console.log(jobs);
-			$scope.attrs = {}; // clearing attributes
 			jobs.forEach(function(job){
 				if(undefined === job || undefined === job.results)
 					return;

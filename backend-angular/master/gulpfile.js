@@ -72,7 +72,7 @@ var vendor = {
 // SOURCES CONFIG 
 var source = {
 	scripts: {
-		app:    [ 'js/init.js',
+		app:    [   'js/init.js',
 					'js/classes/deps.js',
 					'js/classes/module.js',
 					'js/*.js',
@@ -90,7 +90,7 @@ var source = {
 				watch: ['jade/index.jade', hidden_files]
 		},
 		views: {
-				files : ['jade/views/*.jade', 'jade/views/**/*.jade', 'modules/*/views/*.jade', 'modules/*/views/**/*.jade', ignored_files],
+				files : ['jade/views/*.jade', 'jade/views/**/*.jade', ignored_files],
 				watch: ['jade/views/**/*.jade', 'modules/*/views/**/*.jade']
 		},
 		pages: {
@@ -376,7 +376,7 @@ gulp.task('watch', function() {
 	gulp.watch(source.templates.pages.watch,   ['templates:pages']);
 	gulp.watch(source.templates.views.watch,   ['templates:views']);
 	gulp.watch(source.templates.app.watch,     ['templates:app']);
-	gulp.watch('modules/**/*.js', ['modules.scripts']);
+	gulp.watch('modules/**/*.js', ['modules:scripts']);
 	gulp.watch('modules/**/*.less', ['modules:styles']);
 	gulp.watch('modules/**/*.jade', ['modules:views']);
 
