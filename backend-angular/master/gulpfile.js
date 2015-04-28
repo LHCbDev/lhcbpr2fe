@@ -427,10 +427,10 @@ gulp.task('start',[
 					'templates:app',
 					'templates:pages',
 					'templates:views',
-					'connect',
 					'modules:scripts',
 					'modules:styles',
 					'modules:views',
+					'connect',
 					'watch'
 				]);
 
