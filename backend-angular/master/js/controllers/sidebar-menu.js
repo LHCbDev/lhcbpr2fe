@@ -45,13 +45,13 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$locatio
         return $state.is(item.sref) || $state.includes(item.sref);
     };
 
-    // Load menu from json file
-    // ----------------------------------- 
-    
     $scope.getMenuItemPropClasses = function(item) {
       return (item.heading ? 'nav-heading' : '') +
              (isActive(item) ? ' active' : '') ;
     };
+
+    // Load menu from json file
+    // ----------------------------------- 
 
     // $scope.loadSidebarMenu = function() {
     // 	if(undefined === $rootScope.menuItems)
@@ -70,7 +70,7 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$locatio
     //  };
 
     //  $scope.loadSidebarMenu();
-
+    $rootScope.menuItems.sort(function(a, b){ return a.position - b.position; });
     // Handle sidebar collapse items
     // ----------------------------------- 
     var collapseList = [];

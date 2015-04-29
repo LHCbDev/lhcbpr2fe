@@ -1,4 +1,4 @@
-Module.create('attributes', 'Attributes Module', 1)
+Module.create('attributes', 'Attributes Module', 2)
 	.addMenuItems({
 		text: "Attributes",
 		sref: "app.attributes",

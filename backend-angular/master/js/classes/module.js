@@ -14,8 +14,11 @@
 var Module = function(name, title, position, settings){
 	this.name = name;
 	this.menu = {
-		position: position,
-		items: [ { text: title, heading: 'true'} ] // the title item
+	    text: title,
+	    position: position,
+	    sref: "#",
+	    icon: "icon-doc",
+	    submenu: []
 	};
 	if(undefined !== settings && undefined !== settings.folder)
 		this.folder = settings.folder;
@@ -37,10 +40,10 @@ Module.prototype.addMenuItems = function(items){
 	var self = this;
 	if(Array === items.constructor)
 		items.forEach(function(item){
-			self.menu.items.push(item);
+			self.menu.submenu.push(item);
 		});
 	else
-		self.menu.items.push(items);
+		self.menu.submenu.push(items);
 	return this;
 };
 
@@ -122,9 +125,7 @@ Module.prototype.start = function(){
 	var self = this;
 	// Adding menu items
 	this.$app.run(['$rootScope', function($rootScope){
-		self.menu.items.forEach(function(item){
-			$rootScope.menuItems.push(item);
-		});
+		$rootScope.menuItems.push(self.menu);
 	}]);
 	// Adding routes
 	this.$app.config(['$stateProvider', function($stateProvider){

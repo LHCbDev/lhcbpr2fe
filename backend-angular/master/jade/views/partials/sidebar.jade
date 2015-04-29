@@ -30,7 +30,7 @@ script(type='text/ng-template', id="sidebar-renderer.html")
       // END user info
 
       // Iterates over all sidebar items
-      li(ng-class="getMenuItemPropClasses(item)", ng-repeat='item in menuItems', ng-init="pIndex = $index", ng-include="'sidebar-renderer.html'", ng-click="toggleCollapse(pIndex, true)")
+      li(ng-class="getMenuItemPropClasses(item)", ng-repeat='item in menuItems track by $index', ng-init="pIndex = $index", ng-include="'sidebar-renderer.html'", ng-click="toggleCollapse(pIndex, true)")
     // END sidebar nav
 
 // END Sidebar (left)
