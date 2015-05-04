@@ -6,7 +6,7 @@
 App.directive('searchJobs', ["lhcbprResources", function(lhcbprResources){
 	return {
 		templateUrl: 'app/views/directives/search-jobs.html',
-    	scope: {onJobsFound: '&'},
+    	scope: {onFound: '&'},
 		link: function(scope, element, attrs) {
 			scope.versionsIds = [];
 			scope.applicationIds = [];
@@ -67,7 +67,12 @@ App.directive('searchJobs', ["lhcbprResources", function(lhcbprResources){
 						options: scope.optionsIds.join()
 					}
 					).then(function(jobs){
-					scope.onJobsFound({jobs:jobs});
+					scope.onFound({
+						apps: scope.applicationIds,
+						options: scope.optionsIds,
+						versions: scope.versionsIds,
+						jobs:jobs
+					});
 				});
 			};
 			searchJobs();

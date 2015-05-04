@@ -80,7 +80,7 @@ var source = {
 					'js/directives/*.js',
 					'js/services/*.js',
 					'js/filters/*.js',
-					'modules/*/js/init.js',
+					'modules/*/js/init.js'
 				],
 		watch: ['js/**/*.js', 'modules/**/*.js']
 	},
@@ -421,6 +421,7 @@ gulp.task('default', gulpsync.sync([
 });
 
 gulp.task('start',[
+					'scripts:app',
 					'styles:app',
 					'styles:app:rtl',
 					'styles:themes',
