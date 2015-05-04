@@ -2,7 +2,7 @@ h3 Statistics
   small.text-muted Histogrammes of attributes statistics
 .row.traditional(ng-class="csspinner")
   .col-lg-4
-    div(search-jobs on-found="requestStatistics(apps, options, versions, jobs)")
+    div(search-jobs on-found="requestStatistics(jobs)" filter-versions="false")
   .col-lg-8
     //- .panel.panel-primary(ng-show="attrs")
     //-   .panel-heading Select Attributes
