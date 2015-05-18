@@ -28,6 +28,7 @@
     "gulp-util": "^3.0.1",
     "gulp-w3cjs": "^0.2.1",
     "marked": "^0.3.2",
+    "merge-stream": "^0.1.7",
     "through2": "^0.6.3"
   },
   "scripts": {

@@ -2,7 +2,7 @@ h3 Jobs
   small.text-muted LHCbPR
 .row.traditional(ng-class="csspinner")
   .col-lg-4
-    div(search-jobs on-jobs-found="onJobsFound(jobs)")
+    div(search-jobs on-found="onJobsFound(jobs)")
   .col-lg-8
     table.table.table-striped.table-bordered.table-hover(ng-table="tableParams")
         thead
