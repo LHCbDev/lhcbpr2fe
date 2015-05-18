@@ -78,9 +78,9 @@ Module.prototype.addState = function(state){
 		state.title = parts.join(' ');
 	}
 	if(undefined === state.templateUrl && undefined === state.template){
-		state.templateUrl = '/app/modules/' + this.folder + '/views/' + words.join('-') + '.html';
+		state.templateUrl = 'app/modules/' + this.folder + '/views/' + words.join('-') + '.html';
 	} else if(undefined !== state.templateUrl){
-		state.templateUrl = '/app/modules/' + this.folder + '/views/' + state.templateUrl;
+		state.templateUrl = 'app/modules/' + this.folder + '/views/' + state.templateUrl;
 	}
 	if(undefined === state.controller){
 		state.controller = [];

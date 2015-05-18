@@ -39,7 +39,7 @@ Module.create('jobs', 'LHCbPR Jobs', 1)
 		name: 'jobs.list',
 		title: 'Jobs',
 		templateUrl: 'jobs.html',
-		resolve: ['ngTable']
+		resolve: ['chartjs','ngTable', 'ngDialog']
 	})
 	.addState({
 		name: 'jobs.example',
