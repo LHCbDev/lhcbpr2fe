@@ -29,6 +29,13 @@ node_modules
 bower_components
 vendor/
 
+backend-angular/app/js
+backend-angular/app/modules
+backend-angular/app/pages
+backend-angular/app/css
+backend-angular/app/views
+backend-angular/vendor
+
 # Sublime Text project files
 LHCbPR-www.sublime-project
 LHCbPR-www.sublime-workspace
