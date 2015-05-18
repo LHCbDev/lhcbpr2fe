@@ -13,6 +13,7 @@ App.controller('JobsListController',
      ["$scope", "$filter", "$q", "ngTableParams", "lhcbprResources", function ($scope, $filter, $q, ngTableParams, lhcbprResources) {
     
     $scope.jobs = [];
+	
 	$scope.tableParams = new ngTableParams({
         	page: 1,            // show first page
         	count: 10          // count per page
@@ -20,13 +21,24 @@ App.controller('JobsListController',
         	total: $scope.jobs.length, // length of data
         	getData: function($defer, params) {
 	            // use build-in angular filter
-	            var orderedData = params.sorting() ?
-	                    $filter('orderBy')($scope.jobs, params.orderBy()) :
-	                    $scope.jobs;
-	    
-	            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-        	}
-    	});
+	            if (!$scope.searchParams) {
+	            	return;
+	            }
+	            lhcbprResources.all("search-jobs").getList(
+				{
+							application: $scope.searchParams.apps.join(),
+							versions: $scope.searchParams.versions.join(),
+							options: $scope.searchParams.options.join(),
+							page: params.page(),
+							page_size: params.count()
+				}).then(function(jobs){
+			            if(jobs._resultmeta) {
+			    			params.total(jobs._resultmeta.count)
+			    		}
+			            // $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+		        		$defer.resolve(jobs)
+        		});
+    		}});
 
 	// Fix bug in ng-table
 	$scope.tableParams.settings().$scope = $scope;
@@ -36,9 +48,10 @@ App.controller('JobsListController',
 		console.log(job.resource_uri);
 	};
 
-	$scope.onJobsFound = function(jobs) {
-		console.log("IN", jobs);
-		$scope.jobs = jobs;	
+	$scope.onJobsFound = function(params) {
+		// console.log("AAA", params);
+		$scope.searchParams = params;
+		$scope.tableParams.page(1);
 		$scope.tableParams.reload();
 	};
 
