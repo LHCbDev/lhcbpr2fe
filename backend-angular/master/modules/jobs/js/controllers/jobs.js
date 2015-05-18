@@ -159,6 +159,31 @@ App.controller('JobsListController',
 	          data : attr.jobvalues.map(function(v) {return parseFloat(v.value);})
 	        }
 		];
+		if (attr.thresholds.length > 0) {
+			datasets.push(
+				{
+		          label: 'Upper threshold',
+		          fillColor : 'rgba(35,183,229,0)',
+		          strokeColor : 'red',
+		          pointColor : 'red',
+		          pointStrokeColor : '#fff',
+		          pointHighlightFill : '#fff',
+		          pointHighlightStroke : 'red',
+		          data : attr.jobvalues.map(function(v) { return attr.thresholds[0].up_value;})
+        		}
+        	);
+        	datasets.push({
+			          label: 'Down threshold',
+			          fillColor : 'rgba(35,183,229,0)',
+			          strokeColor : 'green',
+			          pointColor : 'green',
+			          pointStrokeColor : '#fff',
+			          pointHighlightFill : '#fff',
+			          pointHighlightStroke : 'green',
+			          data : attr.jobvalues.map(function(v) { return attr.thresholds[0].down_value;})
+        			}
+        	);
+		}
 	 	var lineData = {
 	 		"labels": labels,
 	 		"datasets": datasets
