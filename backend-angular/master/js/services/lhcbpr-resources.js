@@ -1,5 +1,5 @@
 App.constant('LHCBPR_PARAMS', {
-	"api1": "/amazurov/lhcbpr-dev/api",
+	"api1": "http://127.0.0.1:8000/",
 	"api": "http://amazurov.web.cern.ch/amazurov/lhcbpr-api/"
 });
 

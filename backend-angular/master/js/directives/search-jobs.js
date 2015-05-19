@@ -69,21 +69,12 @@ App.directive('searchJobs', ["lhcbprResources", function(lhcbprResources){
 
 			var searchJobs = function() {
 				if(scope.done){
-					lhcbprResources.all("search-jobs").getList(
-						{
-							application: scope.applicationIds.join(),
-							versions: scope.versionsIds.join(),
-							options: scope.optionsIds.join()
-						}
-						).then(function(jobs){
-						scope.onFound({
+					scope.onFound({'searchParams': {
 							apps: scope.applicationIds,
 							options: scope.optionsIds,
 							versions: scope.versionsIds,
-							jobs:jobs
-						});
-					});
-				}
+						}});
+  				};
 			};
 
 			lhcbprResources.all("active/applications").getList().then(

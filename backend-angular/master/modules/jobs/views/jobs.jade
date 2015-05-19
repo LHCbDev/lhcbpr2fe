@@ -1,27 +1,74 @@
 h3 Jobs
   small.text-muted LHCbPR
-.row.traditional(ng-class="csspinner")
+.row.traditional(ng-class="csspinner", ng-show="!isShowSearchForm && !isShowTrend")
   .col-lg-4
-    div(search-jobs on-found="onJobsFound(jobs)")
+    button.btn.btn-primary(type="button" ng-disabled="isShowSearchForm", ng-click="isShowSearchForm=true")
+      | Show search form
+.row.traditional(ng-class="csspinner", ng-show="isShowSearchForm")
+  .col-lg-4
+    div(search-jobs on-found="onJobsFound(searchParams)")
   .col-lg-8
-    table.table.table-striped.table-bordered.table-hover(ng-table="tableParams")
+    table.table.table-striped.table-bordered.table-hover(ng-table="jobsTableParams")
         thead
+          th 
+            button.btn.btn-primary(type="button" ng-disabled="isDisabledCompare()", ng-click="compare()")
+              | Analyze
+          th ID
           th Job description
           th Host
-          th Status
-          th Start
-          th End
-          th 
+          th Start/End
         tr(ng-repeat="job in $data")
+          td
+            .c-checkbox.needsclick.checkbox
+              label
+                input(type="checkbox", checklist-model="jobsIds", checklist-value="job.id")
+                span.fa.fa-check
+          td {{job.id}}
           td {{job.job_description.application_version.application.name}}
              {{job.job_description.application_version.version}},
              {{job.job_description.option.content}}
           td {{job.host.hostname}}, {{job.platform.cmtconfig}}
-          td {{job.status}}
-          td {{job.time_start | date:'yyyy-MM-dd HH:mm:ss Z'}}
-          td {{job.time_end | date:'yyyy-MM-dd HH:mm:ss Z'}}
-          td 
-            a.button.btn.btn-sm.btn-info(ui-sref="app.jobs.detail({job:job.id})") Results
+          td {{job.time_start | date:'yyyy-MM-dd HH:mm:ss Z'}} / 
+             {{job.time_end | date:'yyyy-MM-dd HH:mm:ss Z'}}
+.row(style="margin-top: 10px")
+.row(style="margin-top: 10px", ng-show="!isShowTrend")
+  .col-lg-12
+    .form-group
+      input.form-control(type="text" placeholder="Filter attributes" ng-model="attrFilter" ng-model-options="{ debounce: 1000 }")
+    table.table.table-striped.table-bordered.table-hover(ng-table="attrsTableParams")
+      thead
+        th ID
+        th Name
+        th Description
+        th Type
+        th Values
+        th Actions
+      tr(ng-repeat="attr in $data")
+        td {{attr.id}}
+        td {{attr.name}}
+        td {{attr.description}}
+        td {{attr.dtype}}
+        td 
+          table.table-condensed
+            tr(ng-repeat="jv in attr.jobvalues")
+              td
+                strong
+                  | {{jv.value}}
+              td
+                | {{getJobName(jv.job.id)}}
+        td
+          button.btn.btn-info(ng-show="showCompareButton(attr.dtype)" ng-click="trend(attr)")
+            | Compare
+          
+.row
+  .col-lg-12
+    h2
+      | {{attr.name}}&nbsp; 
+      button.btn.btn-info(ng-click="isShowTrend = false",ng-show="isShowTrend")
+        | Close
+    div(ng-show="isShowTrend")
+      mark {{mean | number}} &#177; {{err | number}}
 
-
-
+    canvas(id="attrChart", linechart='',data='lineData', height='400', width='600')
+    
+ 

@@ -7,19 +7,21 @@
           label Application
           select.form-control(ng-model="app", ng-options="(item.name+ ' ('+ item.count + ')')  for item in apps track by item.id")
             option ...
-        .form-group(ng-show="versions")
-          label Versions
-          .checkbox.c-checkbox.needsclick
-            label.checkbox-inline.needsclick(ng-repeat="version in versions")
-              input(type="checkbox", checklist-model="versionsIds", checklist-value="version.id", checklist-change="versionChanged()")
-              span.fa.fa-check
-              |  {{version.name}} ({{version.count}})
         .form-group(ng-show="options")
           label Options
-          .checkbox.c-checkbox.needsclick
-            label.checkbox-inline.needsclick(ng-repeat="option in options")
+          .c-checkbox.checkbox.needsclick(ng-repeat="option in options")
+            label
               input(type="checkbox", checklist-model="optionsIds", checklist-value="option.id", checklist-change="optionChanged()")
               span.fa.fa-check
               |  {{option.name}} ({{option.count}})
+        .form-group(ng-show="versions")
+          label(ng-repeat-start="group in versions")
+            {{group.name}}
+          .c-checkbox.needsclick.checkbox(ng-repeat="version in group.values")
+            label
+              input(type="checkbox", checklist-model="versionsIds", checklist-value="version.id", checklist-change="versionChanged()")
+              span.fa.fa-check
+              |  {{version.name}} ({{version.count}})
+          div(ng-repeat-end)
 
       
