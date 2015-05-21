@@ -34,16 +34,10 @@ div(select-jobs on-jobs-selected="compare(jobIds)", ng-show="isShowSearchForm")
         td
           button.btn.btn-info(ng-show="showCompareButton(attr.dtype)" ng-click="trend(attr)")
             | Compare
-          
-.row
-  .col-lg-12
-    h2
-      | {{attr.name}}&nbsp; 
-      button.btn.btn-info(ng-click="isShowTrend = false",ng-show="isShowTrend")
-        | Close
-    div(ng-show="isShowTrend")
-      mark {{mean | number}} &#177; {{err | number}}
-
-    canvas(id="attrChart", linechart='',data='lineData', height='400', width='600')
-    
- 
+script(type="text/ng-template", id="chartTemplate")
+  .row
+    .col-lg-12
+      h2 {{attr.name}}
+      div
+        mark {{mean | number}} &#177; {{err | number}}
+      canvas(id="attrChart", linechart='',data='lineData', height='400', width='600')
