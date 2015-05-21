@@ -1,13 +1,26 @@
-div(search-jobs on-jobs-found="handleJobs(jobs)")
-.panel.panel-primary
-  .panel-heading Select Jobs
-  .panel-wrapper
-    .panel-body
-      form(role='form')
-        .form-group
-          .checkbox.c-checkbox.needsclick
-            label.checkbox.needsclick(ng-repeat="job in jobs")
-              br
-              input(type="checkbox", checklist-model="selectedIds", checklist-value="job.id", checklist-change="selectionChanged()")
-              span.fa.fa-check 
-              | {{job.id}} -- {{job.time_end}}
+.row.traditional(ng-class="csspinner")
+  .col-lg-4
+    div(search-jobs on-found="onJobsFound(searchParams)")
+  .col-lg-8
+    table.table.table-striped.table-bordered.table-hover(ng-table="jobsTableParams")
+        thead
+          th 
+            button.btn.btn-primary(type="button" ng-disabled="jobsIds.length < 1", ng-click="callback()")
+              | Analyze
+          th ID
+          th Job description
+          th Host
+          th Start/End
+        tr(ng-repeat="job in $data")
+          td
+            .c-checkbox.needsclick.checkbox
+              label
+                input(type="checkbox", checklist-model="jobsIds", checklist-value="job.id")
+                span.fa.fa-check
+          td {{job.id}}
+          td {{job.job_description.application_version.application.name}}
+             {{job.job_description.application_version.version}},
+             {{job.job_description.option.content}}
+          td {{job.host.hostname}}, {{job.platform.cmtconfig}}
+          td {{job.time_start | date:'yyyy-MM-dd HH:mm:ss Z'}} / 
+             {{job.time_end | date:'yyyy-MM-dd HH:mm:ss Z'}}

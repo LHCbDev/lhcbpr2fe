@@ -1,22 +1,3 @@
 h3 Attributes
   small.text-muted Just for test
-.row.traditional(ng-class="csspinner")
-  .col-lg-4
-    div(select-jobs on-jobs-selected="handleJobs(jobs)")
-  .col-lg-8
-    .panel.panel-primary(ng-show="attrs")
-      .panel-heading Select Attributes
-      .panel-wrapper
-        .panel-body
-          form(role='form')
-            .form-group
-              .checkbox.c-checkbox.needsclick
-                label.checkbox-inline.needsclick(ng-repeat="attr in attrs")
-                  input(type="checkbox", checklist-model="selectedAttrIds", checklist-value="attr.id")
-                  span.fa.fa-check
-                  |  {{attr.name}} ({{attr.values.length}})
-    .panel.panel-primary(ng-repeat="id in selectedAttrIds")
-      .panel-heading {{attrs[id].name}}
-      .panel-wrapper
-        .panel-body
-          canvas(linechart='', options='lineOptions', data='attrs[id].lineData', height='400', width='600', legend='true')
+div(select-jobs on-jobs-selected="showSelected(jobIds)")
