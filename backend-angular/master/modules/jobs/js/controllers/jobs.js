@@ -106,14 +106,15 @@ App.controller('JobsListController',
 		reloadAttrsTable();
 	});
 
-	$scope.compare = function() {
+	$scope.compare = function(ids) {
 		var requestIds = [];
 		$scope.isShowSearchForm  = false;
+		$scope.jobsIds = ids;
 
-		for (var i = 0; i < $scope.jobsIds.length; ++i) {
+		for (var i = 0, l = ids.length; i < l; ++i) {
 			var promises = []
 			promises.push(
-				lhcbprResources.one('jobs', $scope.jobsIds[i]).get().then(
+				lhcbprResources.one('jobs', ids[i]).get().then(
 					function (job) {
 						$scope.cachedJobs[job.id] = job 
 					}
