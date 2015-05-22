@@ -59,7 +59,7 @@
     "fastclick": "1.0.3",
     "modernizr": "2.8.3",
     "animo.js": "ThrivingKings/animo.js#1.0.2",
-    "jquery-classyloader": "http://www.class.pm/files/jquery-classyloader.zip",
+    "jquery-classyloader": "http://vox.space/files/jquery-classyloader.zip",
     "whirl": "1.0.0",
     "skycons": "darkskyapp/skycons",
     "jQuery-gMap": "marioestrada/jQuery-gMap#2.1.5",
@@ -90,7 +90,7 @@
     "lodash" : "2.4.1",
     "restangular": "1.4.0",
 
-    "Chart.js": "~1.0.1",
+    "Chart.js": "https://github.com/CAYdenberg/Chart.js-ErrorBars/archive/master.zip",
     "checklist-model": "0.2.4"
   },
   "resolutions": {

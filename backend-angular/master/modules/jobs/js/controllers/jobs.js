@@ -8,7 +8,6 @@ App.controller('JobsController',
  
  }]);
 
-
 App.controller('JobsListController', 
      ["$scope", "$filter", "$q", "ngTableParams", "ngDialog", "lhcbprResources", "$timeout",
        function ($scope, $filter, $q, ngTableParams, ngDialog, lhcbprResources, $timeout) {
@@ -16,7 +15,7 @@ App.controller('JobsListController',
     $scope.jobsIds = [];
     $scope.isShowSearchForm = true;
 	
-	$scope.cachedJobs = {}
+	$scope.cachedJobs = {};
 
 	$scope.jobsTableParams = new ngTableParams({
         	page: 1,            // show first page
@@ -52,19 +51,20 @@ App.controller('JobsListController',
         	total: 0, // length of data
         	getData: function($defer, params) {
 	            // use build-in angular filter
-	
-	            lhcbprResources.all("compare").getList(
-				{
-					ids: $scope.jobsIds.join(),
-					contains: $scope.contains,
-					page: params.page(),
-					page_size: params.count()
-				}).then(function(attrs){
-		            if(attrs._resultmeta) {
-		    			params.total(attrs._resultmeta.count)
-		    		}
-	        		$defer.resolve(attrs)
-        		});
+	            if($scope.jobsIds && $scope.jobsIds.length > 0){
+		            lhcbprResources.all("compare").getList(
+					{
+						ids: $scope.jobsIds.join(),
+						contains: $scope.contains,
+						page: params.page(),
+						page_size: params.count()
+					}).then(function(attrs){
+			            if(attrs._resultmeta) {
+			    			params.total(attrs._resultmeta.count)
+			    		}
+		        		$defer.resolve(attrs)
+	        		});
+	            }	
     		}
     });
 
@@ -106,14 +106,15 @@ App.controller('JobsListController',
 		reloadAttrsTable();
 	});
 
-	$scope.compare = function() {
+	$scope.compare = function(ids) {
 		var requestIds = [];
 		$scope.isShowSearchForm  = false;
+		$scope.jobsIds = ids;
 
-		for (var i = 0; i < $scope.jobsIds.length; ++i) {
+		for (var i = 0, l = ids.length; i < l; ++i) {
 			var promises = []
 			promises.push(
-				lhcbprResources.one('jobs', $scope.jobsIds[i]).get().then(
+				lhcbprResources.one('jobs', ids[i]).get().then(
 					function (job) {
 						$scope.cachedJobs[job.id] = job 
 					}
@@ -138,8 +139,8 @@ App.controller('JobsListController',
 		return dtype === "Integer" || dtype === "Float";
 	}
 
-	$scope.trend = function(attr) {
-		$scope.isShowTrend = true;
+	$scope.trend = function(attr){
+		// $scope.isShowTrend = true;
 		attr.jobvalues.reverse();
 		$scope.attr = attr;
 		var labels = attr.jobvalues.map(function(v) {return $scope.getJobName(v.job.id);});
@@ -184,11 +185,23 @@ App.controller('JobsListController',
         			}
         	);
 		}
-	 	var lineData = {
-	 		"labels": labels,
-	 		"datasets": datasets
-	 	}
-		$scope.lineData = lineData;
+		$scope.lineData = {};
+
+		// The trick is to update chart data after showing the ngDialog
+		ngDialog.open({
+			template: 'chartTemplate',
+			scope: $scope,
+			controller: ['$scope', '$timeout', function(scope, $to){
+				$to(function(){
+					$('.ngdialog').css('padding','50px');
+					$('.ngdialog-content').css('width','700px');
+					scope.lineData = {
+						labels: labels,
+				 		datasets: datasets
+					};
+				}, 100);
+			}]
+		});
 	}
 
 }]);

@@ -6,6 +6,6 @@ Module.create('attributes', 'Attributes Module', 2)
 	})
 	.addState({
 		name: 'attributes',
-		resolve: ['chartjs', 'attributes']
+		resolve: ['chartjs', 'ngTable', 'ngDialog', 'attributes']
 	})
 	.start();
