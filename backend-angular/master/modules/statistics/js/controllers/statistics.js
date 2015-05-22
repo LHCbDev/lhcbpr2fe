@@ -13,10 +13,8 @@ App.controller('StatisticsController', ['$scope', function($scope) {
 
 	$scope.attrs = [];
 
-	$scope.requestStatistics = function(apps, options) {
-		console.log('apps: ', apps);
-		console.log('options: ', options);
-
+	$scope.requestStatistics = function(params) {
+		console.log('params: ', params);
 		// Send request to the api
 		// Assuming the result is
 		var response = [{

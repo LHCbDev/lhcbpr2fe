@@ -90,7 +90,7 @@
     "lodash" : "2.4.1",
     "restangular": "1.4.0",
 
-    "Chart.js": "~1.0.1",
+    "Chart.js": "https://github.com/CAYdenberg/Chart.js-ErrorBars/archive/master.zip",
     "checklist-model": "0.2.4"
   },
   "resolutions": {
