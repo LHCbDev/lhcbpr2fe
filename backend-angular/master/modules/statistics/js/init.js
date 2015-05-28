@@ -8,6 +8,6 @@ Module.create('statistics', 'Statistiques', 2)
 		name: 'statistics',
 		title: 'Statistiques',
 		templateUrl: 'statistics.html',
-		resolve: ['chartjs','statistics']
+		resolve: ['chartjs','statistics', 'ngTable', 'ngDialog']
 	})
 	.start();

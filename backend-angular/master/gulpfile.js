@@ -78,6 +78,7 @@ var source = {
 					'js/*.js',
 					'js/controllers/*.js',
 					'js/directives/*.js',
+					'js/directives/custom/*.js',
 					'js/services/*.js',
 					'js/filters/*.js',
 					'modules/*/js/init.js'

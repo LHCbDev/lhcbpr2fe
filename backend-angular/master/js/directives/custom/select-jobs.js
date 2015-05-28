@@ -51,6 +51,7 @@ App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources",
 				console.log('scope.jobsIds: ', scope.jobsIds);
 				scope.onJobsSelected({ jobIds: scope.jobsIds });
 			}
+			
 		}
 	}
 }]);

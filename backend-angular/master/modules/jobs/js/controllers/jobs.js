@@ -185,7 +185,11 @@ App.controller('JobsListController',
         			}
         	);
 		}
-		$scope.lineData = {};
+		// $scope.lineData = {};
+		$scope.lineData = {
+			labels: labels,
+			datasets: datasets
+		};
 
 		// The trick is to update chart data after showing the ngDialog
 		ngDialog.open({
@@ -195,10 +199,10 @@ App.controller('JobsListController',
 				$to(function(){
 					$('.ngdialog').css('padding','50px');
 					$('.ngdialog-content').css('width','700px');
-					scope.lineData = {
-						labels: labels,
-				 		datasets: datasets
-					};
+					// scope.lineData = {
+					// 	labels: labels,
+				 // 		datasets: datasets
+					// };
 				}, 100);
 			}]
 		});

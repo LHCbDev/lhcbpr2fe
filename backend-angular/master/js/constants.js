@@ -100,7 +100,8 @@ App
                              'vendor/fullcalendar/dist/fullcalendar.css'],
       'gcal':               ['vendor/fullcalendar/dist/gcal.js'],
       'nestable':           ['vendor/nestable/jquery.nestable.js'],
-      'chartjs':            ['vendor/Chart.js/Chart.js']
+      'chartjs':            ['vendor/Chart.js/Chart.js'],
+      'be-responsive': 			['vendor/be-responsive/be-responsive.css', 'vendor/be-responsive/be-responsive.js']
     },
     // Angular based script (use the right module name)
     modules: [

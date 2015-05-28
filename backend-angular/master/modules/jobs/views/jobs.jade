@@ -10,7 +10,7 @@ div(select-jobs on-jobs-selected="compare(jobIds)", ng-show="isShowSearchForm")
   .col-lg-12
     .form-group
       input.form-control(type="text" placeholder="Filter attributes" ng-model="attrFilter" ng-model-options="{ debounce: 1000 }")
-    table.table.table-striped.table-bordered.table-hover(ng-table="attrsTableParams")
+    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="attrsTableParams", data-with-titles="true")
       thead
         th ID
         th Name
@@ -32,7 +32,7 @@ div(select-jobs on-jobs-selected="compare(jobIds)", ng-show="isShowSearchForm")
               td
                 | {{getJobName(jv.job.id)}}
         td
-          button.btn.btn-info(ng-show="showCompareButton(attr.dtype)" ng-click="trend(attr)")
+          button.btn.btn-info(ng-if="showCompareButton(attr.dtype)" ng-click="trend(attr)")
             | Compare
 script(type="text/ng-template", id="chartTemplate")
   .row
