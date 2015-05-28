@@ -4,8 +4,19 @@ h3 Statistics
   .col-lg-4
     div(search-jobs on-found="requestStatistics(searchParams)" filter-versions="false")
   .col-lg-8
-    .panel.panel-primary(ng-repeat="attr in attrs")
-      .panel-heading {{ attr.name }}
-      .panel-wrapper
-        .panel-body
-          canvas(linechart='', options='lineOptions', data='attr.lineData', height='400', width='600', legend='true')
+    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="tableParams")
+      thead
+        th ID
+        th Name
+        th 
+      tbody
+        tr(ng-repeat="a in $data")
+          td {{a.attr_id}}
+          td {{a.attr_name}}
+          td
+            button.btn.btn-primary(ng-click="showChart(a)") Statistics
+script(type="text/ng-template", id="chartTemplate")
+  .row
+    .col-lg-12
+      h2 {{name}}
+      canvas(id="attrChart", linechart='', options='lineOptions', data='lineData', height='400', width='600')

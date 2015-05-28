@@ -93,7 +93,12 @@ Module.prototype.addState = function(state){
 		state.controller = state.controller.join('') + 'Controller';
 	}
 	if(undefined !== state.resolve){
+		Deps.commonModules.forEach(function(cm){
+			state.resolve.push(cm);
+		});
 		state.resolve = this.makePromises(state.resolve);
+	} else {
+		state.resolve = this.makePromises(Deps.commonModules);
 	}
 	
 	state.name = 'app.' + state.name;

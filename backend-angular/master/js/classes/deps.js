@@ -10,6 +10,7 @@ Deps.all = {
 	modules: {}
 };
 Deps.$app = App;
+Deps.commonModules = ['be-responsive'];
 
 Deps.add = function(type, name, files) {
 	if (undefined !== Deps.all[type][name])
@@ -66,3 +67,17 @@ Deps.get = function(name) {
 		return null;
 	return files;
 };
+
+Deps.addCommonModules = function(modules){
+	if (Array !== modules.constructor){
+		modules.forEach(function(module){
+			if( Deps.commonModules.indexOf(module) === -1 ){
+				Deps.commonModules.push(module);
+			}
+		});
+	} else {
+		if( Deps.commonModules.indexOf(modules) === -1 ){
+			Deps.commonModules.push(modules);
+		}
+	}
+}
