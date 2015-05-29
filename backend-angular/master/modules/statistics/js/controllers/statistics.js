@@ -153,13 +153,17 @@ App.controller('StatisticsController', ['$scope', 'ngTableParams', 'ngDialog', '
 		$scope.name = a.attr_name;
 		$dialog.open({
 			template: 'chartTemplate',
-			scope: $scope,
-			controller: ['$scope', '$timeout', function(scope, $to){
-				$to(function(){
-					$('.ngdialog').css('padding', '50px');
-					$('.ngdialog-content').css('width', '700px');
-				}, 100);
-			}]
+			className: 'chart-dialog',
+			scope: $scope
 		});
 	}
+
+	$scope.chartHeight = function() {
+		return $(window).height() - 120;
+	};
+
+	$scope.chartWidth = function() {
+		return $(window).width() - 60;
+	};
+
 }]);
