@@ -40,4 +40,4 @@ script(type="text/ng-template", id="chartTemplate")
       h2 {{attr.name}}
       div
         mark {{mean | number}} &#177; {{err | number}}
-      canvas(id="attrChart", linechart='',data='lineData', height='400', width='600')
+      canvas(id="attrChart", linechart='',data='lineData', height='chartHeight()', width='chartWidth()')

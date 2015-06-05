@@ -185,28 +185,25 @@ App.controller('JobsListController',
         			}
         	);
 		}
-		// $scope.lineData = {};
 		$scope.lineData = {
 			labels: labels,
 			datasets: datasets
 		};
 
-		// The trick is to update chart data after showing the ngDialog
 		ngDialog.open({
 			template: 'chartTemplate',
-			scope: $scope,
-			controller: ['$scope', '$timeout', function(scope, $to){
-				$to(function(){
-					$('.ngdialog').css('padding','50px');
-					$('.ngdialog-content').css('width','700px');
-					// scope.lineData = {
-					// 	labels: labels,
-				 // 		datasets: datasets
-					// };
-				}, 100);
-			}]
+			className: 'chart-dialog',
+			scope: $scope
 		});
 	}
+
+	$scope.chartHeight = function() {
+		return $(window).height() - 160;
+	};
+
+	$scope.chartWidth = function() {
+		return $(window).width() - 60;
+	};
 
 }]);
 
