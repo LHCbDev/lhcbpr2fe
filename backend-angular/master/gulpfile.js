@@ -73,8 +73,9 @@ var vendor = {
 var source = {
 	scripts: {
 		app:    [   'js/init.js',
-					'js/classes/deps.js',
-					'js/classes/module.js',
+					//'js/classes/deps.js',
+					//'js/classes/module.js',
+					'js/classes/*.js',
 					'js/*.js',
 					'js/controllers/*.js',
 					'js/directives/*.js',

@@ -1,8 +1,8 @@
-h3 Statistics
-  small.text-muted Histogrammes of attributes statistics
+h3 Histograms
+  small.text-muted
 .row.traditional(ng-class="csspinner")
   .col-lg-4
-    div(search-jobs on-found="requestStatistics(searchParams)" filter-versions="false")
+    div(search-jobs on-found="requestStatistics(searchParams)")
   .col-lg-8
     table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="tableParams")
       thead
@@ -11,13 +11,13 @@ h3 Statistics
         th 
       tbody
         tr(ng-repeat="a in $data")
-          td {{a.attr_id}}
-          td {{a.attr_name}}
+          td {{a.id}}
+          td {{a.name}}
           td
-            button.btn.btn-primary(ng-click="showChart(a)") Statistics
+            button.btn.btn-primary(ng-click="showChart(a)") Show
 script(type="text/ng-template", id="chartTemplate")
   .row
     .col-lg-10.col-lg-offset-1.col-md-10.col-md-offset-1.col-sx-10.col-sx-offset-1
       h2 {{name}}
       .chart
-        canvas(id="attrChart", linechart='', options='lineOptions', data='lineData', height='chartHeight()', width='chartWidth()')
+        canvas(id='attrChart', legend='true', barchart='', options='lineOptions', data='lineData', height='chartHeight()', width='chartWidth()')

@@ -65,8 +65,11 @@ var ChartJS = function (type) {
 
                 chartCreated = chart[type]($scope.data, $scope.options);
                 chartCreated.update();
-                if($scope.legend)
+                if($scope.legend){
+                	console.log('With Legend :D');
                     angular.element($elem[0]).parent().before( chartCreated.generateLegend() );
+                } else
+	                console.log('Without Legend :(');
             }, true);
 
             $scope.$watch("tooltip", function (newVal, oldVal) {
@@ -99,3 +102,4 @@ App.directive("polarchart",    function () { return ChartJS("PolarArea"); });
 App.directive("piechart",      function () { return ChartJS("Pie"); });
 App.directive("doughnutchart", function () { return ChartJS("Doughnut"); });
 App.directive("donutchart",    function () { return ChartJS("Doughnut"); });
+App.directive("stackedbarchart",     function () { return ChartJS("StackedBar"); });
