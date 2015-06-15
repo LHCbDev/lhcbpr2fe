@@ -8,7 +8,7 @@ App.controller('HistogramsController', ['$scope', 'ngTableParams', 'ngDialog', '
 	    tooltipHideZero: true,
 	    barShowStroke : false,
 	    barStrokeWidth : 0,
-	    barValueSpacing : 0,
+	    barValueSpacing : 1,
   		tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %>",
 		legendTemplate : '<% for (var i=0; i<datasets.length; i++){%><span class="label label-default" style="background-color:<%=datasets[i].fillColor%>"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></span> <%}%>'
 	};
@@ -18,7 +18,8 @@ App.controller('HistogramsController', ['$scope', 'ngTableParams', 'ngDialog', '
 	$scope.versions = undefined;
 	$scope.min = '';
 	$scope.max = '';
-	$scope.intervals = 10;
+	$scope.intervals = 40;
+	$scope.loading = false;
 
 	$scope.tableParams = new $tableParams(
 		{ page: 1, count: 10 }, 
@@ -44,6 +45,7 @@ App.controller('HistogramsController', ['$scope', 'ngTableParams', 'ngDialog', '
 						params.total(response._resultmeta.count);
 					}
 					$defer.resolve(response);
+					$scope.loading = false;
 				});
             }
         }
@@ -52,24 +54,31 @@ App.controller('HistogramsController', ['$scope', 'ngTableParams', 'ngDialog', '
 	$scope.tableParams.settings().$scope = $scope;
 
 	$scope.requestStatistics = function(params) {
-		$scope.appId = params.apps[0];
-		$scope.options = params.options;
-		$scope.versions = params.versions;
-		$scope.tableParams.page(1);
-		$scope.tableParams.reload();
+		if(params.apps.length > 0 && params.options.length > 0 ){
+			$scope.appId = params.apps[0];
+			$scope.options = params.options;
+			$scope.versions = params.versions;
+			$scope.update();
+		}
 	};
 
-	$scope.showChart = function(a){
+	$scope.update = function(){
+		$scope.loading = true;
+		$scope.tableParams.page(1);
+		$scope.tableParams.reload();
+	}
+
+	$scope.showAllCharts = function(a){
 		console.log('Show chart of ' + a.name);
 		var labels = [];
 		var datasets = [];
 		// Fill labels
-		var l = a.min_value + a.interval_width;
-		while(l <= a.max_value){
-			labels.push(l + '');
-			l += a.interval_width;
+		var first, last;
+		for(var i = 0, count = a.values[0].jobs.length; i < count; i ++){
+			first = parseInt((a.min_value + i * a.interval_width) * 100) / 100.0;
+			last = parseInt((a.min_value + (i + 1) * a.interval_width) * 100) / 100.0;
+			labels.push('[' + first + ', ' + last + ']');
 		}
-		labels.push(l + '');
 
 		// Fill datasets
 		var index = -1;
@@ -84,6 +93,39 @@ App.controller('HistogramsController', ['$scope', 'ngTableParams', 'ngDialog', '
 				data: value.jobs
 			};
 		});
+
+		$scope.lineData = {
+			labels: labels,
+			datasets: datasets
+		};
+		$scope.name = a.name;
+		$dialog.open({
+			template: 'chartTemplate',
+			className: 'chart-dialog',
+			scope: $scope
+		});
+	}
+
+	$scope.showChart = function(a, index){
+		console.log('Show chart of ' + a.name + ' for ' + index);
+		var labels = [];
+		var datasets = [];
+		// Fill labels
+		var first, last;
+		for(var i = 0, count = a.values[index].jobs.length; i < count; i ++){
+			first = parseInt((a.min_value + i * a.interval_width) * 100) / 100.0;
+			last = parseInt((a.min_value + (i + 1) * a.interval_width) * 100) / 100.0;
+			labels.push('[' + first + ', ' + last + ']');
+		}
+
+		datasets = [{
+			label: a.values[index].version,
+			fillColor: Colors.get(index),
+			strokeColor: Colors.getDark(index, 0.5),
+			highlightFill: Colors.getLight(index, 0.5),
+			highlightStroke: Colors.get(index),
+			data: a.values[index].jobs
+		}];
 
 		$scope.lineData = {
 			labels: labels,

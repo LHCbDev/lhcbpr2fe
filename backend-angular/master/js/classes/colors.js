@@ -62,12 +62,12 @@ Colors.get = function(id, percentage) {
 	}
 }
 
-Colors.getDark = function(id) {
-	return Colors.darken(Colors.get(id));
+Colors.getDark = function(id, percentage) {
+	return Colors.darken(Colors.get(id), percentage);
 }
 
-Colors.getLight = function(id) {
-	return Colors.lighten(Colors.get(id));
+Colors.getLight = function(id, percentage) {
+	return Colors.lighten(Colors.get(id), percentage);
 }
 
 Colors.add('blue', '#1748B4');

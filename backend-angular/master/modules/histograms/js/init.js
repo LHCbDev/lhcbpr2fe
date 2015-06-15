@@ -8,6 +8,6 @@ Module.create('histograms', 'Histograms', 2)
 		name: 'histograms',
 		title: 'Histograms',
 		templateUrl: 'histograms.html',
-		resolve: ['histograms', 'chartjs', 'ngTable', 'ngDialog']
+		resolve: ['histograms', 'chartjs', 'slider', 'ngTable', 'ngDialog']
 	})
 	.start();

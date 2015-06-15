@@ -99,7 +99,7 @@ App.controller('TrendController', ['$scope', 'ngTableParams', 'ngDialog', 'lhcbp
 	}
 
 	$scope.chartHeight = function() {
-		return $(window).height() - 120;
+		return $(window).height() - 140;
 	};
 
 	$scope.chartWidth = function() {
