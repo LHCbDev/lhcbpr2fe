@@ -42,31 +42,38 @@ var ChartJS = function (type) {
                 }
             };
 
+            $scope.update = function(){
+            	if(chartCreated)
+            	    chartCreated.destroy();
+
+            	if ($scope.chart) { type = $scope.chart; }
+
+            	if(autosize){
+            	    $scope.size();
+            	    chart = new Chart(ctx);
+            	}
+
+            	if($scope.responsive || $scope.resize)
+            	    $scope.options.responsive = true;
+
+            	if($scope.responsive !== undefined)
+            	    $scope.options.responsive = $scope.responsive;
+
+            	chartCreated = chart[type]($scope.data, $scope.options);
+            	chartCreated.update();
+            }
+
             $scope.$watch("data", function (newVal, oldVal) {
-                if(chartCreated)
-                    chartCreated.destroy();
+            	if (!newVal) return;
+            	$scope.update();
+            	if($scope.legend){
+            	    angular.element($elem[0]).parent().before( chartCreated.generateLegend() );
+            	}
+            }, true);
 
-                // if data not defined, exit
-                if (!newVal) {
-                    return;
-                }
-                if ($scope.chart) { type = $scope.chart; }
-
-                if(autosize){
-                    $scope.size();
-                    chart = new Chart(ctx);
-                }
-
-                if($scope.responsive || $scope.resize)
-                    $scope.options.responsive = true;
-
-                if($scope.responsive !== undefined)
-                    $scope.options.responsive = $scope.responsive;
-
-                chartCreated = chart[type]($scope.data, $scope.options);
-                chartCreated.update();
-                if($scope.legend)
-                    angular.element($elem[0]).parent().before( chartCreated.generateLegend() );
+            $scope.$watch("options", function (newVal, oldVal) {
+            	if (!newVal) return;
+            	$scope.update();
             }, true);
 
             $scope.$watch("tooltip", function (newVal, oldVal) {
@@ -99,3 +106,4 @@ App.directive("polarchart",    function () { return ChartJS("PolarArea"); });
 App.directive("piechart",      function () { return ChartJS("Pie"); });
 App.directive("doughnutchart", function () { return ChartJS("Doughnut"); });
 App.directive("donutchart",    function () { return ChartJS("Doughnut"); });
+App.directive("superposedbarchart", function () { return ChartJS("SuperposedBar"); });

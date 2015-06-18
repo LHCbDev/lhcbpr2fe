@@ -1,9 +1,13 @@
-h3 Statistics
-  small.text-muted Histogrammes of attributes statistics
+h3 Trends
+  small.text-muted Attributes values by version
 .row.traditional(ng-class="csspinner")
   .col-lg-4
     div(search-jobs on-found="requestStatistics(searchParams)" filter-versions="false")
   .col-lg-8
+    form
+      .form-group
+        label Filter Attributes
+        input.form-control(ng-model='attrFilter', ng-change='update()', type='text')
     table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="tableParams")
       thead
         th ID
@@ -11,10 +15,10 @@ h3 Statistics
         th 
       tbody
         tr(ng-repeat="a in $data")
-          td {{a.attr_id}}
-          td {{a.attr_name}}
+          td {{a.id}}
+          td {{a.name}}
           td
-            button.btn.btn-primary(ng-click="showChart(a)") Statistics
+            button.btn.btn-primary(ng-click="showChart(a)") Show
 script(type="text/ng-template", id="chartTemplate")
   .row
     .col-lg-10.col-lg-offset-1.col-md-10.col-md-offset-1.col-sx-10.col-sx-offset-1
