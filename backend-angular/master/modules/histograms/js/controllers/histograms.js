@@ -1,4 +1,4 @@
-App.controller('HistogramsController', ['$scope', 'ngTableParams', 'ngDialog', 'lhcbprResources', function($scope, $tableParams, $dialog, $api) {
+App.controller('HistogramsController', ['$scope', '$stateParams', '$location', 'ngTableParams', 'ngDialog', 'lhcbprResources', function($scope, $params, $location, $tableParams, $dialog, $api) {
 
 	$scope.lineOptions = {
 		animation: false,
@@ -19,6 +19,7 @@ App.controller('HistogramsController', ['$scope', 'ngTableParams', 'ngDialog', '
 	$scope.min = '';
 	$scope.max = '';
 	$scope.intervals = 40;
+	$scope.attrFilter = ''
 	$scope.loading = false;
 
 	$scope.tableParams = new $tableParams(
@@ -38,6 +39,10 @@ App.controller('HistogramsController', ['$scope', 'ngTableParams', 'ngDialog', '
 				}
 				if(! isNaN(parseFloat($scope.max))){
 					requestParams.max = parseFloat($scope.max);
+				}
+				$scope.attrFilter = $scope.attrFilter.trim();
+				if($scope.attrFilter != ''){
+					requestParams.attr_filter = $scope.attrFilter;
 				}
 				console.log('requestParams: ', requestParams);
 				$api.all('histograms').getList(requestParams).then(function(response){

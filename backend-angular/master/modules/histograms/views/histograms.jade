@@ -18,8 +18,12 @@ h3 Histograms
           button.btn.btn-primary(ng-click='update()' ng-disabled='!appId || !options || !configForm.min.$valid || !configForm.max.$valid || !configForm.intervals.$valid') Update
     div(search-jobs on-found="requestStatistics(searchParams)")
   .col-lg-8
+    form
+      .form-group
+        label Filter Attributes
+        input.form-control(ng-model='attrFilter', ng-change='update()', type='text')
     .alert.alert-info(ng-show="loading") Loading ...
-    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="tableParams")
+    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="tableParams", show-filter='true')
       thead
         th ID
         th Name

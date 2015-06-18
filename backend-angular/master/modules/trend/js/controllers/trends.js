@@ -13,17 +13,22 @@ App.controller('TrendController', ['$scope', 'ngTableParams', 'ngDialog', 'lhcbp
 
 	$scope.appId = undefined;
 	$scope.options = undefined;
+	$scope.attrFilter = '';
 
 	$scope.tableParams = new $tableParams(
 		{ page: 1, count: 10 }, 
 		{ total: 0, getData: function($defer, params) {
             if($scope.appId && $scope.options){
-				$api.all('trends').getList({
+            	var requestParams = {
 					app: $scope.appId,
 					options: $scope.options,
 					page: params.page(),
 					page_size: params.count()
-				}).then(function(trends){
+            	};
+            	$scope.attrFilter = $scope.attrFilter.trim();
+            	if($scope.attrFilter != '')
+            		requestParams.attr_filter = $scope.attrFilter;
+				$api.all('trends').getList(requestParams).then(function(trends){
 					if(trends._resultmeta){
 						params.total(trends._resultmeta.count);
 					}
@@ -36,14 +41,15 @@ App.controller('TrendController', ['$scope', 'ngTableParams', 'ngDialog', 'lhcbp
 	$scope.tableParams.settings().$scope = $scope;
 
 	$scope.requestStatistics = function(params) {
-		console.log('params: ', params);
-		// Send request to the api		
-		// Assuming the result is
 		$scope.appId = params.apps[0];
 		$scope.options = params.options;
+		$scope.update();
+	};
+
+	$scope.update = function(){
 		$scope.tableParams.page(1);
 		$scope.tableParams.reload();
-	};
+	}
 
 	$scope.showChart = function(a){
 		console.log('Show chart of ' + a.name);
