@@ -1,4 +1,4 @@
-App.controller('TrendController', ['$scope', 'ngTableParams', 'ngDialog', 'lhcbprResources', function($scope, $tableParams, $dialog, $api) {
+App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDialog', 'lhcbprResources', function($scope, $location, $tableParams, $dialog, $api) {
 	$scope.lineOptions = {
 		errorDir : "both",
 		errorStrokeWidth : 3,
@@ -33,6 +33,16 @@ App.controller('TrendController', ['$scope', 'ngTableParams', 'ngDialog', 'lhcbp
 						params.total(trends._resultmeta.count);
 					}
 					$defer.resolve(trends);
+					var paramsAttr = $location.search().attr;
+					if(paramsAttr !== undefined){
+						var a = undefined;
+						trends.forEach(function(t){
+							if(t.id == paramsAttr)
+								a = t;
+						});
+						if(a !== undefined)
+							$scope.showChart(a);
+					}
 				});
             }
 		} }
@@ -100,8 +110,15 @@ App.controller('TrendController', ['$scope', 'ngTableParams', 'ngDialog', 'lhcbp
 		$dialog.open({
 			template: 'chartTemplate',
 			className: 'chart-dialog',
-			scope: $scope
+			scope: $scope,
+			preCloseCallback: function() {
+				$scope.$apply(function(){
+					$location.search('attr', null);
+				});
+			}
 		});
+
+		$location.search('attr', a.id);
 	}
 
 	$scope.chartHeight = function() {
