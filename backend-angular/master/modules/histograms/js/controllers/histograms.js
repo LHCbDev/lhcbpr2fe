@@ -1,4 +1,4 @@
-App.controller('HistogramsController', ['$scope', '$stateParams', '$location', 'ngTableParams', 'ngDialog', 'lhcbprResources', function($scope, $params, $location, $tableParams, $dialog, $api) {
+App.controller('HistogramsController', ['$scope', '$location', 'ngTableParams', 'ngDialog', 'lhcbprResources', function($scope, $location, $tableParams, $dialog, $api) {
 
 	$scope.lineOptions = {
 		animation: false,
@@ -17,9 +17,17 @@ App.controller('HistogramsController', ['$scope', '$stateParams', '$location', '
 	$scope.options = undefined;
 	$scope.versions = undefined;
 	$scope.min = '';
+	if($location.search().min)
+		$scope.min = parseFloat($location.search().min);
 	$scope.max = '';
+	if($location.search().max)
+		$scope.max = parseFloat($location.search().max);
 	$scope.intervals = 40;
-	$scope.attrFilter = ''
+	if($location.search().intervals)
+		$scope.intervals = parseInt($location.search().intervals);
+	$scope.attrFilter = '';
+	if($location.search().attr_filter)
+		$scope.attrFilter = $location.search().attr_filter;
 	$scope.loading = false;
 
 	$scope.tableParams = new $tableParams(
@@ -41,6 +49,7 @@ App.controller('HistogramsController', ['$scope', '$stateParams', '$location', '
 					requestParams.max = parseFloat($scope.max);
 				}
 				$scope.attrFilter = $scope.attrFilter.trim();
+				$location.search('attr_filter', $scope.attrFilter);
 				if($scope.attrFilter != ''){
 					requestParams.attr_filter = $scope.attrFilter;
 				}
@@ -50,6 +59,24 @@ App.controller('HistogramsController', ['$scope', '$stateParams', '$location', '
 						params.total(response._resultmeta.count);
 					}
 					$defer.resolve(response);
+					var paramsAttr = $location.search().attr;
+					var paramsAttrVersion = $location.search().attr_version;
+					if(paramsAttr != undefined){
+						var a = null;
+						response.forEach(function(r){
+							if(r.id == paramsAttr)
+								a = r;
+						});
+						if(a != null){
+							if(paramsAttrVersion) {
+								var index = parseInt(paramsAttrVersion);
+								if( ! isNaN(index) && index < a.values.length )
+									$scope.showChart(a, index);
+							} else {
+								$scope.showAllCharts(a);
+							}
+						}
+					}
 					$scope.loading = false;
 				});
             }
@@ -69,6 +96,9 @@ App.controller('HistogramsController', ['$scope', '$stateParams', '$location', '
 
 	$scope.update = function(){
 		$scope.loading = true;
+		$location.search('min', $scope.min);
+		$location.search('max', $scope.max);
+		$location.search('intervals', $scope.intervals);
 		$scope.tableParams.page(1);
 		$scope.tableParams.reload();
 	}
@@ -107,8 +137,14 @@ App.controller('HistogramsController', ['$scope', '$stateParams', '$location', '
 		$dialog.open({
 			template: 'chartTemplate',
 			className: 'chart-dialog',
-			scope: $scope
+			scope: $scope,
+			preCloseCallback: function() {
+				$scope.$apply(function(){
+					$location.search('attr', null);
+				});
+			}
 		});
+		$location.search('attr', a.id);
 	}
 
 	$scope.showChart = function(a, index){
@@ -140,8 +176,17 @@ App.controller('HistogramsController', ['$scope', '$stateParams', '$location', '
 		$dialog.open({
 			template: 'chartTemplate',
 			className: 'chart-dialog',
-			scope: $scope
+			scope: $scope,
+			preCloseCallback: function() {
+				$scope.$apply(function(){
+					$location.search('attr', null);
+					$location.search('attr_version', null);
+				});
+			}
 		});
+
+		$location.search('attr', a.id);
+		$location.search('attr_version', index);
 	}
 
 	$scope.chartHeight = function() {
