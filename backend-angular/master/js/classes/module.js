@@ -100,8 +100,6 @@ Module.prototype.addState = function(state){
 	} else {
 		state.resolve = this.makePromises(Deps.commonModules);
 	}
-
-	state.reloadOnSearch = false;
 	
 	state.name = 'app.' + state.name;
 	this.states.push(state);
