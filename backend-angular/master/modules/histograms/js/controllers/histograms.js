@@ -36,8 +36,8 @@ App.controller('HistogramsController', ['$scope', '$location', 'ngTableParams', 
             if($scope.appId && $scope.options && $scope.versions){
             	var requestParams = {
 					app: $scope.appId,
-					options: $scope.options,
-					versions: $scope.versions,
+					options: $scope.options.join(','),
+					versions: $scope.versions.join(','),
 					intervals: $scope.intervals,
 					page: params.page(),
 					page_size: params.count()

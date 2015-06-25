@@ -1,5 +1,6 @@
 App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDialog', 'lhcbprResources', function($scope, $location, $tableParams, $dialog, $api) {
 	$scope.lineOptions = {
+		animation: false,
 		errorDir : "both",
 		errorStrokeWidth : 3,
 		datasetFill : false,
@@ -13,6 +14,7 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 
 	$scope.appId = undefined;
 	$scope.options = undefined;
+	$scope.versions = undefined;
 	$scope.attrFilter = '';
 
 	$scope.tableParams = new $tableParams(
@@ -22,6 +24,7 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
             	var requestParams = {
 					app: $scope.appId,
 					options: $scope.options,
+					versions: $scope.versions,
 					page: params.page(),
 					page_size: params.count()
             	};
@@ -53,6 +56,7 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 	$scope.requestStatistics = function(params) {
 		$scope.appId = params.apps[0];
 		$scope.options = params.options;
+		$scope.versions = params.versions;
 		$scope.update();
 	};
 
