@@ -402,7 +402,21 @@ gulp.task('watch', function() {
 
 
 // build for production (minify)
-gulp.task('build', ['prod', 'default']);
+gulp.task('build', [
+	'prod', 
+	'scripts:vendor',
+	'scripts:app',	
+	'styles:app',
+	'styles:app:rtl',
+	'styles:themes',
+	'templates:app',
+	'templates:pages',
+	'templates:views',
+	'modules:scripts',
+	'modules:styles',
+	'modules:views'
+]);
+
 gulp.task('prod', function() { isProduction = true; });
 
 // build with sourcemaps (no minify)
