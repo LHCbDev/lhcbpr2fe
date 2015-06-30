@@ -112,11 +112,13 @@ This is a helper class simplifying the creation of modules. It offers easy metho
 - **position:** The position of the module menu in the sidebar. If two modules have the same position, there are shown one under the other.
 
 - **settings:** An optional plain object specifying the folder name of the module.
+
 ```javascript
-	Module.create('name', 'Title', 1, { 
-		folder: 'my_folder_name' 
-	}); 
+Module.create('name', 'Title', 1, { 
+	folder: 'my_folder_name' 
+});
 ```
+
 If no settings is provided; the folder name is assumed to be the same as the module name.
 
 This method returns an instance of the `Module` class, providing the following methods:
@@ -124,15 +126,17 @@ This method returns an instance of the `Module` class, providing the following m
 `addMenuItems(items)`
 
 - **items:** Menu object or array of menu objects. A menu object has the following format:
+
 ```javascript
-	{
-		text: "Title", // Text to show on the sidebar
-		sref: "app.state.name", // Target state name 
-		// prefixed by 'app.'
-		icon: "icon-grid", // Icon of the menu item
-		alert: "new" // Added a budge to the menu item
-	}
+{
+	text: "Title", // Text to show on the sidebar
+	sref: "app.state.name", // Target state name 
+	// prefixed by 'app.'
+	icon: "icon-grid", // Icon of the menu item
+	alert: "new" // Added a budge to the menu item
+}
 ```
+
 This method returns the same calling `Module` instance so that we can chain calls to other methods.
 
 `addStates(states)`
@@ -140,24 +144,26 @@ This method returns the same calling `Module` instance so that we can chain call
 A state can be considered as a view or page of the module. One module can have multiple states and not all of them should have direct links on the sidebar.
 
 - **states:** State object or array of state objects. A state object has the following format:
+
 ```javascript
-	{
-		name: 'test.state_one', // Required
-		url: '/my-url', // If not provided,it will be defined
-		// based on the name ('/state-one' for this example)
-		title: 'Title', // If not provided,it will be defined
-		// based on the name ('State One' for this example)
-		templateUrl: 'view.html', // name of the view file 
-		// with html extension instead of jade. If not provided 
-		// the view name will be 'state-one.html' in this case.
-		controller: 'MyController', // name of the controller 
-		// handeling the state. If not provided, it will be 
-		// 'TestStateOneController' for this case.
-		resolve: ['test', 'chartjs'] // names of dependencies
-		// on which this state depends. The name of its own
-		// module should be part of the dependencies.
-	}
+{
+	name: 'test.state_one', // Required
+	url: '/my-url', // If not provided,it will be defined
+	// based on the name ('/state-one' for this example)
+	title: 'Title', // If not provided,it will be defined
+	// based on the name ('State One' for this example)
+	templateUrl: 'view.html', // name of the view file 
+	// with html extension instead of jade. If not provided 
+	// the view name will be 'state-one.html' in this case.
+	controller: 'MyController', // name of the controller 
+	// handeling the state. If not provided, it will be 
+	// 'TestStateOneController' for this case.
+	resolve: ['test', 'chartjs'] // names of dependencies
+	// on which this state depends. The name of its own
+	// module should be part of the dependencies.
+}
 ```
+
 This method returns the same calling `Module` instance so that we can chain calls to other methods.
 
 `start()`
@@ -165,23 +171,25 @@ This method returns the same calling `Module` instance so that we can chain call
 This method should be called once all the desired menu items and states were added to the module. It executes the corresponding code on the AngularJS instance and integrate the module with the rest of the web application.
 
 Now let's use this class to initialize our module. We will write the following code in the file `test/js/init.js`:
+
 ```javascript
-	Module.create('test', 'Test Title', 1)
-		.addMenuItems({
-			text: "Test Module",
-			sref: "app.test",
-			icon: "icon-grid"
-		})
-		.addStates({
-			name: 'test',
-			resolve: ['test']
-			// This will assume that:
-			// title is 'Test'
-			// templateUrl is 'test.html'
-			// controller is 'TestController'
-		})
-		.start();
+Module.create('test', 'Test Title', 1)
+	.addMenuItems({
+		text: "Test Module",
+		sref: "app.test",
+		icon: "icon-grid"
+	})
+	.addStates({
+		name: 'test',
+		resolve: ['test']
+		// This will assume that:
+		// title is 'Test'
+		// templateUrl is 'test.html'
+		// controller is 'TestController'
+	})
+	.start();
 ```
+
 The code above assume that we have a view and a controller. So we have to create them so that our module works properly.
 
 #### Adding a controller
@@ -189,35 +197,38 @@ The code above assume that we have a view and a controller. So we have to create
 In Angular, a controller is a javascript function that handles a view or a part of the page. Take a look at the official documentation [https://docs.angularjs.org/guide/controller](https://docs.angularjs.org/guid/controller"). The controller javascript file can be stored anywhere inside the `test/js` directory. Let's store it inside a controllers directory like this `test/js/controllers/test.js` and write the following code:
 
 ```javascript
-	/**
-	* TestController
-	*/
-	App.controller('TestController', ['$scope', function($scope){
-		// the $scope variable holds variables and methods 
-		// which can be used directly from the view
-		// we define a variable message 
-		// with the value "Hello World !" for example:
-		$scope.message = 'Hello World !';
-		
-		// and a function to show and alert
-		$scope.showAlert = function(){
-				alert('Here is the alert !');
-		};
-	}]);
+/**
+* TestController
+*/
+App.controller('TestController', ['$scope', function($scope){
+	// the $scope variable holds variables and methods 
+	// which can be used directly from the view
+	// we define a variable message 
+	// with the value "Hello World !" for example:
+	$scope.message = 'Hello World !';
+	
+	// and a function to show and alert
+	$scope.showAlert = function(){
+			alert('Here is the alert !');
+	};
+}]);
 ```
+
 Please note that we have given the name "TestController" to our controller as assumed by the module declaration. The next step is to create a view and use the variable `message` and the function `showAlert()`.
 
 #### Adding a View
 
 A view is an HTML file to be rendered as part of the web page. But instead of writing views in basic HTML language which is very verbose. We are using the `Jade` template engine that makes writing HTML files more easier. Check the Jade official website for more details: [http://jade-lang.com](http://jade-lang.com/). One of the Gulp tasks is to compile every jade file and produce the corresponding HTML file. So you will not need to run Jade from the command-line manually.
 Now Let's create our test view. its name should be `test.jade` because the templateUrl we are assuming in the module declaration is `test.html`. It should be stored inside the `test/views` directory.
+
 ```jade
-	h2 Just for test
-		div.alert.alert-info.
-			the message is : {{message}}
-		button.btn.btn-primary(ng-click="showAlert()")
-			| Click to show the alert
+h2 Just for test
+	div.alert.alert-info.
+		the message is : {{message}}
+	button.btn.btn-primary(ng-click="showAlert()")
+		| Click to show the alert
 ```
+
 Now after re-running the command `gulp` from the terminal. You should see the new test module added to the sidebar and once clicked it shows the view.
 
 ## Using Directives
@@ -231,28 +242,33 @@ This is the most used directive in analysis modules. It shows a form in which th
 #### Usage Example
 
 Code to add on the view:
+
 ```jade
-	search-jobs(on-found="updateJobs(searchParams)")
+search-jobs(on-found="updateJobs(searchParams)")
 ```
+
 Code to add on the controller:
+
 ```javascript
-	$scope.updateJobs = function(params){
-		// You can use the selected parameters:
-		// params.apps[0]: the selected application id
-		// params.options: array of selected options ids
-		// params.versions: array of selected versions ids
-	};
+$scope.updateJobs = function(params){
+	// You can use the selected parameters:
+	// params.apps[0]: the selected application id
+	// params.options: array of selected options ids
+	// params.versions: array of selected versions ids
+};
 ```
+
 #### Syntax
+
 ```jade
-	search-jobs(
-		on-found="updateJobs(searchParams)"
-			//- Required: the function to call with selected params
-		filter-options="true"
-			//- show options filtering? default is "true"
-		filter-versions="false" 
-			//- show versions filtering? default is "true"
-	)
+search-jobs(
+	on-found="updateJobs(searchParams)"
+		//- Required: the function to call with selected params
+	filter-options="true"
+		//- show options filtering? default is "true"
+	filter-versions="false" 
+		//- show versions filtering? default is "true"
+)
 ```
 ### ngTable
 
@@ -261,49 +277,53 @@ This directive can be used to add table with sorting, filtering and pagination f
 #### Usage Example
 
 Code to add on the view:
+
 ```jade
-	table.table.table-striped.table-bordered.table-hover(
-	ng-table="tableParams")
-	thead
-		th ID
-		th Name
-	tbody
-		tr(ng-repeat="attr in $data")
-			td {{attr.id}}
-			td {{attr.name}}
+table.table.table-striped.table-bordered.table-hover(
+ng-table="tableParams")
+thead
+	th ID
+	th Name
+tbody
+	tr(ng-repeat="attr in $data")
+		td {{attr.id}}
+		td {{attr.name}}
 ```
+
 Code to add on the controller:
+
 ```javascript
-	App.controller('TestController', [
-		'$scope', 'ngTableParams', function($scope, ngTableParams) 
-	{
-		// We define some hard coded data
-		$scope.attrs = [
-			{ id: 56, name: "EVENT_LOOP" },	
-			{ id: 57, name: "EVENT_LOOP_count" },	
-			{ id: 58, name: "EVENT_LOOP_rank" },	
-			{ id: 60, name: "EVENT_LOOP_id" },	
-			{ id: 81, name: "BrunelInit" },	
-			{ id: 82, name: "BrunelInit_count" },	
-			{ id: 83, name: "BrunelInit_rank" },	
-			{ id: 85, name: "BrunelInit_id" },	
-			{ id: 91, name: "L0DUFromRaw" },	
-			{ id: 92, name: "L0DUFromRaw_count" }
-		];
+App.controller('TestController', [
+	'$scope', 'ngTableParams', function($scope, ngTableParams) 
+{
+	// We define some hard coded data
+	$scope.attrs = [
+		{ id: 56, name: "EVENT_LOOP" },	
+		{ id: 57, name: "EVENT_LOOP_count" },	
+		{ id: 58, name: "EVENT_LOOP_rank" },	
+		{ id: 60, name: "EVENT_LOOP_id" },	
+		{ id: 81, name: "BrunelInit" },	
+		{ id: 82, name: "BrunelInit_count" },	
+		{ id: 83, name: "BrunelInit_rank" },	
+		{ id: 85, name: "BrunelInit_id" },	
+		{ id: 91, name: "L0DUFromRaw" },	
+		{ id: 92, name: "L0DUFromRaw_count" }
+	];
 
-		// Table parameters
-		$scope.tableParams = new ngTableParams(
-			{ page: 1, count: 10 }, 
-			{ total: 0, getData: function($defer, params) {
-				// We just show the hard coded values
-				$defer.resolve($scope.attrs);
-			}});
+	// Table parameters
+	$scope.tableParams = new ngTableParams(
+		{ page: 1, count: 10 }, 
+		{ total: 0, getData: function($defer, params) {
+			// We just show the hard coded values
+			$defer.resolve($scope.attrs);
+		}});
 
-		// Add this line to fix a bug in the ng-table directive				
-		$scope.tableParams.settings().$scope = $scope;
+	// Add this line to fix a bug in the ng-table directive				
+	$scope.tableParams.settings().$scope = $scope;
 
-	}]);
+}]);
 ```
+
 For full ngTable documentation, please visit the official site: [ng-table.com](http://ng-table.com)
 
 ## Using LHCbPR API
@@ -313,24 +333,26 @@ The `lhcbprResources` service is based on `Restangular` and can be used to inter
 ### Usage Example
 
 here is an example retreiving the list of active applications
+
 ```javascript
-	App.controller('TestController', [
-	'$scope','lhcbprResources',function($scope,lhcbprResources) 
-	{
-		// Get the list of active applications for example
-		lhcbprResources.all('active/applications')
-			.getList()
-			.then(function(response){
-				// Do what ever you want with the response
-				// This will show it on the console
-				console.log(response);
-			});
+App.controller('TestController', [
+'$scope','lhcbprResources',function($scope,lhcbprResources) 
+{
+	// Get the list of active applications for example
+	lhcbprResources.all('active/applications')
+		.getList()
+		.then(function(response){
+			// Do what ever you want with the response
+			// This will show it on the console
+			console.log(response);
+		});
 
-			// Some other code here
-			// Please note that the AJAX calls are asynchronious 
-			// which means that the code here maybe executed while 
-			// waiting for the response
+		// Some other code here
+		// Please note that the AJAX calls are asynchronious 
+		// which means that the code here maybe executed while 
+		// waiting for the response
 
-	}]);
+}]);
 ```
+
 For full Restangular documentation please visit [https://github.com/mgonto/restangular](https://github.com/mgonto/restangular)
