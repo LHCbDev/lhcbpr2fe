@@ -1,6 +1,6 @@
-#LHCbPR Modules Development Guide
+# LHCbPR Modules Development Guide
 
-##Contents
+## Contents
 
 1. [Introduction](#introduction)
 
@@ -13,11 +13,11 @@
 5. [Using LHCbPR API](#using-lhcbpr-api)
 
 
-##Introduction
+## Introduction
 
 The LHCbPR web application was designed to be scalable and allow adding/removing modules easily. This document presents how to create new module and add it to the application.
 
-##The Web Application Files Structure
+## The Web Application Files Structure
 
 The LHCbPR web application has the following files structure:
 
@@ -49,9 +49,9 @@ module_name/
 	|-- views/            # views
 ```
 
-##Getting Started
+## Getting Started
 
-###Setting Up The Web Application Locally
+### Setting Up The Web Application Locally
 
 In order to be able to clone and run the web application locally, you will need to install the following tools first:
 
@@ -68,21 +68,21 @@ In order to be able to clone and run the web application locally, you will need 
 Now you can clone the web application and run it locally using the following commands:
 
 ```bash	
-# clone the github repository
+#  clone the github repository
 git clone https://github.com/LHCbDev/lhcbpr-www.git
-# go inside the master folder
+#  go inside the master folder
 cd lhcbpr-www/backend-angular/master
-# install gulp and npm dependencies.
+#  install gulp and npm dependencies.
 [sudo] npm install
-# install vendor dependencies
+#  install vendor dependencies
 bower install
-# compile and run the application
+#  compile and run the application
 gulp
 ```
 
 If everything goes fine, you should see the messages in the terminal telling you that most the task are done successfully. Going to [http://localhost:9000/](http://localhost:9000/) should show you the local website.
 	
-###Creating New Module
+### Creating New Module
 
 Let's create a new module called `Test`. We start by creating a new directory under `master/modules` following the minimal module structure (we create only required files for the module to work; we can add more files later when needed):
 
@@ -99,7 +99,7 @@ master
 
 Now we should write the initialization of our module on the file `test/js/init.js`. We will use the class `Module` for this.
 		
-####The Module Class
+#### The Module Class
 
 This is a helper class simplifying the creation of modules. It offers easy methods and call the corresponding AngularJS methods behind the scene.
 
@@ -184,7 +184,7 @@ Now let's use this class to initialize our module. We will write the following c
 ```
 The code above assume that we have a view and a controller. So we have to create them so that our module works properly.
 
-####Adding a controller
+#### Adding a controller
 
 In Angular, a controller is a javascript function that handles a view or a part of the page. Take a look at the official documentation [https://docs.angularjs.org/guide/controller](https://docs.angularjs.org/guid/controller"). The controller javascript file can be stored anywhere inside the `test/js` directory. Let's store it inside a controllers directory like this `test/js/controllers/test.js` and write the following code:
 
@@ -207,7 +207,7 @@ In Angular, a controller is a javascript function that handles a view or a part 
 ```
 Please note that we have given the name "TestController" to our controller as assumed by the module declaration. The next step is to create a view and use the variable `message` and the function `showAlert()`.
 
-####Adding a View
+#### Adding a View
 
 A view is an HTML file to be rendered as part of the web page. But instead of writing views in basic HTML language which is very verbose. We are using the `Jade` template engine that makes writing HTML files more easier. Check the Jade official website for more details: [http://jade-lang.com](http://jade-lang.com/). One of the Gulp tasks is to compile every jade file and produce the corresponding HTML file. So you will not need to run Jade from the command-line manually.
 Now Let's create our test view. its name should be `test.jade` because the templateUrl we are assuming in the module declaration is `test.html`. It should be stored inside the `test/views` directory.
@@ -220,15 +220,15 @@ Now Let's create our test view. its name should be `test.jade` because the templ
 ```
 Now after re-running the command `gulp` from the terminal. You should see the new test module added to the sidebar and once clicked it shows the view.
 
-##Using Directives
+## Using Directives
 
 The LHCbPR web application contains many predefined directives that you can use in your modules. Check this link to know more about directives: [docs.angularjs.org/guide/directive](https://docs.angularjs.org/guide/directive). The most used directives are explained below.
 
-###Search Jobs
+### Search Jobs
 
 This is the most used directive in analysis modules. It shows a form in which the user can filter jobs by application, options and versions. And notifies the controller each time the selection changes.
 
-####Usage Example
+#### Usage Example
 
 Code to add on the view:
 ```jade
@@ -243,7 +243,7 @@ Code to add on the controller:
 		// params.versions: array of selected versions ids
 	};
 ```
-####Syntax
+#### Syntax
 ```jade
 	search-jobs(
 		on-found="updateJobs(searchParams)"
@@ -254,11 +254,11 @@ Code to add on the controller:
 			//- show versions filtering? default is "true"
 	)
 ```
-###ngTable
+### ngTable
 
 This directive can be used to add table with sorting, filtering and pagination features.
 
-####Usage Example
+#### Usage Example
 
 Code to add on the view:
 ```jade
@@ -306,11 +306,11 @@ Code to add on the controller:
 ```
 For full ngTable documentation, please visit the official site: [ng-table.com](http://ng-table.com)
 
-##Using LHCbPR API
+## Using LHCbPR API
 
 The `lhcbprResources` service is based on `Restangular` and can be used to interact with the API.
 
-###Usage Example
+### Usage Example
 
 here is an example retreiving the list of active applications
 ```javascript
