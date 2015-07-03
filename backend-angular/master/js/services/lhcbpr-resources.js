@@ -1,9 +1,9 @@
 App.constant('LHCBPR_PARAMS', {
 	"api1": "http://127.0.0.1:8000/",
-	"api": "https://amazurov.web.cern.ch/amazurov/lhcbpr-api/"
+	"api": "https://test-lhcb-pr2.web.cern.ch/test-lhcb-pr2/api/"
 });
 
-App.service('lhcbprResources', ["Restangular", "LHCBPR_PARAMS", 
+App.service('lhcbprResources', ["Restangular", "LHCBPR_PARAMS",
 function(Restangular, lhcbpr_params) {
     var url = lhcbpr_params.api;
     Restangular.setBaseUrl(url);
@@ -25,7 +25,7 @@ function(Restangular, lhcbpr_params) {
         }
         return response;
     });
- 
+
     return Restangular;
 }]
 );
