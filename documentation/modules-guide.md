@@ -453,15 +453,15 @@ This module will have only one state, so one view and one controller; the files 
 ```
 master
 	|-- modules
-		|-- trend/
+		|-- demo/
 			|-- js/
 			|   |-- controllers/
-			|   	  |-- trends.js
+			|   	  |-- demo.js
 			|   |-- init.js
 			|-- less/
 			|     |-- style.less
 			|-- views/
-				  |-- trends.jade
+				  |-- demo.jade
 ```
 
 ### Module declaration
@@ -469,22 +469,20 @@ master
 The module declaration is written on the file `js/init.js`:
 
 ```javascript
-Module.create('trend', 'Trends', 2)
+Module.create('demo', 'Demo', 2)
 	.addMenuItems({
-		text: "Trends",
-		sref: "app.trend",
+		text: "Demo",
+		sref: "app.demo",
 		icon: "icon-grid"
 	})
 	.addState({
-		name: 'trend',
-		title: 'Trends',
-		templateUrl: 'trends.html',
-		resolve: ['trend', 'chartjs', 'ngTable', 'ngDialog']
+		name: 'demo',
+		resolve: ['demo', 'chartjs', 'ngTable', 'ngDialog']
 	})
 	.start();
 ```
 
-According to the code above, we are creating a module named `trend` having one menu item pointing to the `app.trend` state. The only state of the module is named `trend`. Note that the menu item is pointing to `app.trend` while the state's name is just `trend`. That's fine because the `Module` class prefixes all state names with `app.`. This module depends on 
+According to the code above, we are creating a module named `demo` having one menu item pointing to the `app.demo` state. The only state of the module is named `demo`. Note that the menu item is pointing to `app.demo` while the state's name is just `demo`. That's fine because the `Module` class prefixes all state names with `app.`. This module depends on 
 
 - `chartjs`: used to draw plots
 
@@ -509,7 +507,7 @@ h3 Trends
 As you see, we have told the `search-jobs` directive to call the function `requestStatistics` on every change; So we have to define this function in the controller. So for the moment the controller's code will be like this:
 
 ```javascript
-App.controller('TrendController', ['$scope', function($scope) {
+App.controller('DemoController', ['$scope', function($scope) {
 
 	$scope.appId = undefined;
 	$scope.options = undefined;
@@ -565,7 +563,7 @@ We applied the `ng-table` directive to our table using `attrsTtableParams` varia
 Now let's add the variable `attrsTableParams` and the function `showChart` to the controller. First of all, we need to inject the `ngTableParams` and `lhcbprResources` services into our controller to be able to use them; we do this by Adding them to controller parameters like this:
 
 ```javascript
-App.controller('TrendController', ['$scope', 'ngTableParams', 'lhcbprResources', function($scope, $tableParams, $api) {
+App.controller('DemoController', ['$scope', 'ngTableParams', 'lhcbprResources', function($scope, $tableParams, $api) {
 ```
 
 Note that we add the `ngTableParams` and `lhcbprResources` to the array and to the function arguments. The order of arguments should be the same as in the array. So here the argument `$scope` is referencing the `$scope` service, `$tableParams` is referencing the `ngTableParams` and `$api` is referencing `lhcbprResources`.
@@ -812,7 +810,7 @@ $scope.showChart = function(a){
 When we show the chart, we need to add the id of the shown attribute to the URL, and when the popup is closed we just remove this information from the URL. To do this, we need the `$location` service that we will inject into our controller:
 
 ```javascript
-App.controller('TrendController', ['$scope', 'ngTableParams', 'lhcbprResources', '$location', function($scope, $tableParams, $api, $location) {
+App.controller('DemoController', ['$scope', 'ngTableParams', 'lhcbprResources', '$location', function($scope, $tableParams, $api, $location) {
 ```
 
 Then we change the last part of `showChart` function:
