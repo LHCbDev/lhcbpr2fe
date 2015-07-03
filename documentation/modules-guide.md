@@ -12,6 +12,7 @@
 
 5. [Using LHCbPR API](#using-lhcbpr-api)
 
+6. [Advanced Module Example](#advanced-module-example)
 
 ## Introduction
 
