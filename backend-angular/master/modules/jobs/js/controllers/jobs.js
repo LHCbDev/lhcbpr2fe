@@ -9,8 +9,8 @@ App.controller('JobsController',
  }]);
 
 App.controller('JobsListController', 
-     ["$scope", "$filter", "$q", "ngTableParams", "ngDialog", "lhcbprResources", "$timeout",
-       function ($scope, $filter, $q, ngTableParams, ngDialog, lhcbprResources, $timeout) {
+     ["$scope", "$filter", "$q", "ngTableParams", "ngDialog", "lhcbprResources", "$timeout", "$sce", "$http",
+       function ($scope, $filter, $q, ngTableParams, ngDialog, lhcbprResources, $timeout, $sce, $http) {
     
     $scope.jobsIds = [];
     $scope.isShowSearchForm = true;
@@ -136,7 +136,14 @@ App.controller('JobsListController',
 	}
 
 	$scope.showCompareButton = function(dtype) {
-		return dtype === "Integer" || dtype === "Float";
+		return dtype === "Integer" || dtype === "Float" || dtype == "String"; // using String instead of File for test
+	}
+
+	$scope.showCompareDialog = function(attr) {
+		if(attr.dtype == "Integer" || attr.dtype == "Float")
+			$scope.trend(attr);
+		else if(attr.dtype == "String") // using String instead of File for test
+			$scope.filesCompare(attr);
 	}
 
 	$scope.trend = function(attr){
@@ -196,6 +203,30 @@ App.controller('JobsListController',
 			scope: $scope
 		});
 	}
+
+	$scope.filesCompare = function(attr){
+		// Hard coded samples for the moment !
+		$scope.files = [
+			{
+				type: 'image',
+				url: $sce.trustAsResourceUrl('https://test-lhcb-pr2.web.cern.ch/test-lhcb-pr2/files/test-file-1.png')
+			},
+			{
+				type: 'image',
+				url: $sce.trustAsResourceUrl('https://test-lhcb-pr2.web.cern.ch/test-lhcb-pr2/files/test-file-2.jpg')
+			},
+			{
+				type: 'pdf',
+				url: $sce.trustAsResourceUrl('https://test-lhcb-pr2.web.cern.ch/test-lhcb-pr2/files/test-file-1.pdf')
+			}
+		];
+		 
+		ngDialog.open({
+			template: 'filesTemplate',
+			className: 'chart-dialog',
+			scope: $scope
+		});
+	};
 
 	$scope.chartHeight = function() {
 		return $(window).height() - 160;
