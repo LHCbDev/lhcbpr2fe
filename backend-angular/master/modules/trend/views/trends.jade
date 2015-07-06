@@ -2,13 +2,13 @@ h3 Trends
   small.text-muted Attributes values by version
 .row.traditional(ng-class="csspinner")
   .col-lg-4
-    div(search-jobs on-found="requestStatistics(searchParams)")
+    search-jobs(on-found="requestStatistics(searchParams)")
   .col-lg-8
     form
       .form-group
         label Filter Attributes
         input.form-control(ng-model='attrFilter', ng-change='update()', type='text')
-    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="tableParams")
+    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="attrsTableParams")
       thead
         th ID
         th Name

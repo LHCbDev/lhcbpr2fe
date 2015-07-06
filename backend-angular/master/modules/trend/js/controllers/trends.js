@@ -17,41 +17,50 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 	$scope.versions = undefined;
 	$scope.attrFilter = '';
 
-	$scope.tableParams = new $tableParams(
-		{ page: 1, count: 10 }, 
-		{ total: 0, getData: function($defer, params) {
-            if($scope.appId && $scope.options){
-            	var requestParams = {
-					app: $scope.appId,
-					options: $scope.options,
-					versions: $scope.versions,
-					page: params.page(),
-					page_size: params.count()
-            	};
-            	$scope.attrFilter = $scope.attrFilter.trim();
-            	if($scope.attrFilter != '')
-            		requestParams.attr_filter = $scope.attrFilter;
-				$api.all('trends').getList(requestParams).then(function(trends){
-					if(trends._resultmeta){
-						params.total(trends._resultmeta.count);
-					}
-					$defer.resolve(trends);
-					var paramsAttr = $location.search().attr;
-					if(paramsAttr !== undefined){
-						var a = undefined;
-						trends.forEach(function(t){
-							if(t.id == paramsAttr)
-								a = t;
-						});
-						if(a !== undefined)
-							$scope.showChart(a);
-					}
-				});
-            }
-		} }
+	$scope.attrsTableParams = new $tableParams(
+		{
+			page: 1, // the page to show initialy
+			count: 10 // number of rows on each page
+		}, 
+		{ 
+			total: 0, // total number of rows initialy
+			// function that fetchs data to fill the table
+			getData: function($defer, params) {
+				// We check if an application and options were selected
+	            if($scope.appId && $scope.options){
+	            	// We construct the data to send with the request to the API
+	            	var requestParams = {
+						app: $scope.appId,
+						options: $scope.options,
+						versions: $scope.versions,
+						page: params.page(),
+						page_size: params.count()
+	            	};
+	            	$scope.attrFilter = $scope.attrFilter.trim();
+	            	if($scope.attrFilter != '')
+	            		requestParams.attr_filter = $scope.attrFilter;
+					$api.all('trends').getList(requestParams).then(function(trends){
+						if(trends._resultmeta){
+							params.total(trends._resultmeta.count);
+						}
+						$defer.resolve(trends);
+						var paramsAttr = $location.search().attr;
+						if(paramsAttr !== undefined){
+							var a = undefined;
+							trends.forEach(function(t){
+								if(t.id == paramsAttr)
+									a = t;
+							});
+							if(a !== undefined)
+								$scope.showChart(a);
+						}
+					});
+	            }
+	        }
+	    }
     );
 
-	$scope.tableParams.settings().$scope = $scope;
+	$scope.attrsTableParams.settings().$scope = $scope;
 
 	$scope.requestStatistics = function(params) {
 		$scope.appId = params.apps[0];
@@ -61,8 +70,10 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 	};
 
 	$scope.update = function(){
-		$scope.tableParams.page(1);
-		$scope.tableParams.reload();
+		// Set the current page of the table to the first page
+		$scope.attrsTableParams.page(1);
+		// reloading data
+		$scope.attrsTableParams.reload();
 	}
 
 	$scope.showChart = function(a){
