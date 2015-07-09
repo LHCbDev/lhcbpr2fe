@@ -17,7 +17,7 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 			scope.optionsIds = [];
 			scope.versionsFiltered = true;
 			scope.optionsFiltered = true;
-			scope.app = {};
+			scope.app = undefined;
 
 			scope.$watch("app", function(newApp) {
 				if (newApp !== undefined) {
@@ -116,7 +116,6 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 							if(id == a.id)
 								scope.app = a;
 						});
-//						scope.update(true);
 					}
 				}
 			);
