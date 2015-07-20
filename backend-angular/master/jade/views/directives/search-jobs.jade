@@ -14,14 +14,23 @@
               input(type="checkbox", checklist-model="optionsIds", checklist-value="option.id", checklist-change="searchJobs()")
               span.fa.fa-check
               |  {{option.name}} ({{option.count}})
-        .form-group(ng-show="filterVersions !== 'false' && versions")
-          label(ng-repeat-start="group in versions")
-            {{group.name}}
-          .c-checkbox.needsclick.checkbox(ng-repeat="version in group.values")
-            label
-              input(type="checkbox", checklist-model="versionsIds", checklist-value="version.id", checklist-change="searchJobs()")
-              span.fa.fa-check
-              |  {{version.name}} ({{version.count}})
-          div(ng-repeat-end)
+        div(ng-show="filterVersions !== 'false' && versions")
+          .form-group
+            label versions
+          .form-group
+            input(type="checkbox", ng-model="withNightly", ng-change="searchJobs()")
+            | Show Nightly versions
+          .form-group(ng-show="withNightly")
+            label Number of nightly versions to show
+            input(type="text", ng-model="nightlyVersionNumber", ng-change="searchJobs()")
+          .form-group
+            label(ng-repeat-start="group in versions")
+              {{group.name}}
+            .c-checkbox.needsclick.checkbox(ng-repeat="version in group.values")
+              label
+                input(type="checkbox", checklist-model="versionsIds", checklist-value="version.id", checklist-change="searchJobs()")
+                span.fa.fa-check
+                |  {{version.name}} ({{version.count}})
+            div(ng-repeat-end)
 
       

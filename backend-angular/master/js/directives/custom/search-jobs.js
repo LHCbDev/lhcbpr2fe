@@ -19,6 +19,11 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 			scope.optionsFiltered = true;
 			scope.app = undefined;
 
+			scope.withNightly = ( $location.search().withNightly === true );
+			scope.nightlyVersionNumber = parseInt($location.search().nightlyVersionNumber);
+			if(isNaN(scope.nightlyVersionNumber))
+				scope.nightlyVersionNumber = 1;
+
 			scope.$watch("app", function(newApp) {
 				if (newApp !== undefined) {
 					console.log("changed !");
@@ -32,7 +37,10 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 					scope.versionsFiltered = false;
 					lhcbprResources.all(
 						"active/applications/" + scope.app.id +'/versions/'
-					).getList().then(
+					).getList({
+						withNightly: scope.withNightly,
+						nightlyVersionNumber: scope.nightlyVersionNumber
+					}).then(
 						function(versions){
 							scope.versionsIds = [];
 							scope.versions = versions;
@@ -98,12 +106,16 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 					scope.onFound({'searchParams': {
 						apps: scope.applicationIds,
 						options: scope.optionsIds,
-						versions: scope.versionsIds
+						versions: scope.versionsIds,
+						withNightly: scope.withNightly,
+						nightlyVersionNumber: scope.nightlyVersionNumber
 					}});
 					console.log('Search scope.versionsIds: ', scope.versionsIds);
 					$location.search('apps', scope.applicationIds);
 					$location.search('options', scope.optionsIds);
 					$location.search('versions', scope.versionsIds);
+					$location.search('withNightly', scope.withNightly);
+					$location.search('nightlyVersionNumber', scope.nightlyVersionNumber);
 				}
 			};
 
