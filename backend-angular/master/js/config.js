@@ -30,7 +30,7 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
   });
 
   // defaults to dashboard
-  $urlRouterProvider.otherwise('/app/dashboard');
+  $urlRouterProvider.otherwise('/app/jobs/list');
 
   // 
   // Application Routes
@@ -43,7 +43,7 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
         controller: 'AppController',
         resolve: helper.resolveFor('fastclick', 'modernizr', 'icons', 'screenfull', 'animo', 'sparklines', 'slimscroll', 'classyloader', 'toaster', 'whirl')
     })
-    .state('app.dashboard', {
+/*    .state('app.dashboard', {
         url: '/dashboard',
         title: 'Dashboard',
         templateUrl: helper.basepath('dashboard.html'),
@@ -485,7 +485,7 @@ function ($stateProvider, $urlRouterProvider, $controllerProvider, $compileProvi
     //   )
     // })
     ;
-
+*/
 
 }]).config(['$translateProvider', function ($translateProvider) {
 
