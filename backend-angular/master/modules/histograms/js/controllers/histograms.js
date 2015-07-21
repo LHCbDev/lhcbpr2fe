@@ -90,6 +90,7 @@ App.controller('HistogramsController', ['$scope', '$location', 'ngTableParams', 
 			$scope.appId = params.apps[0];
 			$scope.options = params.options;
 			$scope.versions = params.versions;
+			console.log('Histograms versions:', $scope.versions);
 			$scope.update();
 		}
 	};

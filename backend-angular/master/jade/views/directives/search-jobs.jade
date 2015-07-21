@@ -18,11 +18,11 @@
           .form-group
             label versions
           .form-group
-            input(type="checkbox", ng-model="withNightly", ng-change="searchJobs()")
+            input(type="checkbox", ng-model="withNightly", ng-change="update()")
             | Show Nightly versions
           .form-group(ng-show="withNightly")
             label Number of nightly versions to show
-            input(type="text", ng-model="nightlyVersionNumber", ng-change="searchJobs()")
+            input(type="text", ng-model="nightlyVersionNumber", ng-change="update()")
           .form-group
             label(ng-repeat-start="group in versions")
               {{group.name}}
