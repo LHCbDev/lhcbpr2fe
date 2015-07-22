@@ -8,6 +8,7 @@ h3 Trends
       .form-group
         label Filter Attributes
         input.form-control(ng-model='attrFilter', ng-change='update()', type='text')
+    .alert.alert-warning(ng-show="!options || options.length == 0") Please select at least one option
     .alert.alert-info(ng-show="loading") Loading ...
     table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="attrsTableParams", ng-show="!loading")
       thead

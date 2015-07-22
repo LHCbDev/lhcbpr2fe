@@ -28,9 +28,8 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 			// function that fetchs data to fill the table
 			getData: function($defer, params) {
 				// We check if an application and options were selected
-	            if($scope.appId){
-	            	// $defer.resolve([]);
-	            	// params.total(0);
+	            if($scope.appId && $scope.options.length > 0){
+	            	$scope.loading = true;
 	            	console.log('Sending request !');
 	            	// We construct the data to send with the request to the API
 	            	var requestParams = {
@@ -76,7 +75,6 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 
 	$scope.update = function(){
 		console.log('Updating !!');
-		$scope.loading = true;
 		// Set the current page of the table to the first page
 		$scope.attrsTableParams.page(1);
 		// reloading data
