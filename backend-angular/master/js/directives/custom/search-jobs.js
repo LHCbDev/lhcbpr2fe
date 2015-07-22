@@ -103,20 +103,16 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 			scope.searchJobs = function() {
 				console.log('Search Jobs Called !');
 				if(scope.optionsFiltered && scope.versionsFiltered){
-					console.log('Runned !');
 					var selectedVersions = scope.versionsIds;
-					var selectedOptions = scope.optionsIds;
 					if(selectedVersions.length < 1){
 						selectedVersions = [];
 						scope.versions.forEach(function(v){
 							selectedVersions = selectedVersions.concat(getAllIds(v.values));
 						});
 					}
-					if(selectedOptions.length < 1)
-						selectedOptions = getAllIds(scope.options);
 					scope.onFound({'searchParams': {
 						apps: scope.applicationIds,
-						options: selectedOptions,
+						options: scope.optionsIds,
 						versions: selectedVersions
 					}});
 					$location.search('apps', scope.applicationIds);

@@ -23,7 +23,7 @@ h3 Histograms
         label Filter Attributes
         input.form-control(ng-model='attrFilter', ng-change='update()', type='text')
     .alert.alert-info(ng-show="loading") Loading ...
-    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="tableParams", show-filter='true')
+    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="tableParams", show-filter='true', ng-show="!loading")
       thead
         th ID
         th Name

@@ -8,7 +8,8 @@ h3 Trends
       .form-group
         label Filter Attributes
         input.form-control(ng-model='attrFilter', ng-change='update()', type='text')
-    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="attrsTableParams")
+    .alert.alert-info(ng-show="loading") Loading ...
+    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="attrsTableParams", ng-show="!loading")
       thead
         th ID
         th Name

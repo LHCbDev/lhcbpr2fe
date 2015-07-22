@@ -16,6 +16,7 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 	$scope.options = undefined;
 	$scope.versions = undefined;
 	$scope.attrFilter = '';
+	$scope.loading = false;
 
 	$scope.attrsTableParams = new $tableParams(
 		{
@@ -27,12 +28,15 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 			// function that fetchs data to fill the table
 			getData: function($defer, params) {
 				// We check if an application and options were selected
-	            if($scope.appId && $scope.options){
+	            if($scope.appId){
+	            	// $defer.resolve([]);
+	            	// params.total(0);
+	            	console.log('Sending request !');
 	            	// We construct the data to send with the request to the API
 	            	var requestParams = {
 						app: $scope.appId,
-						options: $scope.options,
-						versions: $scope.versions,
+						options: $scope.options.join(','),
+						versions: $scope.versions.join(','),
 						page: params.page(),
 						page_size: params.count()
 	            	};
@@ -44,6 +48,7 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 							params.total(trends._resultmeta.count);
 						}
 						$defer.resolve(trends);
+						$scope.loading = false;
 						var paramsAttr = $location.search().attr;
 						if(paramsAttr !== undefined){
 							var a = undefined;
@@ -70,6 +75,8 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 	};
 
 	$scope.update = function(){
+		console.log('Updating !!');
+		$scope.loading = true;
 		// Set the current page of the table to the first page
 		$scope.attrsTableParams.page(1);
 		// reloading data
