@@ -24,7 +24,7 @@ App.service('lhcbprResources', ["Restangular", "LHCBPR_PARAMS", '$rootScope', fu
         }
     	$rootScope.pendingRequests --;
     	if($rootScope.pendingRequests == 0)
-    		$rootScope.loadingPercentage = 0;
+    		$rootScope.loadingPercentage = 5;
     	else
 	    	$rootScope.loadingPercentage = 100 / ($rootScope.pendingRequests + 1);
         return response;
