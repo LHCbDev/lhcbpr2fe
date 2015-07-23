@@ -9,13 +9,13 @@ App.controller('JobsController',
  }]);
 
 App.controller('JobsListController', 
-     ["$scope", "$filter", "$q", "ngTableParams", "ngDialog", "lhcbprResources", "$timeout", "$sce", "$http",
-       function ($scope, $filter, $q, ngTableParams, ngDialog, lhcbprResources, $timeout, $sce, $http) {
+     ["$scope", "$filter", "$q", "ngTableParams", "ngDialog", "lhcbprResources", "$timeout", "$sce", "$http", '$location',
+       function ($scope, $filter, $q, ngTableParams, ngDialog, lhcbprResources, $timeout, $sce, $http, $location) {
     
     $scope.jobsIds = [];
-    $scope.isShowSearchForm = true;
-	
+    $scope.isShowSearchForm = ! ( $location.search().ssf == 'false' );
 	$scope.cachedJobs = {};
+	$scope.isShowingDialog = false;
 
 	$scope.jobsTableParams = new ngTableParams({
         	page: 1,            // show first page
@@ -62,7 +62,20 @@ App.controller('JobsListController',
 			            if(attrs._resultmeta) {
 			    			params.total(attrs._resultmeta.count)
 			    		}
-		        		$defer.resolve(attrs)
+		        		$defer.resolve(attrs);
+		        		var attrId = $location.search().attr;
+		        		if(attrId && !$scope.isShowingDialog){
+		        			attrId = parseInt(attrId);
+		        			if(! isNaN(attrId)){
+		        				var theAttr = null;
+		        				attrs.forEach(function(a){
+		        					if(a.id == attrId)
+		        						theAttr = a;
+		        				});
+		        				if(theAttr != null)
+		        					$scope.showCompareDialog(theAttr);
+		        			}
+		        		}
 	        		});
 	            }	
     		}
@@ -109,6 +122,7 @@ App.controller('JobsListController',
 	$scope.compare = function(ids) {
 		var requestIds = [];
 		$scope.isShowSearchForm  = false;
+		$location.search('ssf', false);
 		$scope.jobsIds = ids;
 
 		for (var i = 0, l = ids.length; i < l; ++i) {
@@ -123,6 +137,11 @@ App.controller('JobsListController',
 
 			$q.all(promises).then(reloadAttrsTable);
 		}
+	}
+
+	$scope.showSearchForm = function(){
+		$scope.isShowSearchForm = true;
+		$location.search('ssf', true);
 	}
 
 	$scope.getJobName = function (id) {
@@ -140,6 +159,8 @@ App.controller('JobsListController',
 	}
 
 	$scope.showCompareDialog = function(attr) {
+		$location.search('attr', attr.id);
+		$scope.isShowingDialog = true;
 		if(attr.dtype == "Integer" || attr.dtype == "Float")
 			$scope.trend(attr);
 		else if(attr.dtype == "String") // using String instead of File for test
@@ -200,7 +221,12 @@ App.controller('JobsListController',
 		ngDialog.open({
 			template: 'chartTemplate',
 			className: 'chart-dialog',
-			scope: $scope
+			scope: $scope,
+			preCloseCallback: function() {
+				$scope.$apply(function(){
+					$location.search('attr', null);
+				});
+			}
 		});
 	}
 
@@ -224,7 +250,12 @@ App.controller('JobsListController',
 		ngDialog.open({
 			template: 'filesTemplate',
 			className: 'chart-dialog',
-			scope: $scope
+			scope: $scope,
+			preCloseCallback: function() {
+				$scope.$apply(function(){
+					$location.search('attr', null);
+				});
+			}
 		});
 	};
 
@@ -235,6 +266,19 @@ App.controller('JobsListController',
 	$scope.chartWidth = function() {
 		return $(window).width() - 60;
 	};
+
+	if(! $scope.isShowSearchForm && $location.search().jobs){
+		var paramsJobIds = $location.search().jobs;
+		if(paramsJobIds){
+			if(typeof paramsJobIds === 'string')
+				paramsJobIds = [ parseInt(paramsJobIds) ];
+			else
+				paramsJobIds = paramsJobIds.map(function(v){
+					return parseInt(v);
+				});
+			$scope.compare(paramsJobIds);
+		}
+    }
 
 }]);
 

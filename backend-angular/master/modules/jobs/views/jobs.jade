@@ -3,7 +3,7 @@ h3 Jobs
 div(select-jobs on-jobs-selected="compare(jobIds)", ng-show="isShowSearchForm")
 .row.traditional(ng-class="csspinner", ng-show="!isShowSearchForm && !isShowTrend")
   .col-lg-4
-    button.btn.btn-primary(type="button" ng-disabled="isShowSearchForm", ng-click="isShowSearchForm=true")
+    button.btn.btn-primary(type="button" ng-disabled="isShowSearchForm", ng-click="showSearchForm()")
       | Show search form
 .row(style="margin-top: 10px")
 .row(style="margin-top: 10px", ng-show="!isShowTrend")
