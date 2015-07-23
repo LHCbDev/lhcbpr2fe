@@ -101,4 +101,6 @@ nav.navbar.topnavbar(role='navigation')
     //-   button.hidden.btn.btn-default(type='submit') Submit
     //- // END Search form
 
+    .progress.progress-striped.progress-xs(ng-show="pendingRequests > 0", style="margin: 0px")
+      .progress-bar.progress-bar-warning(ng-class="'progress-'+loadingPercentage", role='progressbar', aria-valuenow='{{loadingPercentage}}', aria-valuemin='0', aria-valuemax='100')
 // END Top Navbar

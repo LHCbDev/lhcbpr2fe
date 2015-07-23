@@ -65,5 +65,7 @@ var App = angular.module('angle', ['ngRoute',
                 picture: 'app/img/user/02.jpg'
             };
             $rootScope.menuItems = [];
+            $rootScope.pendingRequests = 0;
+            $rootScope.loadingPercentage = 100;
         }
     ]);

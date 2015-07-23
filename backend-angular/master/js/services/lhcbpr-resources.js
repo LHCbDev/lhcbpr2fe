@@ -3,8 +3,7 @@ App.constant('LHCBPR_PARAMS', {
 	"api": "https://test-lhcb-pr2.web.cern.ch/test-lhcb-pr2/api/"
 });
 
-App.service('lhcbprResources', ["Restangular", "LHCBPR_PARAMS",
-function(Restangular, lhcbpr_params) {
+App.service('lhcbprResources', ["Restangular", "LHCBPR_PARAMS", '$rootScope', function(Restangular, lhcbpr_params, $rootScope) {
     var url = lhcbpr_params.api;
     Restangular.setBaseUrl(url);
     Restangular.setJsonp(true)
@@ -21,9 +20,20 @@ function(Restangular, lhcbpr_params) {
                 "next": response.next,
                 "previous": response.previous
             };
-            return newResponse;
+            response = newResponse;
         }
+    	$rootScope.pendingRequests --;
+    	if($rootScope.pendingRequests == 0)
+    		$rootScope.loadingPercentage = 0;
+    	else
+	    	$rootScope.loadingPercentage = 100 / ($rootScope.pendingRequests + 1);
         return response;
+    });
+
+    Restangular.addRequestInterceptor(function(element, operation, what, url){
+    	$rootScope.pendingRequests ++;
+	    $rootScope.loadingPercentage = 100 / ($rootScope.pendingRequests + 1);
+	    return element;
     });
 
     return Restangular;
