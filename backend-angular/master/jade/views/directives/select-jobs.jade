@@ -16,7 +16,7 @@
             td
               .c-checkbox.needsclick.checkbox
                 label
-                  input(type="checkbox", checklist-model="jobsIds", checklist-value="job.id")
+                  input(type="checkbox", checklist-model="jobsIds", checklist-value="job.id", checklist-change="update()")
                   span.fa.fa-check
             td {{job.id}}
             td {{job.job_description.application_version.application.name}}

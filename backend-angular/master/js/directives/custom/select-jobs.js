@@ -2,8 +2,8 @@
  * Directive: Select jobs
  =========================================================*/
 
-App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources", 
-	function(ngTableParams, ngDialog, lhcbprResources){
+App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources", '$location',
+	function(ngTableParams, ngDialog, lhcbprResources, $location){
 	return {
 		templateUrl: 'app/views/directives/select-jobs.html',
     	scope: { 
@@ -24,17 +24,24 @@ App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources",
 		            	return;
 		            }
 		            lhcbprResources.all("search-jobs").getList({
-						application: scope.searchParams.apps.join(),
-						versions: scope.searchParams.versions.join(),
-						options: scope.searchParams.options.join(),
+						application: scope.searchParams.apps.join(','),
+						versions: scope.searchParams.versions.join(','),
+						options: scope.searchParams.options.join(','),
 						page: params.page(),
 						page_size: params.count()
 					}).then(function(jobs){
 			            if(jobs._resultmeta) {
 			    			params.total(jobs._resultmeta.count);
 			    		}
-			            // $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
 		        		$defer.resolve(jobs);
+	        			var allJobIds = jobs.map(function(job){
+	        				return job.id;
+	        			});
+	        			scope.jobsIds = scope.jobsIds.filter(function(id){
+	        				return allJobIds.indexOf(id) != -1;
+	        			});
+	        			console.log('scope.jobsIds: ', scope.jobsIds);
+	        			$location.search('jobs', scope.jobsIds);
 	        		});
 	    		}
 		    });
@@ -43,13 +50,32 @@ App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources",
 				console.log('params: ', params);
 				scope.searchParams = params;
 				scope.jobsTableParams.page(1);
-				scope.jobsIds = [];
+			    
+			    var paramsJobIds = $location.search().jobs;
+        		if(paramsJobIds){
+        			if(typeof paramsJobIds === 'string')
+        				paramsJobIds = [ parseInt(paramsJobIds) ];
+        			else
+        				paramsJobIds = paramsJobIds.map(function(v){
+        					return parseInt(v);
+        				});
+
+        			scope.jobsIds = paramsJobIds;
+
+        			console.log('paramsJobIds: ', paramsJobIds);
+        		} else {
+        			scope.jobIds = [];
+        		}
 				scope.jobsTableParams.reload();
 			}
 
 			scope.callback = function(){
 				console.log('scope.jobsIds: ', scope.jobsIds);
 				scope.onJobsSelected({ jobIds: scope.jobsIds });
+			}
+
+			scope.update = function(){
+				$location.search('jobs', scope.jobsIds);
 			}
 			
 		}
