@@ -11,15 +11,20 @@ nav.navbar.topnavbar(role='navigation')
 
     // START Nav wrapper
     .nav-wrapper
-    //-   // START Left navbar
-    //-   ul.nav.navbar-nav
-    //-     li
-    //-       // Button used to collapse the left sidebar. Only visible on tablet and desktops
-    //-       a(href='#', ng-click="app.layout.isCollapsed = !app.layout.isCollapsed").hidden-xs
-    //-         em.fa.fa-navicon
-    //-       // Button to show/hide the sidebar on mobile. Visible on mobile only.
-    //-       a(href='#', toggle-state="aside-toggled", no-persist).visible-xs.sidebar-toggle
-    //-         em.fa.fa-navicon
+      // START Left navbar
+      ul.nav.navbar-nav
+        li
+          // Button used to collapse the left sidebar. Only visible on tablet and desktops
+          a(href='#', ng-click="app.layout.isCollapsed = !app.layout.isCollapsed").hidden-xs
+            em.fa.fa-navicon
+          // Button to show/hide the sidebar on mobile. Visible on mobile only.
+          a(href='#', toggle-state="aside-toggled", no-persist).visible-xs.sidebar-toggle
+            em.fa.fa-navicon
+      ul.nav.navbar-nav.navbar-right
+        li(ng-show="pendingRequests > 0")
+          a(href='#')
+            em.fa.fa-spin.fa-circle-o-notch.fa-2x
+
     //-     // START User avatar toggle
     //-     li
     //-       // Button used to collapse the left sidebar. Only visible on tablet and desktops
@@ -101,6 +106,4 @@ nav.navbar.topnavbar(role='navigation')
     //-   button.hidden.btn.btn-default(type='submit') Submit
     //- // END Search form
 
-    .progress.progress-striped.progress-xs(ng-show="pendingRequests > 0", style="margin: 0px")
-      .progress-bar.progress-bar-warning(ng-class="'progress-'+loadingPercentage", role='progressbar', aria-valuenow='{{loadingPercentage}}', aria-valuemin='0', aria-valuemax='100')
 // END Top Navbar
