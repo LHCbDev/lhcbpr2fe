@@ -17,6 +17,7 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 	$scope.versions = undefined;
 	$scope.attrFilter = '';
 	$scope.loading = false;
+	$scope.noData = true;
 
 	$scope.attrsTableParams = new $tableParams(
 		{
@@ -30,7 +31,7 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 				// We check if an application and options were selected
 	            if($scope.appId && $scope.options.length > 0){
 	            	$scope.loading = true;
-	            	console.log('Sending request !');
+	            	console.log('Sending Trends request !');
 	            	// We construct the data to send with the request to the API
 	            	var requestParams = {
 						app: $scope.appId,
@@ -43,9 +44,12 @@ App.controller('TrendController', ['$scope', '$location', 'ngTableParams', 'ngDi
 	            	if($scope.attrFilter != '')
 	            		requestParams.attr_filter = $scope.attrFilter;
 					$api.all('trends').getList(requestParams).then(function(trends){
+						console.log('Trends Reponse received');
 						if(trends._resultmeta){
 							params.total(trends._resultmeta.count);
 						}
+						console.log(trends);
+						$scope.noData = (trends.length < 1);
 						$defer.resolve(trends);
 						$scope.loading = false;
 						var paramsAttr = $location.search().attr;

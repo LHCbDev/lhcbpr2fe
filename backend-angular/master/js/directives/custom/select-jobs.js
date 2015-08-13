@@ -13,6 +13,7 @@ App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources", '$l
 
 			scope.jobsIds = [];
 			scope.searchParams = undefined;
+			scope.noData = true;
 			scope.jobsTableParams = new ngTableParams({
 	        	page: 1,            // show first page
 	        	count: 10          // count per page
@@ -30,6 +31,7 @@ App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources", '$l
 						page: params.page(),
 						page_size: params.count()
 					}).then(function(jobs){
+						scope.noData = (jobs.length < 1);
 			            if(jobs._resultmeta) {
 			    			params.total(jobs._resultmeta.count);
 			    		}

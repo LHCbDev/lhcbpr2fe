@@ -29,6 +29,7 @@ App.controller('HistogramsController', ['$scope', '$location', 'ngTableParams', 
 	if($location.search().attr_filter)
 		$scope.attrFilter = $location.search().attr_filter;
 	$scope.loading = false;
+	$scope.noData = true;
 
 	$scope.tableParams = new $tableParams(
 		{ page: 1, count: 10 }, 
@@ -58,6 +59,7 @@ App.controller('HistogramsController', ['$scope', '$location', 'ngTableParams', 
 					if(response._resultmeta){
 						params.total(response._resultmeta.count);
 					}
+					$scope.noData = (response.length < 1);
 					$defer.resolve(response);
 					var paramsAttr = $location.search().attr;
 					var paramsAttrVersion = $location.search().attr_version;
