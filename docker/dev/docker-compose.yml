@@ -28,5 +28,6 @@ lhcbpr-www:
     - "80:80"
   volumes:
     - ../../backend-angular/app:/usr/share/nginx/html/app
+    - ../../nginx/conf.d:etc/nginx/conf.d
   links:
     - lhcbpr-api:lhcbpr-api
