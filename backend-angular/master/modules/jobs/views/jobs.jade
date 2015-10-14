@@ -27,12 +27,14 @@ div(select-jobs on-jobs-selected="compare(jobIds)", ng-show="isShowSearchForm")
           table.table-condensed
             tr(ng-repeat="jv in attr.jobvalues")
               td
-                strong
-                  | {{jv.value}}
+                  a(ng-if="attr.dtype=='File'" href="/media/jobs/{{jv.job.id}}/{{jv.value}}" target="_blank")
+                    | {{jv.value}}
+                  strong(ng-if="attr.dtype!='File'")
+                    | {{jv.value}}
               td
                 | {{getJobName(jv.job.id)}}
         td
-          button.btn.btn-info(ng-if="showCompareButton(attr.dtype)" ng-click="showCompareDialog(attr)")
+          button.btn.btn-info(ng-if="showCompareButton(attr.dtype, attr.jobvalues)" ng-click="showCompareDialog(attr)")
             | Compare
 script(type="text/ng-template", id="chartTemplate")
   .row
@@ -48,4 +50,4 @@ script(type="text/ng-template", id="filesTemplate")
       div(style="height: {{chartHeight()}}px; width: {{chartWidth()}}px; overflow: scroll")
         div(ng-repeat="file in files")
           img(ng-if="file.type == 'image'" ng-src="{{file.url}}")
-          embed(ng-if="file.type == 'pdf'" ng-src="{{file.url}}" style="width: {{chartWidth()}}px; height: 400px;")
+          embed(ng-if="file.type == 'gif'" ng-src="{{file.url}}" style="width: {{chartWidth()}}px; height: 400px;")

@@ -3,19 +3,24 @@
  * Provides a simple demo for typeahead
  =========================================================*/
 
-App.controller('JobsController', 
+App.controller('JobsController',
      ["$scope", function ($scope) {
- 
+
  }]);
 
-App.controller('JobsListController', 
+App.controller('JobsListController',
      ["$scope", "$filter", "$q", "ngTableParams", "ngDialog", "lhcbprResources", "$timeout", "$sce", "$http", '$location',
        function ($scope, $filter, $q, ngTableParams, ngDialog, lhcbprResources, $timeout, $sce, $http, $location) {
-    
-    $scope.jobsIds = [];
-    $scope.isShowSearchForm = ! ( $location.search().ssf == 'false' );
+
+  $scope.jobsIds = [];
+  $scope.isShowSearchForm = ! ( $location.search().ssf == 'false' );
 	$scope.cachedJobs = {};
 	$scope.isShowingDialog = false;
+
+  var isImage = function(filename) {
+    var ext = filename.split('.').pop().toLowerCase();
+    return ext == 'gif' || ext == 'png' || ext == "jpeg" || ext == 'jpg'
+  };
 
 	$scope.jobsTableParams = new ngTableParams({
         	page: 1,            // show first page
@@ -77,14 +82,14 @@ App.controller('JobsListController',
 		        			}
 		        		}
 	        		});
-	            }	
+	            }
     		}
     });
 
 	// Fix bug in ng-table
 	$scope.jobsTableParams.settings().$scope = $scope;
 	$scope.attrsTableParams.settings().$scope = $scope;
- 
+
 
 	$scope.showResults = function(job) {
 		// console.log(job.resource_uri);
@@ -130,7 +135,7 @@ App.controller('JobsListController',
 			promises.push(
 				lhcbprResources.one('jobs', ids[i]).get().then(
 					function (job) {
-						$scope.cachedJobs[job.id] = job 
+						$scope.cachedJobs[job.id] = job
 					}
 				)
 			);
@@ -154,16 +159,28 @@ App.controller('JobsListController',
 		}
 	}
 
-	$scope.showCompareButton = function(dtype) {
-		return dtype === "Integer" || dtype === "Float" || dtype == "String"; // using String instead of File for test
+  $scope.getJobValue = function (attr, jv) {
+		if (attr.dtype == 'File') {
+      return
+    }
 	}
+
+	$scope.showCompareButton = function(dtype, values) {
+    if (dtype == 'File') {
+      if (values.length > 0 ) {
+        return isImage(values[0].value);
+      }
+      return false;
+    }
+		return true;
+  }
 
 	$scope.showCompareDialog = function(attr) {
 		$location.search('attr', attr.id);
 		$scope.isShowingDialog = true;
 		if(attr.dtype == "Integer" || attr.dtype == "Float")
 			$scope.trend(attr);
-		else if(attr.dtype == "String") // using String instead of File for test
+		else if(attr.dtype == "File")
 			$scope.filesCompare(attr);
 	}
 
@@ -231,22 +248,16 @@ App.controller('JobsListController',
 	}
 
 	$scope.filesCompare = function(attr){
-		// Hard coded samples for the moment !
-		$scope.files = [
-			{
-				type: 'image',
-				url: $sce.trustAsResourceUrl('https://test-lhcb-pr2.web.cern.ch/test-lhcb-pr2/files/test-file-1.png')
-			},
-			{
-				type: 'image',
-				url: $sce.trustAsResourceUrl('https://test-lhcb-pr2.web.cern.ch/test-lhcb-pr2/files/test-file-2.jpg')
-			},
-			{
-				type: 'pdf',
-				url: $sce.trustAsResourceUrl('https://test-lhcb-pr2.web.cern.ch/test-lhcb-pr2/files/test-file-1.pdf')
-			}
-		];
-		 
+		attr.jobvalues.reverse();
+		$scope.files = attr.jobvalues.map(
+      function(v) {
+        return {
+          type: "image",
+          url: "/media/jobs/" + v.job.id + "/" + v.value
+        }
+      }
+    );
+
 		ngDialog.open({
 			template: 'filesTemplate',
 			className: 'chart-dialog',
@@ -282,7 +293,7 @@ App.controller('JobsListController',
 
 }]);
 
-App.controller('JobsDetailController', ["$scope", "$filter", "$stateParams", "ngTableParams", "lhcbprResources", 
+App.controller('JobsDetailController', ["$scope", "$filter", "$stateParams", "ngTableParams", "lhcbprResources",
 	function($scope, $filter, $stateParams, ngTableParams, lhcbprResources) {
 
     var createTable = function(data) {
@@ -297,7 +308,7 @@ App.controller('JobsDetailController', ["$scope", "$filter", "$stateParams", "ng
 	            var orderedData = params.sorting() ?
 	                    $filter('orderBy')(data, params.orderBy()) :
 	                    data;
-	    
+
 	            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
         	}
     	});
@@ -308,4 +319,3 @@ App.controller('JobsDetailController', ["$scope", "$filter", "$stateParams", "ng
 		createTable(job.results);
 	});
 }]);
-
