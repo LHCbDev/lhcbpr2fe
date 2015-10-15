@@ -9,14 +9,17 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
     	scope: {
     		onFound: '&',
     		filterOptions: '@',
-    		filterVersions: '@'
+    		filterVersions: '@',
+				filterPlatforms: '@'
     	},
 		link: function(scope, element, attrs) {
 			scope.versionsIds = [];
 			scope.applicationIds = [];
+			scope.platformsIds = [];
 			scope.optionsIds = [];
 			scope.versionsFiltered = true;
 			scope.optionsFiltered = true;
+			scope.platformsFiltered = true;
 			scope.app = undefined;
 
 			scope.withNightly = ( $location.search().withNightly === true );
@@ -92,17 +95,43 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 						scope.searchJobs();
 					});
 				}
+
+				if(scope.filterPlatforms !== 'false'){
+					scope.platformsFiltered = false;
+					lhcbprResources.all("active/applications/" + scope.app.id + "/platforms").getList(
+						{platforms: scope.platformsIds.join()}
+					).then(function(platforms){
+						scope.platforms = platforms;
+						var paramsPlatforms = $location.search().platforms;
+						if(paramsPlatforms){
+							if(typeof paramsPlatforms === 'string')
+								scope.platformsIds = [ parseInt(paramsPlatforms) ];
+							else
+								scope.platformsIds = paramsPlatforms.map(function(op){
+									return parseInt(op);
+								});
+						} else {
+							scope.allPlatformsIds = getAllIds(platforms);
+							scope.platformsIds = scope.platformsIds.filter(function(el){
+								return scope.allPlatformsIds.indexOf(el) != -1;
+							});
+						}
+						scope.platformsFiltered = true;
+						scope.searchJobs();
+					});
+				}
 			}
 
 			var getAllIds = function(objs) {
-				return objs.map(function(obj) { 
+				return objs.map(function(obj) {
 					return obj.id;
 				});
 			};
 
 			scope.searchJobs = function() {
 				console.log('Search Jobs Called !');
-				if(scope.optionsFiltered && scope.versionsFiltered){
+				if(scope.optionsFiltered && scope.versionsFiltered && scope.platformsFiltered){
+
 					var selectedVersions = scope.versionsIds;
 					if(selectedVersions.length < 1){
 						selectedVersions = [];
@@ -110,13 +139,16 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 							selectedVersions = selectedVersions.concat(getAllIds(v.values));
 						});
 					}
+
 					scope.onFound({'searchParams': {
 						apps: scope.applicationIds,
 						options: scope.optionsIds,
-						versions: selectedVersions
+						versions: selectedVersions,
+						platforms: scope.platformsIds
 					}});
 					$location.search('apps', scope.applicationIds);
 					$location.search('options', scope.optionsIds);
+					$location.search('platforms', scope.platformsIds);
 					$location.search('versions', scope.versionsIds);
 					$location.search('withNightly', scope.withNightly);
 					$location.search('nightlyVersionNumber', scope.nightlyVersionNumber);
