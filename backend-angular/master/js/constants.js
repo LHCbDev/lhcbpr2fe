@@ -52,6 +52,7 @@ App
                              'vendor/ika.jvectormap/jquery-jvectormap-us-mill-en.js',
                              'vendor/ika.jvectormap/jquery-jvectormap-1.2.2.css'],
       'loadGoogleMapsJS':   ['app/vendor/gmap/load-google-maps.js'],
+      'jsroot':   ['app/vendor/jsroot/scripts/JSRootCore.js'],
       'google-map':         ['vendor/jQuery-gMap/jquery.gmap.min.js'],
       'flot-chart':         ['vendor/Flot/jquery.flot.js'],
       'flot-chart-plugins': ['vendor/flot.tooltip/js/jquery.flot.tooltip.min.js',

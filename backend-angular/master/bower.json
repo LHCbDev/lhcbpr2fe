@@ -86,7 +86,7 @@
     "ng-img-crop": "~0.3.2",
     "angular-ui-select": "~0.9.6",
     "angular-ui-codemirror": "~0.2.2",
-    "lodash": "2.4.1",
+    "lodash-compat": "^3.10.1",
     "restangular": "1.4.0",
     "checklist-model": "0.2.4",
     "be-responsive": "~1.0.1",

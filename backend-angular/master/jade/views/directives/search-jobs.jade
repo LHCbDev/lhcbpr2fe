@@ -15,7 +15,7 @@
               span.fa.fa-check
               |  {{option.name}} ({{option.count}})
         
-        .form-group(ng-show="filterPlatforms !== 'false'" && platforms"")
+        .form-group(ng-show="filterPlatforms !== 'false' && platforms")
           label Platforms
           .c-checkbox.checkbox.needsclick(ng-repeat="platform in platforms")
             label

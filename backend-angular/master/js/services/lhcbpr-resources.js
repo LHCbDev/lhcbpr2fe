@@ -1,5 +1,5 @@
 App.constant('LHCBPR_PARAMS', {
-	"api": "/api/"
+	"api": "http://lblhcbpr2.cern.ch/api/"
 });
 
 App.service('lhcbprResources', ["Restangular", "LHCBPR_PARAMS", '$rootScope', function(Restangular, lhcbpr_params, $rootScope) {

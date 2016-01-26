@@ -17,7 +17,7 @@ hr
           .row.row-table.row-flush
             .col-xs-12.align-middle.p-lg
               .h4(ng-repeat-start="ver in app.versions")
-                {{ver.version}}
+                | {{ver.version}}
               ul(ng-repeat-end)
                 li(ng-repeat="jd in ver.jobdescriptions")
                   span
@@ -25,7 +25,7 @@ hr
                   span(ng-if="!jd.option.is_standalone")
                     | gaudirun.py
                   span
-                    {{jd.option.content}}
+                    |  {{jd.option.content}}
 
                            
 

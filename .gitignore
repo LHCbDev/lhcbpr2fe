@@ -27,7 +27,7 @@ build/Release
 node_modules
 
 bower_components
-vendor/
+master/vendor/
 
 backend-angular/app/js
 backend-angular/app/modules
