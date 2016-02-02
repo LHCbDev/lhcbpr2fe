@@ -1,0 +1,3 @@
+#!/bin/bash
+cd backend-angular/master
+gulp build --output prod --minify --url "http://lblhcbpr2.cern.ch/api"
