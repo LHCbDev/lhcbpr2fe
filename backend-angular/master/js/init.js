@@ -27,7 +27,8 @@ var App = angular.module('angle', ['ngRoute',
         'ngSanitize',
         'ngResource',
         'restangular',
-        'checklist-model'
+        'checklist-model',
+        'buildParams'
     ])
     .run(["$rootScope", "$state", "$stateParams", '$window', '$templateCache',
         function($rootScope, $state, $stateParams, $window, $templateCache) {

@@ -1,80 +1,68 @@
+// ============================================================================
 var gulp        = require('gulp'),
+		changed     = require('gulp-changed'),
 		concat      = require('gulp-concat'),
-		uglify      = require('gulp-uglify'),
+		connect		= require('gulp-connect'),
+		expect      = require('gulp-expect-file'),
+		flip        = require('css-flip'),
+		fs 			= require('fs'),
+		gulpFilter  = require('gulp-filter'),
+		gulpsync    = require('gulp-sync')(gulp),
+		gutil       = require('gulp-util'),
 		jade        = require('gulp-jade'),
 		less        = require('gulp-less'),
-		path        = require('path'),
 		livereload  = require('gulp-livereload'), // Livereload plugin needed: https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei
 		marked      = require('marked'), // For :markdown filter in jade
-		changed     = require('gulp-changed'),
-		prettify    = require('gulp-html-prettify'),
-		w3cjs       = require('gulp-w3cjs'),
-		rename      = require('gulp-rename'),
-		flip        = require('css-flip'),
-		through     = require('through2'),
-		gutil       = require('gulp-util'),
-		htmlify     = require('gulp-angular-htmlify'),
-		minifyCSS   = require('gulp-minify-css'),
-		gulpFilter  = require('gulp-filter'),
-		expect      = require('gulp-expect-file'),
-		gulpsync    = require('gulp-sync')(gulp),
-		ngAnnotate  = require('gulp-ng-annotate'),
-		sourcemaps  = require('gulp-sourcemaps'),
-		connect		= require('gulp-connect'),
-		fs 			= require('fs'),
 		merge 		= require('merge-stream'),
-		PluginError = gutil.PluginError;
-
+		minifyCSS   = require('gulp-minify-css'),
+		ngAnnotate  = require('gulp-ng-annotate'),
+		ngConstant  = require('gulp-ng-constant'),
+		path        = require('path'),
+		PluginError = gutil.PluginError,
+		prettify    = require('gulp-html-prettify'),
+		rename      = require('gulp-rename'),
+		sourcemaps  = require('gulp-sourcemaps'),
+		through     = require('through2'),
+		uglify      = require('gulp-uglify'),
+		w3cjs       = require('gulp-w3cjs');
+// ============================================================================
 // LiveReload port. Change it only if there's a conflict
 var lvr_port = 35729;
-
-var W3C_OPTIONS = {
-	// Set here your local validator if your using one. leave it empty if not
-	//uri: 'http://validator/check',
-	doctype: 'HTML5',
-	output: 'json',
-	// Remove some messages that angular will always display.
-	filter: function(message) {
-		if( /Element head is missing a required instance of child element title/.test(message) )
-			return false;
-		if( /Attribute .+ not allowed on element .+ at this point/.test(message) )
-			return false;
-		if( /Element .+ not allowed as child of element .+ in this context/.test(message) )
-			return false;
-		if(/Comments seen before doctype./.test(message))
-			return false;
-	}
-};
-
-// production mode (see build task)
-var isProduction = false;
-var useSourceMaps = false;
 
 // ignore everything that begins with underscore
 var hidden_files = '**/_*.*';
 var ignored_files = '!'+hidden_files;
+// ============================================================================
+// BUILD PARAMS
+// ============================================================================
+var params = {
+	dist: '../../dist/' + (gutil.env.output || 'dev'),
+    url_api: gutil.env.url || 'http://lblhcbpr2.cern.ch/api',
+	minify:  gutil.env.minify !== undefined,
+	sourcemaps: gutil.env.sourcemaps !== undefined
+};
 
+
+// ============================================================================
 // VENDOR CONFIG
 var vendor = {
 	// vendor scripts required to start the app
 	base: {
 		source: require('./vendor.base.json'),
-		dest: '../app/js',
+		dest: params.dist + '/app/js',
 		name: 'base.js'
 	},
 	// vendor scripts to make to app work. Usually via lazy loading
 	app: {
 		source: require('./vendor.json'),
-		dest: '../vendor'
+		dest: params.dist + '/vendor'
 	}
 };
-
+// ============================================================================
 // SOURCES CONFIG 
 var source = {
 	scripts: {
 		app:    [   'js/init.js',
-					//'js/classes/deps.js',
-					//'js/classes/module.js',
 					'js/classes/*.js',
 					'js/*.js',
 					'js/controllers/*.js',
@@ -118,46 +106,53 @@ var source = {
 		watch: ['less/bootstrap/*.less']
 	}
 };
-
+// ============================================================================
 // BUILD TARGET CONFIG 
 var build = {
 	scripts: {
 		app: {
 			main: 'app.js',
-			dir: '../app/js'
+			dir: params.dist + '/app/js'
 		}
 	},
-	styles: '../app/css',
+	styles: params.dist + '/app/css',
 	templates: {
-		app: '..',
-		views: '../app/views',
-		pages: '../app/pages'
+		app: params.dist,
+		views: params.dist + '/app/views',
+		pages: params.dist + '/app/pages'
 	}
 };
-
-
-
-//---------------
+// ============================================================================
 // TASKS
-//---------------
-
-
+// ============================================================================
 // JS APP
+// ----------------------------------------------------------------------------
 gulp.task('scripts:app', function() {
 		// Minify and copy all JavaScript (except vendor scripts)
-		return gulp.src(source.scripts.app)
-				.pipe( useSourceMaps ? sourcemaps.init() : gutil.noop())
+		var constants = ngConstant(
+			{
+				stream: true,
+				name: "buildParams",
+				constants: {
+					BUILD_PARAMS: {
+						url_api: params.url_api
+					}
+				}
+			});
+		return  merge(constants, gulp.src(source.scripts.app))
+				.pipe( params.sourcemaps ? sourcemaps.init() : gutil.noop())
 				.pipe(concat(build.scripts.app.main))
 				.pipe(ngAnnotate())
 				.on("error", handleError)
-				.pipe( isProduction ? uglify({preserveComments:'some'}) : gutil.noop() )
+				.pipe( params.minify ? uglify({preserveComments:'some'}) : gutil.noop() )
 				.on("error", handleError)
-				.pipe( useSourceMaps ? sourcemaps.write() : gutil.noop() )
+				.pipe( params.sourcemaps ? sourcemaps.write('.') : gutil.noop() )
 				.pipe(gulp.dest(build.scripts.app.dir));
 });
 
-
+// ----------------------------------------------------------------------------
 // VENDOR BUILD
+// ----------------------------------------------------------------------------
 gulp.task('scripts:vendor', ['scripts:vendor:base', 'scripts:vendor:app']);
 
 //  This will be included vendor files statically
@@ -189,39 +184,42 @@ gulp.task('scripts:vendor:app', function() {
 			.pipe( gulp.dest(vendor.app.dest) );
 
 });
-
+// ----------------------------------------------------------------------------
 // APP LESS
+// ----------------------------------------------------------------------------
 gulp.task('styles:app', function() {
 		return gulp.src(source.styles.app.main)
-				.pipe( useSourceMaps ? sourcemaps.init() : gutil.noop())
+				.pipe( params.sourcemaps ? sourcemaps.init() : gutil.noop())
 				.pipe(less({
 						paths: [source.styles.app.dir]
 				}))
 				.on("error", handleError)
-				.pipe( isProduction ? minifyCSS() : gutil.noop() )
-				.pipe( useSourceMaps ? sourcemaps.write() : gutil.noop())
+				.pipe( params.minify ? minifyCSS() : gutil.noop() )
+				.pipe( params.sourcemaps ? sourcemaps.write('.') : gutil.noop())
 				.pipe(gulp.dest(build.styles));
 });
-
+// ----------------------------------------------------------------------------
 // APP RTL
+// ----------------------------------------------------------------------------
 gulp.task('styles:app:rtl', function() {
 		return gulp.src(source.styles.app.main)
-				.pipe( useSourceMaps ? sourcemaps.init() : gutil.noop())
+				.pipe( sourcemaps ? sourcemaps.init() : gutil.noop())
 				.pipe(less({
 						paths: [source.styles.app.dir]
 				}))
 				.on("error", handleError)
 				.pipe(flipcss())
-				.pipe( isProduction ? minifyCSS() : gutil.noop() )
-				.pipe( useSourceMaps ? sourcemaps.write() : gutil.noop())
+				.pipe( params.minify ? minifyCSS() : gutil.noop() )
+				.pipe( sourcemaps ? sourcemaps.write('.') : gutil.noop())
 				.pipe(rename(function(path) {
 						path.basename += "-rtl";
 						return path;
 				}))
 				.pipe(gulp.dest(build.styles));
 });
-
+// ----------------------------------------------------------------------------
 // LESS THEMES
+// ----------------------------------------------------------------------------
 gulp.task('styles:themes', function() {
 		return gulp.src(source.styles.themes.main)
 				.pipe(less({
@@ -230,8 +228,9 @@ gulp.task('styles:themes', function() {
 				.on("error", handleError)
 				.pipe(gulp.dest(build.styles));
 });
-
-// BOOSTRAP
+// ----------------------------------------------------------------------------
+// BOOTSTRAP
+// ----------------------------------------------------------------------------
 gulp.task('bootstrap', function() {
 		return gulp.src(source.bootstrap.main)
 				.pipe(less({
@@ -240,8 +239,9 @@ gulp.task('bootstrap', function() {
 				.on("error", handleError)
 				.pipe(gulp.dest(build.styles));
 });
-
-// JADE
+// ----------------------------------------------------------------------------
+// JADE APP
+// ----------------------------------------------------------------------------
 gulp.task('templates:app', function() {
 		return gulp.src(source.templates.app.files)
 				.pipe(changed(build.templates.app, { extension: '.html' }))
@@ -252,15 +252,12 @@ gulp.task('templates:app', function() {
 						indent_size: 3,
 						unformatted: ['a', 'sub', 'sup', 'b', 'i', 'u']
 				}))
-				// .pipe(htmlify({
-				//     customPrefixes: ['ui-']
-				// }))
-				// .pipe(w3cjs( W3C_OPTIONS ))
 				.pipe(gulp.dest(build.templates.app))
 				;
 });
-
-// JADE
+// ----------------------------------------------------------------------------
+// JADE PAGES
+// ----------------------------------------------------------------------------
 gulp.task('templates:pages', function() {
 		return gulp.src(source.templates.pages.files)
 				.pipe(changed(build.templates.pages, { extension: '.html' }))
@@ -271,15 +268,12 @@ gulp.task('templates:pages', function() {
 						indent_size: 3,
 						unformatted: ['a', 'sub', 'sup', 'b', 'i', 'u']
 				}))
-				// .pipe(htmlify({
-				//     customPrefixes: ['ui-']
-				// }))
-				// .pipe(w3cjs( W3C_OPTIONS ))
 				.pipe(gulp.dest(build.templates.pages))
 				;
 });
-
-// JADE
+// ----------------------------------------------------------------------------
+// JADE VIEWS
+// ----------------------------------------------------------------------------
 gulp.task('templates:views', function() {
 		return gulp.src(source.templates.views.files)
 				.pipe(changed(build.templates.views, { extension: '.html' }))
@@ -290,24 +284,22 @@ gulp.task('templates:views', function() {
 						indent_size: 3,
 						unformatted: ['a', 'sub', 'sup', 'b', 'i', 'u']
 				}))
-				// .pipe(htmlify({
-				//     customPrefixes: ['ui-']
-				// }))
-				// .pipe(w3cjs( W3C_OPTIONS ))
 				.pipe(gulp.dest(build.templates.views))
 				;
 });
-
+// ----------------------------------------------------------------------------
 // CONNECT
+// ----------------------------------------------------------------------------
 gulp.task('connect', function() {
 	connect.server({
-		root: '../',
+		root: params.dist,
 		port: '9000',
 		livereload: true
 	});
 });
-
+// ----------------------------------------------------------------------------
 // MODULES SCRIPTS
+// ----------------------------------------------------------------------------
 gulp.task('modules:scripts', function() {
 	var modulesPath = 'modules';
 	var folders = fs.readdirSync(modulesPath)
@@ -318,13 +310,14 @@ gulp.task('modules:scripts', function() {
 	var tasks = folders.map(function(folder) {
 		return gulp.src(['modules/' + folder + '/**/*.js', '!modules/' + folder + '/js/init.js'])
 			.pipe(concat('all.js'))
-			.pipe(gulp.dest('../app/modules/' + folder));
+			.pipe(gulp.dest(params.dist + '/app/modules/' + folder));
    });
 
    return merge(tasks);
 });
-
+// ----------------------------------------------------------------------------
 // MODULES STYLES
+// ----------------------------------------------------------------------------
 gulp.task('modules:styles', function() {
 	var modulesPath = 'modules';
 	var folders = fs.readdirSync(modulesPath)
@@ -338,13 +331,14 @@ gulp.task('modules:styles', function() {
 				paths: ['modules/' + folder + '/less']
 			}))
 			.pipe(rename('style.css'))
-			.pipe(gulp.dest('../app/modules/' + folder));
+			.pipe(gulp.dest(params.dist + '/app/modules/' + folder));
    });
 
    return merge(tasks);
 });
-
+// ----------------------------------------------------------------------------
 // MODULES VIEWS
+// ----------------------------------------------------------------------------
 gulp.task('modules:views', function() {
 	var modulesPath = 'modules';
 	var folders = fs.readdirSync(modulesPath)
@@ -356,16 +350,14 @@ gulp.task('modules:views', function() {
 		return gulp.src(['modules/' + folder + '/views/*.jade', 'modules/' + folder + '/views/**/*.jade'])
 			.pipe(jade())
 			.pipe(rename(function(path){ path.extname = '.html'; }))
-			.pipe(gulp.dest('../app/modules/' + folder + '/views'));
+			.pipe(gulp.dest(params.dist + '/app/modules/' + folder + '/views'));
    });
 
    return merge(tasks);
 });
-
-
-//---------------
+// ----------------------------------------------------------------------------
 // WATCH
-//---------------
+// ----------------------------------------------------------------------------
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
@@ -383,9 +375,7 @@ gulp.task('watch', function() {
 	gulp.watch('modules/**/*.jade', ['modules:views']);
 
 	gulp.watch([
-
-			'../app/**'
-
+			params.dist + '/app/**'
 	]).on('change', function(event) {
 
 			livereload.changed( event.path );
@@ -394,16 +384,24 @@ gulp.task('watch', function() {
 	});
 
 });
+// ----------------------------------------------------------------------------
+// STATIC FILES
+// ----------------------------------------------------------------------------
+gulp.task('static', function(){
+	gulp.src('../app/**').pipe(gulp.dest(params.dist + '/app'));
+}
+);
 
 
-//---------------
+
+
+
+// ----------------------------------------------------------------------------
 // DEFAULT TASK
-//---------------
-
-
+// ----------------------------------------------------------------------------
 // build for production (minify)
-gulp.task('build', gulpsync.sync([
-		'prod', 
+gulp.task('build', gulpsync.async([
+		'static',
 		'scripts:vendor',
 		'scripts:app',	
 		'styles:app',
@@ -418,16 +416,9 @@ gulp.task('build', gulpsync.sync([
 	])
 );
 
-gulp.task('prod', function() { isProduction = true; });
-
-// build with sourcemaps (no minify)
-gulp.task('sourcemaps', ['usesources', 'default']);
-gulp.task('usesources', function(){ useSourceMaps = true; });
-
+// ----------------------------------------------------------------------------
 // default (no minify)
 gulp.task('default', gulpsync.sync([
-					'scripts:vendor',
-					'scripts:app',
 					'start'
 				]), function(){
 
@@ -436,25 +427,17 @@ gulp.task('default', gulpsync.sync([
 	gutil.log(gutil.colors.cyan('************'));
 
 });
-
+// ----------------------------------------------------------------------------
 gulp.task('start',[
-					'scripts:app',
-					'styles:app',
-					'styles:app:rtl',
-					'styles:themes',
-					'templates:app',
-					'templates:pages',
-					'templates:views',
-					'modules:scripts',
-					'modules:styles',
-					'modules:views',
+					'build',
 					'connect',
 					'watch'
 				]);
-
+// ----------------------------------------------------------------------------
 gulp.task('done', function(){
 	console.log('All Done!! You can start editing your code, LiveReload will update your browser after any change..');
 });
+// ----------------------------------------------------------------------------
 
 // Error handler
 function handleError(err) {

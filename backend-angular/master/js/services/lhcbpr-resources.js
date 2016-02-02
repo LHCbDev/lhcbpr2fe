@@ -1,9 +1,5 @@
-App.constant('LHCBPR_PARAMS', {
-	"api": "http://lblhcbpr2.cern.ch/api/"
-});
-
-App.service('lhcbprResources', ["Restangular", "LHCBPR_PARAMS", '$rootScope', function(Restangular, lhcbpr_params, $rootScope) {
-    var url = lhcbpr_params.api;
+App.service('lhcbprResources', function(Restangular, BUILD_PARAMS, $rootScope) {
+    var url = BUILD_PARAMS.url_api;
     Restangular.setBaseUrl(url);
     Restangular.setJsonp(true)
     Restangular.setDefaultRequestParams('jsonp', {format: 'jsonp', callback: 'JSON_CALLBACK'});
@@ -36,5 +32,5 @@ App.service('lhcbprResources', ["Restangular", "LHCBPR_PARAMS", '$rootScope', fu
     });
 
     return Restangular;
-}]
+}
 );
