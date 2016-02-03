@@ -9,6 +9,6 @@ Module.create('geantstandalone', 'GEANT', 2)
 		title: 'GEANT standalone tests',
 		url: '/geantstandalone',
 		templateUrl: 'geantstandalone.html',
-		resolve: ['geantstandalone', 'jsroot']
+		resolve: ['geantstandalone', 'jsroot','ngTable', 'ngDialog']
 	})
 	.start();

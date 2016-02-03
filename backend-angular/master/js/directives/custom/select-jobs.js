@@ -6,6 +6,7 @@ App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources", '$l
 	function(ngTableParams, ngDialog, lhcbprResources, $location) {
 		return {
 			templateUrl: 'app/views/directives/select-jobs.html',
+			restrict: 'EC',
 			scope: {
 				onJobsSelected: '&'
 			},

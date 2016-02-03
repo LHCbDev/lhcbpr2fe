@@ -1,7 +1,9 @@
 h3 GEANT standalone tests 
   small.text-muted
 
-rootjsserver(entrypoint="///prl-dev" 
-    files="{'FTFP_BERT_kaon+_Be.root':'GGG','FTFP_BERT_proton_Si.root':'gcc49'}"
-    items="Total,Inelastic,Elastic"
+select-jobs(on-jobs-selected="doSomething(jobIds)")
+
+rootjsserver(entrypoint="url" 
+    files="files_and_titles"
+    items="graphs"
     width="800" height="600")

@@ -21,7 +21,7 @@
             label
               input(type="checkbox", checklist-model="platformsIds", checklist-value="platform.id", checklist-change="searchJobs()")
               span.fa.fa-check
-              |  {{platform.name}} ({{platform.count}})        
+              | {{platform.name}} ({{platform.count}})        
         
         div(ng-show="filterVersions !== 'false' && versions")
           .form-group
@@ -34,7 +34,7 @@
             input(type="text", ng-model="nightlyVersionNumber", ng-change="update()")
           .form-group
             label(ng-repeat-start="group in versions")
-              {{group.name}}
+            | {{group.name}}
             .c-checkbox.needsclick.checkbox(ng-repeat="version in group.values")
               label
                 input(type="checkbox", checklist-model="versionsIds", checklist-value="version.id", checklist-change="searchJobs()")

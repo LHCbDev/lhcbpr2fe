@@ -37,7 +37,8 @@ var ignored_files = '!'+hidden_files;
 // ============================================================================
 var params = {
 	dist: '../../dist/' + (gutil.env.output || 'dev'),
-    url_api: gutil.env.url || 'http://lblhcbpr2.cern.ch/api',
+    url_api: gutil.env.urlapi || 'http://lblhcbpr2.cern.ch:8080/api',
+    url_root: gutil.env.urlroot || 'http://lblhcbpr2.cern.ch:8081',
 	minify:  gutil.env.minify !== undefined,
 	sourcemaps: gutil.env.sourcemaps !== undefined
 };
@@ -135,7 +136,8 @@ gulp.task('scripts:app', function() {
 				name: "buildParams",
 				constants: {
 					BUILD_PARAMS: {
-						url_api: params.url_api
+						url_api: params.url_api,
+						url_root: params.url_root
 					}
 				}
 			});
@@ -161,7 +163,7 @@ gulp.task('scripts:vendor:base', function() {
 		// Minify and copy all JavaScript (except vendor scripts)
 		return gulp.src(vendor.base.source)
 				.pipe(expect(vendor.base.source))
-				.pipe(uglify())
+				//.pipe(uglify())
 				.pipe(concat(vendor.base.name))
 				.pipe(gulp.dest(vendor.base.dest))
 				;
