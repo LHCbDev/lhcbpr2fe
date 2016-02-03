@@ -1,5 +1,5 @@
 #!/bin/bash
 cd backend-angular/master
-npm install &&\ 
- bower install &&\  
- gulp --output dev --urlapi "http://lblhcbpr2.cern.ch:8080/api" --urlroot "http://lblhcbpr2.cern.ch:8081"
+npm install &&\
+	bower install && \
+	gulp --output dev --urlapi "http://lblhcbpr2.cern.ch:8080/api" --urlroot "http://lblhcbpr2.cern.ch:8081"
