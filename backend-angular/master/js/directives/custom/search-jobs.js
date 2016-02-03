@@ -10,7 +10,7 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
     		onFound: '&',
     		filterOptions: '@',
     		filterVersions: '@',
-				filterPlatforms: '@'
+			filterPlatforms: '@'
     	},
 		link: function(scope, element, attrs) {
 			scope.versionsIds = [];

@@ -233,9 +233,9 @@ App.directive('rootjsserver', function($http) {
   return {
   restrict: 'E',
   scope: {
-    entrypoint: '@',
+    entrypoint: '=',
     files: '=',
-    items: '@',
+    items: '=',
     width: '@',
     height: '@'
   },
