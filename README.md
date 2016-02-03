@@ -7,7 +7,7 @@
 **Prerequisites:**
 
 1. You need to have [git](https://git-scm.com/)  and [nodejs](https://nodejs.org/en/) tools
-1. You need to install bower tool for retrive external javascript dependencies: ```npm install -g bower```
+1. You need to install `bower` tool for retriving external javascript dependencies: `npm install -g bower`
 
 **Get the source and run development server:**
 
