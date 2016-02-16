@@ -8,6 +8,8 @@ App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources", '$l
 			templateUrl: 'app/views/directives/select-jobs.html',
 			restrict: 'ECA',
 			scope: {
+				selectedApp: '@',
+				selectedOptions: '@',
 				onJobsSelected: '&'
 			},
 			link: function(scope, element, attrs) {
@@ -44,7 +46,6 @@ App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources", '$l
 							scope.jobsIds = scope.jobsIds.filter(function(id) {
 								return allJobIds.indexOf(id) != -1;
 							});
-							console.log('scope.jobsIds: ', scope.jobsIds);
 							$location.search('jobs', scope.jobsIds);
 						});
 					}
@@ -74,7 +75,6 @@ App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources", '$l
 				}
 
 				scope.callback = function() {
-					console.log('scope.jobsIds: ', scope.jobsIds);
 					scope.onJobsSelected({
 						jobIds: scope.jobsIds
 					});

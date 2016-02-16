@@ -1,6 +1,6 @@
 .row.traditional(ng-class="csspinner")
   .col-lg-4
-    div(search-jobs on-found="onJobsFound(searchParams)")
+    search-jobs(selected-app="{{selectedApp}}" selected-options="{{selectedOptions}}" on-found="onJobsFound(searchParams)")
   .col-lg-8
     .alert.alert-info(ng-show="noData") No data was found !
     div(id="jobsTableWrapper", ng-hide="noData")

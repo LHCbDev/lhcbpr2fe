@@ -10,7 +10,9 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
     		onFound: '&',
     		filterOptions: '@',
     		filterVersions: '@',
-			filterPlatforms: '@'
+			filterPlatforms: '@',
+			selectedApp: '@',
+			selectedOptions: '@'
     	},
 		link: function(scope, element, attrs) {
 			scope.versionsIds = [];
@@ -76,7 +78,26 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 					lhcbprResources.all("active/applications/" + scope.app.id + "/options").getList(
 						{versions: scope.versionsIds.join()}
 					).then(function(options){
-						scope.options = options;
+						scope.options = [];
+						scope.optionsIds = []
+						if (scope.selectedOptions) {
+							var selectedOptionsArr = [];
+							if (angular.isString(scope.selectedOptions)){
+								selectedOptionsArr.push(scope.selectedOptions)
+							}else{
+								selectedOptionsArr = scope.selectedOptions;
+							}
+
+							options.forEach(function(opt){
+								if (selectedOptionsArr.indexOf(opt.name) != -1) {
+									scope.optionsIds.push(opt.id); 
+									scope.options.push(opt);
+								}
+							});
+
+						}else {
+							scope.options = options;
+						}
 						var paramsOptions = $location.search().options;
 						if(paramsOptions){
 							if(typeof paramsOptions === 'string')
@@ -157,7 +178,19 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 
 			lhcbprResources.all("active/applications").getList().then(
 				function(apps){
-					scope.apps = apps;
+					console.log(scope.selectedApp);
+					if (scope.selectedApp) {
+						apps.forEach(function(a){
+							if(a.name == scope.selectedApp){
+								scope.apps = [a];
+								scope.app = a;
+							}
+						});
+						return;
+					}else{
+						scope.apps = apps;
+					}
+
 					if($location.search().apps){
 						var id = $location.search().apps;
 						apps.forEach(function(a){

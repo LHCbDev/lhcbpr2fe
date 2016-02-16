@@ -7,13 +7,14 @@ App.controller('JobsController', ['$scope', function($scope) {
 
 }]);
 
-App.controller('JobsListController', ['$scope', '$filter', '$q', 'ngTableParams', 'ngDialog', 'lhcbprResources', '$timeout', '$sce', '$http', '$location',
-	function($scope, $filter, $q, ngTableParams, ngDialog, lhcbprResources, $timeout, $sce, $http, $location) {
+App.controller('JobsListController', ['$scope', '$filter', '$q', 'ngTableParams', 'ngDialog', 'lhcbprResources', '$timeout', '$sce', '$http', '$location', 'BUILD_PARAMS',
+	function($scope, $filter, $q, ngTableParams, ngDialog, lhcbprResources, $timeout, $sce, $http, $location, BUILD_PARAMS) {
 
 		$scope.jobsIds = [];
 		$scope.isShowSearchForm = !($location.search().ssf == 'false');
 		$scope.cachedJobs = {};
 		$scope.isShowingDialog = false;
+		$scope.media_url = BUILD_PARAMS.url_api + '/media/jobs';
 
 		var isImage = function(filename) {
 			var ext = filename.split('.').pop().toLowerCase();
