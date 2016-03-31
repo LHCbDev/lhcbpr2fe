@@ -1,7 +1,5 @@
 # LHCbPR web site
 
-
-
 ## Installation
 
 **Prerequisites:**
