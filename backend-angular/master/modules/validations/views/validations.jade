@@ -1,0 +1,33 @@
+h2 validation Analysis
+  small.text-muted  Look for histograms
+div(select-jobs on-jobs-selected="lookHistos(jobIds)")
+.row.traditional(ng-class="csspinner")  
+  .col-lg-12
+    .alert.alert-info(ng-show="noJobData") No root file was found ! 
+    <div ng-repeat="(key, job) in $data", id="jobsTrees", ng-hide="noJobData">
+    h3 Histos from the root file: {{ key }}
+    <form name="myForm">
+    <div ng-repeat="(path, val ) in job">
+    table.table.table-striped.table-bordered.table-hover
+      tbody
+        tr(ng-repeat="(cat, plots ) in val")
+          td <label for="repeatSelect"> {{ cat.replace("List__", "").replace("__", "/") }} </label>    
+          td
+            <select name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showChart(key, data.repeatSelect[key] )">
+            <option ng-repeat="(name, option) in plots" value="{{ name }}">{{option}}</option>
+            </select>
+    </form>
+    </div>
+    </div>
+         
+script(type="text/ng-template", id="histoGraph")
+  .row
+    .col-lg-10.col-lg-offset-1.col-md-10.col-md-offset-1.col-sx-10.col-sx-offset-1
+        rootjsserver(entrypoint="url" 
+          files="files_and_titles"
+          items="graphs"
+          width="800" height="600")
+          
+        
+          
+    
