@@ -10,30 +10,39 @@ App.directive('rootjs', function($timeout) {
   template: '<div ng-style="{\'width\': width, \'height\': height}"></div>',
   link: function(scope, element) {
 
-    scope.$watch('data', function(value) {
-    	if(!value) return;
-    	console.log('data', value.fGraphs.arr);
+    scope.$watch('data', function(values) {
+    	if(!values) return;
       try {
-        if (angular.isObject(value)) {
-          scope.json = value;
-        } else {
-          scope.json = angular.fromJson(value);
+        scope.json = [];
+        for ( key in values ) {
+          if (angular.isObject(values[key])) {
+            scope.json.push(values[key]);
+          } else {
+          	scope.json.push(angular.fromJson(values[key]));
+          }
         }
+        var obj = [];
         var pad = element.children()[0];
-        var obj = JSROOT.JSONR_unref(scope.json);
-        var canvas = createCanvas(
-        [
-        obj,
-        createLegend(obj)
-        ]
-        );
-        
+        for ( key in scope.json ) {
+          obj.push(JSROOT.JSONR_unref(scope.json[key]));
+        }  
+        var canvas = null;
+        if ( obj[0]._typename != 'TCanvas') {
+          var primitives = [obj[0]];
+        	if (obj[0]._typename == "TMultiGraph" ) {
+           	primitives.push(createLegend(obj[0]));
+          } else {
+            primitives = obj;
+            if ( obj.length > 1 ) primitives.push(createLegendTH(obj));
+          }
+	        canvas = createCanvas(primitives);
+        } else {
+	        canvas = obj[0];
+	      }
         pad.innerHTML = "";
+        
         $timeout(function(){JSROOT.draw(pad, canvas)},2);
-
-
-        // setTimeout(function(){JSROOT.draw(pad, createLegend({}));},1000);
-        //JSROOT.draw(pad, createLegend({}));
+        
       } catch (ex) {
         console.log('rootjs directive: ' + ex);
       }
@@ -42,47 +51,87 @@ App.directive('rootjs', function($timeout) {
 };
 
   function createLegend(obj) {
-  var legend = JSROOT.JSONR_unref({
-    '_typename': 'TLegend',
-    'fUniqueID': 0,
-    'fBits': 50331657,
-    'fLineColor': 1,
-    'fLineStyle': 1,
-    'fLineWidth': 1,
-    'fFillColor': 0,
-    'fFillStyle': 1001,
-    'fX1': 1.600000e-01,
-    'fY1': 7.500000e-01,
-    'fX2': 0.99,
-    'fY2': 0.99,
-    'fX1NDC': -2.353437e-185,
-    'fY1NDC': -2.353437e-185,
-    'fX2NDC': -2.353437e-185,
-    'fY2NDC': -2.353437e-185,
-    'fBorderSize': 1,
-    'fInit': 0,
-    'fShadowColor': 1,
-    'fCornerRadius': 0,
-    'fOption': 'brNDC',
-    'fName': 'TPave',
-    'fTextAngle': 0,
-    'fTextSize': 0,
-    'fTextAlign': 12,
-    'fTextColor': 1,
-    'fTextFont': 42,
-    'fEntrySeparation': 1.000000e-01,
-    'fMargin': 2.500000e-01,
-    'fNColumns': 1,
-    'fColumnSeparation': 0
-  });
-  var lst = JSROOT.CreateTList();
-  _.forEach(obj.fGraphs.arr, function(p) {
-    lst.Add(createTLegendEntry(p.fTitle, p.fLineColor));
-  });
+    var legend = JSROOT.JSONR_unref({
+      '_typename': 'TLegend',
+      'fUniqueID': 0,
+      'fBits': 50331657,
+      'fLineColor': 1,
+      'fLineStyle': 1,
+      'fLineWidth': 1,
+      'fFillColor': 0,
+      'fFillStyle': 1001,
+      'fX1': 8.600000e-01,
+      'fY1': 7.500000e-01,
+      'fX2': 0.99,
+      'fY2': 0.99,
+      'fX1NDC': -2.353437e-185,
+      'fY1NDC': -2.353437e-185,
+      'fX2NDC': -2.353437e-185,
+      'fY2NDC': -2.353437e-185,
+      'fBorderSize': 1,
+      'fInit': 0,
+      'fShadowColor': 1,
+      'fCornerRadius': 0,
+      'fOption': 'brNDC',
+      'fName': 'TPave',
+      'fTextAngle': 0,
+      'fTextSize': 0,
+      'fTextAlign': 12,
+      'fTextColor': 1,
+      'fTextFont': 42,
+      'fEntrySeparation': 1.000000e-01,
+      'fMargin': 2.500000e-01,
+      'fNColumns': 1,
+      'fColumnSeparation': 0
+    });
+    var lst = JSROOT.CreateTList();
+    _.forEach(obj.fGraphs.arr, function(p) {
+      lst.Add(createTLegendEntry(p.fTitle, p.fLineColor));
+    });
 
-  legend.fPrimitives = lst;
-  return legend;
-}
+    legend.fPrimitives = lst;
+    return legend;
+  }
+
+  function createLegendTH(objs) {
+    var legend = JSROOT.JSONR_unref({
+      '_typename': 'TLegend',
+      'fUniqueID': 0,
+      'fBits': 50331657,
+      'fLineColor': 1,
+      'fLineStyle': 1,
+      'fLineWidth': 1,
+      'fFillColor': 0,
+      'fFillStyle': 1001,
+      'fX1': 0.75,
+      'fY1': 0.85,
+      'fX2': 0.99,
+      'fY2': 0.99,
+      'fBorderSize': 1,
+      'fInit': 0,
+      'fShadowColor': 1,
+      'fCornerRadius': 0,
+      'fOption': 'brNDC',
+      'fName': 'TPave',
+      'fTextAngle': 0,
+      'fTextSize': 0,
+      'fTextAlign': 12,
+      'fTextColor': 1,
+      'fTextFont': 42,
+      'fEntrySeparation': 1.000000e-01,
+      'fMargin': 2.500000e-01,
+      'fNColumns': 1,
+      'fColumnSeparation': 0
+      
+    });
+    var lst = JSROOT.CreateTList();
+    _.forEach(objs, function(p) {
+      lst.Add(createTLegendEntry(p.fTitle, p.fLineColor));
+    });
+
+    legend.fPrimitives = lst;
+    return legend;
+  }  
 
   function createCanvas(objArr) {
   var canvas = JSROOT.JSONR_unref({
@@ -252,8 +301,7 @@ App.directive('rootjsserver', function($http) {
 
     ///
     function activate(files, items) {
-    	console.log("activate", files, items);
-      var strFiles = _.map(_.keys(files), encodeURIComponent).join(',');
+      var strFiles = _.map(_.keys(files), encodeURIComponent).join('__');
       var url = scope.entrypoint + '/?files=' +
       strFiles +
       '&items=' + encodeURIComponent(items) +
@@ -265,18 +313,30 @@ App.directive('rootjsserver', function($http) {
     function loaded(data) {
       var graph, mg, color;
       var graphs = [];
+      var others = [];
       color = 1;
       _.forEach(data.data['result'], function(file) {
         _.forEach(file['items'], function(value, key) {
-
-          graph = JSROOT.JSONR_unref(value);
-          graph.fLineColor = color++;
-          graph.fTitle = scope.files[file.root] + ' ' + graph.fTitle;
-          graphs.push(graph);
+        	if(value['_typename'] == 'TGraph' || value['_typename'] == 'TGraphErrors'){
+	          graph = JSROOT.JSONR_unref(value);
+	          graph.fLineColor = color++;
+	          graph.fTitle = scope.files[file.root] + ' ' + graph.fTitle;
+	          graphs.push(graph);
+          } else {
+            other = JSROOT.JSONR_unref(value);
+            other.fLineColor = color++;
+            if ( scope.files[file.root] != "" ) other.fTitle = scope.files[file.root];
+	          others.push(other);
+          }
         });
       });
-      console.log("len", graphs.length);
-      scope.data = JSROOT.CreateTMultiGraph.apply(this, graphs);
+
+      if (others.length > 0){
+      	//scope.data = others[0];
+        scope.data = others;
+      } else {
+      	scope.data = JSROOT.CreateTMultiGraph.apply(this, graphs);
+      }
     }
 
     function error(err) {
@@ -285,4 +345,6 @@ App.directive('rootjsserver', function($http) {
   }
 };
 });
+
+
 

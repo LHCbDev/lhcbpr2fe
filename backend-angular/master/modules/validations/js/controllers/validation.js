@@ -4,25 +4,64 @@ App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResou
   $scope.jobId = [];
   $scope.folders = ['/'];
   $scope.noJobData = true;
+  $scope.isShowSearchForm = true;
+  $scope.cachedJobs = {};
 
   $scope.data = {
     repeatSelect: null,
-    availableOptions: [
-      {id: '1', name: 'Option A'},
-      {id: '2', name: 'Option B'},
-      {id: '3', name: 'Option C'}
-    ],
-   };
+    plotSelect: null,
+    treedirs: {},
+    treeplots: {},
+    tree: {},  
+    graphs: {}
+  };
+  
+  $scope.sizeOf = function(obj) {
+    return Object.keys(obj).length;
+  };
 
+  $scope.showSearchForm = function() {
+    $scope.isShowSearchForm = true;
+  };
+
+  $scope.getJobName = function(id) {
+			var job = $scope.cachedJobs[id];
+			if (job) {
+				var av = job.job_description.application_version;
+				var opt = job.job_description.option;
+				return 'Job ID: ' + job.id + ' ' + av.application.name + ' ' + av.version + ' ' + opt.description;
+			} else {
+				return 'undefined';
+			}
+		};
 
 	$scope.lookHistos = function(jids) {
+    $scope.jobId = [];
+    $scope.folders = ['/'];
+    $scope.noJobData = true;
+    $scope.isShowSearchForm = false;
+
+    $scope.data = {
+      repeatSelect: null,
+      plotSelect: null,
+      treedirs: {},
+      treeplots: {},
+      tree: {},
+      graphs: {}
+    };	  
     var requestParams = {
       ids: jids.join(),
       type: "File",
-    };	  	
+    };
+    for (var i = 0, l = jids.length; i < l; ++i) {
+      $api.one('jobs', jids[i]).get().then(
+        function(job) {
+			    $scope.cachedJobs[job.id] = job;
+			  }
+			)	
+    }
+	
     var result = {};
-		// TODO: The filter code will be added here
-		// We send the request to the '/attributes' url of the API
 		if (jids && jids.length > 0) {
 		  $api.all('compare')
 				  .getList(requestParams)
@@ -36,69 +75,69 @@ App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResou
 				    }
 				    $scope.jobId = res.join("__");
 	          $scope.folders = ['/']; 	
-	          $scope.update();
+	          $scope.readTree();
 				  });
 		}
 	};	
 
-	$scope.attrsTableParams = new $tableParams ( 
-		{
-     	page: 1, // the page to show initialy
-    	count: 10 // number of rows on each page
-    }, 
-    { 
-      total: 0, // total number of rows initialy
-      getData: function($defer, params) {
-        if ($scope.jobId && $scope.jobId.length > 0) {
-          var parameters = {
-            files: $scope.jobId,
-            folders: $scope.folders
-          };
-          $apiroot.lookupDirs(parameters).then(function (response) {
-            params.total(response.length);
-            $scope.noJobData = (response.length < 1);
-            $defer.resolve(response);      
-          });
-        } else {
-          $scope.noJobData = ($scope.jobId.length < 1)
-        } 
-		  }
-		});
+  $scope.readTree = function() {
+    if ($scope.jobId && $scope.jobId.length > 0) {
+      var parameters = {
+        files: $scope.jobId,
+        folders: $scope.folders
+      };
+      $apiroot.lookupDirs(parameters).then(function (response) {
+        $scope.noJobData = (response.length < 1);
+        $scope.data.tree = response;
+        listfn = Object.keys(response);
+        var intersect = Object.keys(response[ listfn[0] ]['/']);
+        for ( key = 1; key < listfn.length; key++ ) { 
+          var list = Object.keys(response[ listfn[key] ]['/']);
+          intersect = $(list).filter(intersect)
+        }     
+        $scope.data.treedirs[listfn.join(',')] = {};
+        for ( key = 0; key < intersect.length; key++ ) {
+          namecat = intersect[key].replace(/List_*/, "/").replace("__","/");
+          $scope.data.treedirs[listfn.join(',')][intersect[key]] = namecat;
+        }
+      });
+    } else {
+      $scope.noJobData = ($scope.jobId.length < 1)
+    } 
+  }
 
-	// We add this line of code to fix a bug in the ngTable service
-	$scope.attrsTableParams.settings().$scope = $scope;
-	
-	$scope.update = function() {
-  	// Set the current page of the table to the first page
-    $scope.attrsTableParams.page(1);
-    // reloading data
-    $scope.attrsTableParams.reload();
-	};
-
-	$scope.showChart = function(file, title){
-	  console.log("Show chart of ", file, title);
+  $scope.showPlots = function(file, namecat) {
+    if ( $scope.data.plotSelect != null ) $scope.data.plotSelect[file] = "";
+    var listfn = file.split(',');
+    var intersect = $scope.data.tree[listfn[0]]['/'][namecat];
+   
+    for ( key = 1; key < listfn.length; key++ ) { 
+      var keys = {};
+      for (var i in intersect) 
+        if (i in $scope.data.tree[listfn[key]]['/'][namecat]) 
+          keys[i] = $scope.data.tree[listfn[key]]['/'][namecat][i];
+      intersect = keys;
+    }
+    $scope.data.treeplots[file] = intersect; 
+  }
+  
+  
+	$scope.showChart = function(file, title) {
 	  files={}
-	  files[file] = '';
+	  var listfn = file.split(',');
+	  for ( key in listfn ) {
+	    files[listfn[key]] = 'Job ID: ' + listfn[key].split('/')[1];
+	  }
+	  titles={}
+	  titles[title] = $scope.data.treeplots[file][title];
 	  $scope.url = BUILD_PARAMS.url_root;
     $scope.files_and_titles = files;
-    $scope.graphs = title;
-    $dialog.open({
-			template: 'histoGraph',
-			className: 'chart-dialog custom-dim',
-			scope: $scope,
-			preCloseCallback: function() {
-			  $scope.data.repeatSelect[file] = ""
-				console.log("Done!");
-			}
-		});
+    if ( title == "ALL" ) 
+      $scope.data.graphs = $scope.data.treeplots[file];
+    else 
+      $scope.data.graphs = titles;  
+
 	};
-	
-	$scope.showTree = function(file, path) {
-	  console.log("Show tree of ", file, path);
-	  $scope.jobId.push(file);
-	  $scope.folders.push(path); 	
-	  $scope.update();  
-	};	
-	
+
 }]);
  
