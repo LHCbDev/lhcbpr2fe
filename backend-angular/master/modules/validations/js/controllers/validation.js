@@ -1,5 +1,18 @@
 App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResources', 'rootResources', 'ngDialog', 'BUILD_PARAMS', 
     function($scope, $tableParams, $api, $apiroot, $dialog, BUILD_PARAMS) {
+    
+  $scope.color = {
+    0: "white",
+    1: "black", 
+    2: "red",
+    3: "green",
+    4: "blue",
+    5: "yellow",
+    6: "magenta",
+    7: "cyan",
+    8: "rgb(89,212,84)",
+    9: "rgb(89,84,217)"
+  };  
 
   $scope.jobId = [];
   $scope.folders = ['/'];

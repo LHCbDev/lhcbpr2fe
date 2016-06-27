@@ -16,9 +16,9 @@ div(select-jobs on-jobs-selected="lookHistos(jobIds)", ng-show="isShowSearchForm
   <div ng-if="key.split(',').length == 1">
   h3(style="color:red") Analyze job: 
   </div>
-  <div ng-repeat="file in key.split(',')">
-  h3(style="font-size:150%") {{ getJobName(file.split('/')[1]) }}
-  </div> 
+  <ul>
+  <li style="font-size:150%; {{ 'color: ' + color[$index+1] }};", ng-repeat="file in key.split(',')">{{ getJobName(file.split('/')[1]) }}</li>
+  </ul>
   .col-lg-6
       <form name="myForm">
       <select name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])">

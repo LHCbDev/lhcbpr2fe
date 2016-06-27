@@ -32,15 +32,15 @@ App.directive('rootjs', function($timeout) {
         	if (obj[0]._typename == "TMultiGraph" ) {
            	primitives.push(createLegend(obj[0]));
           } else {
+            _.forEach(obj, function(o) { o.fBits = 53608456; }); // Do not display title
             primitives = obj;
-            if ( obj.length > 1 ) primitives.push(createLegendTH(obj));
+           // if ( obj.length > 1 ) primitives.push(createLegendTH(obj));
           }
 	        canvas = createCanvas(primitives);
         } else {
 	        canvas = obj[0];
 	      }
         pad.innerHTML = "";
-        
         $timeout(function(){JSROOT.draw(pad, canvas)},2);
         
       } catch (ex) {
@@ -60,8 +60,8 @@ App.directive('rootjs', function($timeout) {
       'fLineWidth': 1,
       'fFillColor': 0,
       'fFillStyle': 1001,
-      'fX1': 8.600000e-01,
-      'fY1': 7.500000e-01,
+      'fX1': 0.75,
+      'fY1': 0.85,
       'fX2': 0.99,
       'fY2': 0.99,
       'fX1NDC': -2.353437e-185,
@@ -92,46 +92,6 @@ App.directive('rootjs', function($timeout) {
     legend.fPrimitives = lst;
     return legend;
   }
-
-  function createLegendTH(objs) {
-    var legend = JSROOT.JSONR_unref({
-      '_typename': 'TLegend',
-      'fUniqueID': 0,
-      'fBits': 50331657,
-      'fLineColor': 1,
-      'fLineStyle': 1,
-      'fLineWidth': 1,
-      'fFillColor': 0,
-      'fFillStyle': 1001,
-      'fX1': 0.75,
-      'fY1': 0.85,
-      'fX2': 0.99,
-      'fY2': 0.99,
-      'fBorderSize': 1,
-      'fInit': 0,
-      'fShadowColor': 1,
-      'fCornerRadius': 0,
-      'fOption': 'brNDC',
-      'fName': 'TPave',
-      'fTextAngle': 0,
-      'fTextSize': 0,
-      'fTextAlign': 12,
-      'fTextColor': 1,
-      'fTextFont': 42,
-      'fEntrySeparation': 1.000000e-01,
-      'fMargin': 2.500000e-01,
-      'fNColumns': 1,
-      'fColumnSeparation': 0
-      
-    });
-    var lst = JSROOT.CreateTList();
-    _.forEach(objs, function(p) {
-      lst.Add(createTLegendEntry(p.fTitle, p.fLineColor));
-    });
-
-    legend.fPrimitives = lst;
-    return legend;
-  }  
 
   function createCanvas(objArr) {
   var canvas = JSROOT.JSONR_unref({
@@ -249,7 +209,7 @@ App.directive('rootjs', function($timeout) {
     'kMenuBar': true
   });
 
-  var lst = JSROOT.CreateTList();
+  var lst = JSROOT.Create("TList");
   _.forEach(objArr, function(o) { lst.Add(o);});
   canvas.fPrimitives = lst;
   return canvas;
@@ -325,14 +285,16 @@ App.directive('rootjsserver', function($http) {
           } else {
             other = JSROOT.JSONR_unref(value);
             other.fLineColor = color++;
-            if ( scope.files[file.root] != "" ) other.fTitle = scope.files[file.root];
+            if ( scope.files[file.root] != "" ) {
+              //other.fTitle = scope.files[file.root]; // used in Legend
+              other.fName = scope.files[file.root];  // used in ToolTips
+            }  
 	          others.push(other);
           }
         });
       });
 
-      if (others.length > 0){
-      	//scope.data = others[0];
+      if (others.length > 0) {
         scope.data = others;
       } else {
       	scope.data = JSROOT.CreateTMultiGraph.apply(this, graphs);
