@@ -42,7 +42,7 @@ App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResou
 			if (job) {
 				var av = job.job_description.application_version;
 				var opt = job.job_description.option;
-				return 'Job ID: ' + job.id + ' ' + av.application.name + ' ' + av.version + ' ' + opt.description;
+				return 'Job ID: ' + job.id + ' ' + av.application.name + ' ' + av.version + ' - ' + job.platform.content + ' - ' + opt.description;
 			} else {
 				return 'undefined';
 			}
