@@ -42,7 +42,7 @@ App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResou
 			if (job) {
 				var av = job.job_description.application_version;
 				var opt = job.job_description.option;
-				return 'Job ID: ' + job.id + ' ' + av.application.name + ' ' + av.version + ' - ' + job.platform.content + ' - ' + opt.description;
+				return 'Job ID ' + job.id + ': ' + av.application.name + ' ' + av.version + ' - ' + job.platform.content + ' - ' + opt.description;
 			} else {
 				return 'undefined';
 			}
@@ -73,7 +73,7 @@ App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResou
 			  }
 			)	
     }
-	
+
     var result = {};
 		if (jids && jids.length > 0) {
 		  $api.all('compare')
@@ -81,9 +81,11 @@ App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResou
 				  .then(function(attr) { // When we receive the response
 				    res = [];
 				    for (i = 0; i < attr.length; i++) {
-				      if ( attr[i].jobvalues[0].value.endsWith(".root") ) {
-				        var file = 'jobs/' + attr[i].jobvalues[0].job.id + '/' + attr[i].jobvalues[0].value;
-				        res.push(file);
+				      for (j = 0; j < attr[i].jobvalues.length; j++) {
+				        if ( attr[i].jobvalues[j].value.endsWith(".root") ) {
+				          var file = 'jobs/' + attr[i].jobvalues[j].job.id + '/' + attr[i].jobvalues[j].value;
+				          res.push(file);
+				        }
 				      }
 				    }
 				    $scope.jobId = res.join("__");
