@@ -14,7 +14,7 @@ var gulp        = require('gulp'),
 		livereload  = require('gulp-livereload'), // Livereload plugin needed: https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei
 		marked      = require('marked'), // For :markdown filter in jade
 		merge 		= require('merge-stream'),
-		minifyCSS   = require('gulp-minify-css'),
+		minifyCSS   = require('gulp-clean-css'),
 		ngAnnotate  = require('gulp-ng-annotate'),
 		ngConstant  = require('gulp-ng-constant'),
 		path        = require('path'),
@@ -172,17 +172,17 @@ gulp.task('scripts:vendor:base', function() {
 // copy file from bower folder into the app vendor folder
 gulp.task('scripts:vendor:app', function() {
 	
-	var jsFilter = gulpFilter('**/*.js');
-	var cssFilter = gulpFilter('**/*.css');
+	var jsFilter = gulpFilter('**/*.js', {restore: true});
+	var cssFilter = gulpFilter('**/*.css', {restore: true});
 
 	return gulp.src(vendor.app.source, {base: 'bower_components'})
 			.pipe(expect(vendor.app.source))
 			.pipe(jsFilter)
 			.pipe(uglify())
-			.pipe(jsFilter.restore())
+			.pipe(jsFilter.restore)
 			.pipe(cssFilter)
 			.pipe(minifyCSS())
-			.pipe(cssFilter.restore())
+			.pipe(cssFilter.restore)
 			.pipe( gulp.dest(vendor.app.dest) );
 
 });
@@ -196,7 +196,7 @@ gulp.task('styles:app', function() {
 						paths: [source.styles.app.dir]
 				}))
 				.on("error", handleError)
-				.pipe( params.minify ? minifyCSS({processImport: false}) : gutil.noop() )
+				.pipe( params.minify ? minifyCSS() : gutil.noop() )
 				.pipe( params.sourcemaps ? sourcemaps.write('.') : gutil.noop())
 				.pipe(gulp.dest(build.styles));
 });
@@ -211,7 +211,7 @@ gulp.task('styles:app:rtl', function() {
 				}))
 				.on("error", handleError)
 				.pipe(flipcss())
-				.pipe( params.minify ? minifyCSS({processImport: false}) : gutil.noop() )
+				.pipe( params.minify ? minifyCSS() : gutil.noop() )
 				.pipe( sourcemaps ? sourcemaps.write('.') : gutil.noop())
 				.pipe(rename(function(path) {
 						path.basename += "-rtl";
@@ -296,7 +296,7 @@ gulp.task('connect', function() {
 	connect.server({
 		root: params.dist,
 		port: params.port,
-		livereload: true
+		livereload: false
 	});
 });
 // ----------------------------------------------------------------------------
