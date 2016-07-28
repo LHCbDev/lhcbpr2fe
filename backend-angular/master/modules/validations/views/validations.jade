@@ -17,7 +17,7 @@ div(select-jobs on-jobs-selected="lookHistos(jobIds)", ng-show="isShowSearchForm
   h3(style="color:red") Analyze job: 
   </div>
   <ul>
-  <li style="font-size:150%; {{ 'color: ' + color[$index+1] }};", ng-repeat="file in key.split(',')">{{ getJobName(file.split('/')[1]) }}</li>
+  <li style="font-size:150%; {{ 'color: ' + color[$index+1] }};", ng-repeat="file in key.split(',')">{{ getJobName(file.split('/')[0]) }}</li>
   </ul>
   .col-lg-6
       <form name="myForm">
