@@ -9,6 +9,7 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
     	scope: {
     		onFound: '&',
     		filterOptions: '@',
+			filterExecutables: '@',
     		filterVersions: '@',
 			filterPlatforms: '@',
 			selectedApp: '@',
@@ -19,9 +20,11 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 			scope.applicationIds = [];
 			scope.platformsIds = [];
 			scope.optionsIds = [];
+			scope.executablesIds = [];
 			scope.versionsFiltered = true;
 			scope.optionsFiltered = true;
 			scope.platformsFiltered = true;
+			scope.executablesFiltered = true;
 			scope.app = undefined;
 
 			scope.withNightly = ( $location.search().withNightly === true );
@@ -116,6 +119,30 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 						scope.searchJobs();
 					});
 				}
+				if(scope.filterExecutables !== 'false'){
+					scope.exectablesFiltered = false;
+					lhcbprResources.all("active/applications/" + scope.app.id + "/executables").getList(
+						{executables: scope.executablesIds.join()}
+					).then(function(executables){
+						scope.executables = executables;
+						var paramsExecutables = $location.search().executables;
+						if(paramsExecutables){
+							if(typeof paramsExecutables === 'string')
+								scope.executablesIds = [ parseInt(paramsExecutables) ];
+							else
+								scope.executablesIds = paramsExecutables.map(function(op){
+									return parseInt(op);
+								});
+						} else {
+							scope.allExecutablesIds = getAllIds(executables);
+							scope.executablesIds = scope.executablesIds.filter(function(el){
+								return scope.allExecutablesIds.indexOf(el) != -1;
+							});
+						}
+						scope.executablesFiltered = true;
+						scope.searchJobs();
+					});
+				}
 
 				if(scope.filterPlatforms !== 'false'){
 					scope.platformsFiltered = false;
@@ -164,11 +191,14 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 					scope.onFound({'searchParams': {
 						apps: scope.applicationIds,
 						options: scope.optionsIds,
+						executables: scope.executablesIds,
 						versions: selectedVersions,
 						platforms: scope.platformsIds
 					}});
+
 					$location.search('apps', scope.applicationIds);
 					$location.search('options', scope.optionsIds);
+					$location.search('executables', scope.executablesIds);
 					$location.search('platforms', scope.platformsIds);
 					$location.search('versions', scope.versionsIds);
 					$location.search('withNightly', scope.withNightly);
