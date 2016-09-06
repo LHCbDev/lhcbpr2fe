@@ -43,6 +43,13 @@ var params = {
 	sourcemaps: gutil.env.sourcemaps !== undefined
 };
 
+var minifyCSSTimeout = 20 * 1000; // 20 seconds
+var minifyOptions = {
+	inliner: {
+		timeout: minifyCSSTimeout
+	}
+};
+
 
 // ============================================================================
 // VENDOR CONFIG
@@ -181,7 +188,7 @@ gulp.task('scripts:vendor:app', function() {
 			.pipe(uglify())
 			.pipe(jsFilter.restore)
 			.pipe(cssFilter)
-			.pipe(minifyCSS())
+			.pipe(minifyCSS(minifyOptions))
 			.pipe(cssFilter.restore)
 			.pipe( gulp.dest(vendor.app.dest) );
 
@@ -196,7 +203,7 @@ gulp.task('styles:app', function() {
 						paths: [source.styles.app.dir]
 				}))
 				.on("error", handleError)
-				.pipe( params.minify ? minifyCSS() : gutil.noop() )
+				.pipe( params.minify ? minifyCSS(minifyOptions) : gutil.noop() )
 				.pipe( params.sourcemaps ? sourcemaps.write('.') : gutil.noop())
 				.pipe(gulp.dest(build.styles));
 });
@@ -211,7 +218,7 @@ gulp.task('styles:app:rtl', function() {
 				}))
 				.on("error", handleError)
 				.pipe(flipcss())
-				.pipe( params.minify ? minifyCSS() : gutil.noop() )
+				.pipe( params.minify ? minifyCSS(minifyOptions) : gutil.noop() )
 				.pipe( sourcemaps ? sourcemaps.write('.') : gutil.noop())
 				.pipe(rename(function(path) {
 						path.basename += "-rtl";
