@@ -27,7 +27,7 @@ Module.create('geantstandalone', 'GEANT', 2)
 		title: 'TestEm3',
 		url: '/geanttestem3',
 		templateUrl: 'geanttestem3.html',
-		resolve: ['geantstandalone','jsroot','ngTable', 'ngDialog']
+		resolve: ['geantstandalone','jsroot','ngTable', 'ngDialog', 'chartjs']
 	})
 	.addState({
 		name: 'geanttestem5',
