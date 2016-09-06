@@ -42,7 +42,8 @@ script(type="text/ng-template", id="chartTemplate")
       h2 {{attr.name}}
       div
         mark {{mean | number}} &#177; {{err | number}}
-      canvas(id="attrChart", linechart='',data='lineData', height='chartHeight()', width='chartWidth()')
+      canvas(id="attrChart", height='{{chartHeight()}}', width='{{chartWidth()}}')
+
 script(type="text/ng-template", id="filesTemplate")
   .row
     .col-lg-12

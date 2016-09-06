@@ -89,8 +89,7 @@
     "lodash-compat": "^3.10.1",
     "restangular": "1.4.0",
     "checklist-model": "0.2.4",
-    "be-responsive": "~1.0.1",
-    "Chart.js": "https://github.com/webNeat/Chart.js-ErrorBars/archive/master.zip"
+    "be-responsive": "~1.0.1"
   },
   "resolutions": {
     "jquery-ui": "1.11.1",
