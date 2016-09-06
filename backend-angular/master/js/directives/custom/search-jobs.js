@@ -211,7 +211,7 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 					console.log(scope.selectedApp);
 					if (scope.selectedApp) {
 						apps.forEach(function(a){
-							if(a.name == scope.selectedApp){
+							if(a.name.toLowerCase() === scope.selectedApp.toLowerCase()){
 								scope.apps = [a];
 								scope.app = a;
 							}
