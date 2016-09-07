@@ -1,51 +1,108 @@
 h3 Validation Analysis
   small.text-muted LHCbPR
-
-div(select-jobs on-jobs-selected="lookHistos(jobIds)", ng-show="isShowSearchForm")  
-.row.traditional(ng-class="csspinner", ng-show="!isShowSearchForm")
-  .col-lg-4
-    button.btn.btn-primary(type="button" ng-disabled="isShowSearchForm", ng-click="showSearchForm()")
-      | Show search form
-   
-.row.traditional(ng-class="csspinner")  
-  .alert.alert-info(ng-show="noJobData") No root file was found ! 
-  <div ng-repeat="(key, job) in data.treedirs", id="jobsTrees", ng-hide="noJobData">
-  <div ng-if="key.split(',').length > 1">
-  h3(style="color:red") Compare jobs: 
-  </div>
-  <div ng-if="key.split(',').length == 1">
-  h3(style="color:red") Analyze job: 
-  </div>
-  <ul>
-  <li style="font-size:150%; {{ 'color: ' + color[$index+1] }};", ng-repeat="file in key.split(',')">{{ getJobName(file.split('/')[0]) }}</li>
-  </ul>
-  .col-lg-6
-      <form name="myForm">
-      <select name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])">
-      <option ng-repeat="(path, val) in job" value="{{ path }}">{{ val }}</option>
-      </select>
-      </form>
-    
-  .col-lg-6
-      <div ng-repeat="(key, job) in data.treeplots", id="jobsPlots", ng-hide="noJobData">
-      <form name="myForm">
-      <select name="{{ 'plotSelect' + key }}" id="{{ 'plotSelect' + key }}" ng-model="data.plotSelect[key]" ng-change="showChart(key, data.plotSelect[key])">
-      <option ng-selected="true" value="">-- select a plots --</option>
-      <option value="ALL">ALL</option>
-      <option ng-repeat="(path, val) in job" value="{{ path }}">{{ val }}</option>
-      </select>
-      </form>
-
+  
+#panelSearch.panel.panel-default
+  .panel-heading
+    paneltool(tool-collapse)
+    .panel-title Select one or more jobs
+  .panel-wrapper(collapse="panelSearch")
+    .panel-body
+      select-jobs(on-jobs-selected="lookHistos(jobIds)")  
+      
+#panelJobs.panel.panel-default
+  .panel-heading
+    paneltool(tool-collapse)
+    .panel-title Select item to plot
+  .panel-wrapper(collapse="panelJobs")
+    .panel-body   
+      .alert.alert-info(ng-show="noJobData") No root file was found ! 
+      <div ng-repeat="(key, job) in data.treedirs", id="jobsTrees", ng-hide="noJobData">
+      <div ng-if="key.split(',').length > 1">
+      h3(style="color:red") Compare jobs: 
+      </div>
+      <div ng-if="key.split(',').length == 1">
+      h3(style="color:red") Analyze job: 
+      </div>
+      <ul>
+      <li style="font-size:150%; {{ 'color: ' + color[$index+1] }};", ng-repeat="file in key.split(',')">{{ getJobName(file.split('/')[0]) }}</li>
+      </ul>
+      .col-lg-6
+          <form name="myForm">
+          <select name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])">
+          <option ng-repeat="(path, val) in job" value="{{ path }}">{{ val }}</option>
+          </select>
+          </form>
+        
+      .col-lg-6
+          <div ng-repeat="(key, job) in data.treeplots", id="jobsPlots", ng-hide="noJobData">
+          <form name="myForm">
+          <select name="{{ 'plotSelect' + key }}" id="{{ 'plotSelect' + key }}" ng-model="data.plotSelect[key]" ng-change="showChart(key, data.plotSelect[key])">
+          <option ng-selected="true" value="">-- select a plots --</option>
+          <option value="ALL">ALL</option>
+          <option ng-repeat="(path, val) in job" value="{{ path }}">{{ val }}</option>
+          </select>
+          </form>
+          </div>
+      </div>    
+      
+<div ng-if="jobId.split('__').length == 3">  
+#panelOptions.panel.panel-default     
+  .panel-heading
+    paneltool(tool-collapse)
+    .panel-title Options 
+  .panel-wrapper(collapse="panelOptions")
+    .panel-body
+       form.form-inline(role='form')
+        fieldset
+          .form-group.col-sm-6
+              label.radio-inline(ng-repeat="option in commonoptions")
+                input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
+                |  {{ option.text }}
+</div>                
+<div ng-if="jobId.split('__').length == 2">  
+#panelOptions.panel.panel-default     
+  .panel-heading
+    paneltool(tool-collapse)
+    .panel-title Options 
+  .panel-wrapper(collapse="panelOptions")
+    .panel-body
+       form.form-inline(role='form')
+        fieldset
+          .form-group.col-sm-6
+              label.radio-inline(ng-repeat="option in commonoptions")
+                input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
+                |  {{ option.text }}          
+              label.radio-inline(ng-repeat="option in options")
+                input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
+                |  {{ option.text }}        
+                      
+</div>
+  
 .row.traditional(ng-class="csspinner")  
   .col-lg-12
+      <div ng-if="data.optvalue=='Split'">
+      <table style="width:100%">
+      <tr ng-repeat="(item, title) in data.graphs", ng-hide="noJobData">
+      <td ng-repeat="(file, name) in files_and_titles" ng-init="test[file] = name">
+      h4(style="color:red") {{ title }} - {{ name }}
+      rootjsserver(entrypoint="url" 
+          files="test"
+          items="item"
+          compute=""
+          width="500" height="375")
+      </td>  
+      </tr>
+      </table>
+      </div>
+      <div ng-if="data.optvalue!='Split'">
       <div ng-repeat="(item, title) in data.graphs", ng-hide="noJobData">
-      h3(style="color:red") {{ title }} 
+      h3(style="color:red") {{ title }}
       rootjsserver(entrypoint="url" 
           files="files_and_titles"
           items="item"
+          compute="data.optvalue"
           width="800" height="600")
-      </div>  
-
-
+      </div>     
+      </div>
           
     

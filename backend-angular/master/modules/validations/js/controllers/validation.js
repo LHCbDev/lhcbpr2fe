@@ -1,5 +1,5 @@
-App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResources', 'rootResources', 'ngDialog', 'BUILD_PARAMS', 
-    function($scope, $tableParams, $api, $apiroot, $dialog, BUILD_PARAMS) {
+App.controller('ValidationsController', ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 
+    function($scope, $api, $apiroot, BUILD_PARAMS) {
     
   $scope.color = {
     0: "white",
@@ -14,6 +14,17 @@ App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResou
     9: "rgb(89,84,217)"
   };  
 
+  $scope.options = [
+  	{value: 'Difference', text: 'Plot difference'},
+    {value: 'Ratio', text: 'Plot ratio'},
+  	{value: 'Kolmogorov', text: 'Apply Kolmogorv test'},
+  ];
+  
+  $scope.commonoptions = [
+  	{value: '', text: 'Superimposed'},  
+  	{value: 'Split', text: 'Separated'}
+  ];  
+  
   $scope.jobId = [];
   $scope.folders = ['/'];
   $scope.noJobData = true;
@@ -26,12 +37,16 @@ App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResou
     treedirs: {},
     treeplots: {},
     tree: {},  
-    graphs: {}
+    graphs: {},
+    optvalue: ""
   };
+  
+  $scope.panelJobs = {toggle: false};
   
   $scope.sizeOf = function(obj) {
     return Object.keys(obj).length;
   };
+
 
   $scope.showSearchForm = function() {
     $scope.isShowSearchForm = true;
@@ -60,8 +75,10 @@ App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResou
       treedirs: {},
       treeplots: {},
       tree: {},
-      graphs: {}
-    };	  
+      graphs: {}, 
+      optvalue: ""
+    };	
+
     var requestParams = {
       ids: jids.join(),
       type: "File",
@@ -136,12 +153,11 @@ App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResou
     $scope.data.treeplots[file] = intersect; 
   }
   
-  
 	$scope.showChart = function(file, title) {
 	  files={}
 	  var listfn = file.split(',');
 	  for ( key in listfn ) {
-	    files[listfn[key]] = 'Job ID: ' + listfn[key].split('/')[1];
+	    files[listfn[key]] = 'Job ID: ' + listfn[key].split('/')[0];
 	  }
 	  titles={}
 	  titles[title] = $scope.data.treeplots[file][title];
@@ -152,7 +168,8 @@ App.controller('ValidationsController', ['$scope', 'ngTableParams', 'lhcbprResou
     else 
       $scope.data.graphs = titles;  
 
-	};
+	}
+
 
 }]);
  
