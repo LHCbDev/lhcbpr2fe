@@ -1,46 +1,49 @@
 App.controller('Geanttestem3Controller',
-               function($scope, $log, lhcbprResourcesHelper, ngDialog,
+function ($scope, $log, lhcbprResourcesHelper, ngDialog,
                         APP_CHART_COLORS, BUILD_PARAMS) {
   $scope.url = BUILD_PARAMS.url_root;
   console.log(Chart.defaults.global.colours);
 
-  $scope.analyze = function(ids) {
-    lhcbprResourcesHelper.compare(ids, "TESTEM3_TABLE").then(showPlots);
+  $scope.analyze = function (ids) {
+    lhcbprResourcesHelper.compare(ids, 'TESTEM3_TABLE').then(showPlots);
   };
 
-
-  $scope.chartHeight = function() { return $(window).height() - 160; };
-  $scope.chartWidth = function() { return $(window).width() - 60; };
+  $scope.chartHeight = function () {
+    return $(window).height() - 160;
+  };
+  $scope.chartWidth = function () {
+    return $(window).width() - 60;
+  };
   $scope.datasets = [];
   // ==========================================================================
-  $scope.$on('ngDialog.opened', function(e, $dialog) {
-    var ctx = $("#attrChart");
+  $scope.$on('ngDialog.opened', function () {
+    var ctx = $('#attrChart');
     $scope.chart = new Chart(ctx, {
       type: 'line',
       data: {datasets: $scope.datasets},
       options: {
         title: {
-                 display: true,
-                 text: "Energy deposition in a sampling calorimeter."
-               },
+          display: true,
+          text: 'Energy deposition in a sampling calorimeter.'
+        },
         responsive: true,
         scales: {
           xAxes: [{
-                   type: 'linear',
-                   position: 'bottom',
-                   scaleLabel: {display: true, labelString: "Energy (GeV)"}
-                 }],
+            type: 'linear',
+            position: 'bottom',
+            scaleLabel: {display: true, labelString: 'Energy (GeV)'}
+          }],
           yAxes: [{
             type: 'linear',
             position: 'left',
-            scaleLabel: {display: true, labelString: "Deposition"}
+            scaleLabel: {display: true, labelString: 'Deposition'}
           }]
         }
       }
     });
   });
 
-  function showPlots(results) {
+  function showPlots (results) {
     console.log(results);
     $scope.datasets.length = 0;
     for (var i = 0; i < results[0].jobvalues.length; i++) {
@@ -49,8 +52,8 @@ App.controller('Geanttestem3Controller',
 
       //   console.log(job, value);
       var dataset = APP_CHART_COLORS[i % APP_CHART_COLORS.length];
-      dataset.label = "Job #" + job.id + ", " +
-                      job.job_description.application_version.version + ", " +
+      dataset.label = 'Job #' + job.id + ', ' +
+                      job.job_description.application_version.version + ', ' +
                       job.platform.content;
       dataset.data = [];
       dataset.fill = false;

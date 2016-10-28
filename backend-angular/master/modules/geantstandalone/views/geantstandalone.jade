@@ -1,4 +1,4 @@
-h3 GEANT standalone tests 
+h3 GEANT standalone tests
   small.text-muted
 #panelGeant1.panel.panel-default
   .panel-heading
@@ -41,9 +41,9 @@ h3 GEANT standalone tests
               label.checkbox.checkbox-inline(ng-repeat="plot in plots")
                 input(type="checkbox", checklist-model="selectedPlots", checklist-value="plot.value")
                 |  {{plot.text}}
-          
 
-rootjsserver(entrypoint="url" 
-    files="files_and_titles"
+
+rootjsserver(entrypoint="url"
+    files="filesAndTitles"
     items="graphs"
     width="800" height="600")
