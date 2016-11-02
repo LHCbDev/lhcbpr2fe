@@ -49,7 +49,9 @@ App.factory('lhcbprResourcesHelper', function(lhcbprResources) {
   }
 
   function compare(job_ids, attr) {
-    var filter = {} filter['ids'] = job_ids.join(',') filter['contains'] = attr;
+    var filter = {};
+    filter['ids'] = job_ids.join(',');
+    filter['contains'] = attr;
 
     return lhcbprResources.all('compare').getList(filter);
   }
