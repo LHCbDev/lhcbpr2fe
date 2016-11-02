@@ -236,7 +236,6 @@ App.controller('JobsListController', ['$scope', '$filter', '$q', 'ngTableParams'
 				datasets: datasets
 			};
 			$scope.$on('ngDialog.opened', function (e, $dialog) {
-				console.log('ngDialog opened: ' + $dialog.attr('id'));
 				var ctx = $('#attrChart');
 				var chart = new Chart(ctx, {type: 'line',
 				data: $scope.lineData,

@@ -2,7 +2,8 @@ App.service('lhcbprResources', function(Restangular, BUILD_PARAMS, $rootScope) {
   var url = BUILD_PARAMS.url_api;
   Restangular.setBaseUrl(url);
   Restangular.setJsonp(true);
-  Restangular.setDefaultRequestParams('jsonp', {format: 'jsonp', callback: 'JSON_CALLBACK'});
+  Restangular.setDefaultRequestParams(
+      'jsonp', {format: 'jsonp', callback: 'JSON_CALLBACK'});
   Restangular.setDefaultHttpFields({cache: true});
 
   Restangular.setResponseExtractor(function(response, operation, what, url) {
@@ -17,30 +18,26 @@ App.service('lhcbprResources', function(Restangular, BUILD_PARAMS, $rootScope) {
       };
       response = newResponse;
     }
-    	$rootScope.pendingRequests --;
-    	if ($rootScope.pendingRequests == 0)
-    		$rootScope.loadingPercentage = 5;
-    	else
-	    	$rootScope.loadingPercentage = 100 / ($rootScope.pendingRequests + 1);
+    $rootScope.pendingRequests--;
+    if ($rootScope.pendingRequests == 0)
+      $rootScope.loadingPercentage = 5;
+    else
+      $rootScope.loadingPercentage = 100 / ($rootScope.pendingRequests + 1);
     return response;
   });
 
   Restangular.addRequestInterceptor(function(element, operation, what, url) {
-    	$rootScope.pendingRequests ++;
+    $rootScope.pendingRequests++;
     $rootScope.loadingPercentage = 100 / ($rootScope.pendingRequests + 1);
     return element;
   });
 
   return Restangular;
-}
-);
+});
 
-App.factory('lhcbprResourcesHelper',function(lhcbprResources) {
+App.factory('lhcbprResourcesHelper', function(lhcbprResources) {
 
-  return {
-    search: search,
-    compare: compare
-  };
+  return {search: search, compare: compare};
 
   ////
   function search(params) {
@@ -51,12 +48,10 @@ App.factory('lhcbprResourcesHelper',function(lhcbprResources) {
     return lhcbprResources.all('search-jobs').getList(filter);
   }
 
-  function compare(job_ids, attr){
-  	var filter = {}
-  	filter['ids'] = job_ids.join(',')
-  	filter['contains'] = attr;
+  function compare(job_ids, attr) {
+    var filter = {} filter['ids'] = job_ids.join(',') filter['contains'] = attr;
 
-  	return lhcbprResources.all('compare').getList(filter);
+    return lhcbprResources.all('compare').getList(filter);
   }
 
 });
