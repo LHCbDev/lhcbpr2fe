@@ -3332,20 +3332,18 @@
 
       if (pixel_density) dorounding = true;
 
-      var pmain = this.main_painter();
-
        // calculate graphical coordinates in advance
       for (i = res.i1; i <= res.i2; ++i) {
          x = this.GetBinX(i);
          if (this.options.Logx && (x <= 0)) { res.i1 = i+1; continue; }
-         res.grx[i] = pmain.grx(x);
+         res.grx[i] = this.grx(x);
          if (dorounding) res.grx[i] = Math.round(res.grx[i]);
       }
 
       for (j = res.j1; j <= res.j2; ++j) {
          y = this.GetBinY(j);
          if (this.options.Logy && (y <= 0)) { res.j1 = j+1; continue; }
-         res.gry[j] = pmain.gry(y);
+         res.gry[j] = this.gry(y);
          if (dorounding) res.gry[j] = Math.round(res.gry[j]);
       }
 

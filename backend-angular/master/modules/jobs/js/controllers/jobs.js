@@ -113,7 +113,6 @@ App.controller('JobsListController', ['$scope', '$filter', '$q', 'ngTableParams'
 			$scope.attrsTableParams.page(1);
 			$scope.attrsTableParams.reload();
 
-			console.log($scope.cachedJobs);
 		};
 
 		$scope.$watch('attrFilter', function(val) {
@@ -150,7 +149,7 @@ App.controller('JobsListController', ['$scope', '$filter', '$q', 'ngTableParams'
 			var job = $scope.cachedJobs[id];
 			if (job) {
 				var av = job.job_description.application_version;
-				return av.application.name + ' ' + av.version + '(id=' + job.id + ')';
+				return av.application.name + ' ' + av.version + ' ' + job.platform.content + ' (id=' + job.id + ')';
 			} else {
 				return 'undefined';
 			}
@@ -197,7 +196,7 @@ App.controller('JobsListController', ['$scope', '$filter', '$q', 'ngTableParams'
 			var datasets = [{
 				label: attr.name,
 				fillColor: 'rgba(0,255,0,0)',
-				strokeColor: 'blue',
+				borderColor: 'blue',
 				pointColor: 'blue',
 				pointStrokeColor: '#fff',
 				pointHighlightFill: '#fff',
@@ -236,7 +235,14 @@ App.controller('JobsListController', ['$scope', '$filter', '$q', 'ngTableParams'
 				labels: labels,
 				datasets: datasets
 			};
-
+			$scope.$on('ngDialog.opened', function (e, $dialog) {
+				var ctx = $('#attrChart');
+				var chart = new Chart(ctx, {type: 'line',
+				data: $scope.lineData,
+				options: {
+        			responsive: true
+    			}});
+			});
 			ngDialog.open({
 				template: 'chartTemplate',
 				className: 'chart-dialog',

@@ -43,6 +43,13 @@ var params = {
 	sourcemaps: gutil.env.sourcemaps !== undefined
 };
 
+var minifyCSSTimeout = 20 * 1000; // 20 seconds
+var minifyOptions = {
+	inliner: {
+		timeout: minifyCSSTimeout
+	}
+};
+
 
 // ============================================================================
 // VENDOR CONFIG
@@ -181,7 +188,7 @@ gulp.task('scripts:vendor:app', function() {
 			.pipe(uglify())
 			.pipe(jsFilter.restore)
 			.pipe(cssFilter)
-			.pipe(minifyCSS())
+			.pipe(minifyCSS(minifyOptions))
 			.pipe(cssFilter.restore)
 			.pipe( gulp.dest(vendor.app.dest) );
 
@@ -196,7 +203,7 @@ gulp.task('styles:app', function() {
 						paths: [source.styles.app.dir]
 				}))
 				.on("error", handleError)
-				.pipe( params.minify ? minifyCSS() : gutil.noop() )
+				.pipe( params.minify ? minifyCSS(minifyOptions) : gutil.noop() )
 				.pipe( params.sourcemaps ? sourcemaps.write('.') : gutil.noop())
 				.pipe(gulp.dest(build.styles));
 });
@@ -211,7 +218,7 @@ gulp.task('styles:app:rtl', function() {
 				}))
 				.on("error", handleError)
 				.pipe(flipcss())
-				.pipe( params.minify ? minifyCSS() : gutil.noop() )
+				.pipe( params.minify ? minifyCSS(minifyOptions) : gutil.noop() )
 				.pipe( sourcemaps ? sourcemaps.write('.') : gutil.noop())
 				.pipe(rename(function(path) {
 						path.basename += "-rtl";
@@ -363,27 +370,27 @@ gulp.task('modules:views', function() {
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
-	livereload.listen({port: params.lvr_port});
+	// livereload.listen({port: params.lvr_port});
+	var watchOpts = {interval: 2000};
+	gulp.watch(source.scripts.watch, watchOpts,['scripts:app']);
+	gulp.watch(source.styles.app.watch, watchOpts, ['styles:app', 'styles:app:rtl']);
+	gulp.watch(source.styles.themes.watch, watchOpts,  ['styles:themes']);
+	gulp.watch(source.bootstrap.watch, watchOpts,  ['styles:app']); //bootstrap
+	gulp.watch(source.templates.pages.watch, watchOpts, ['templates:pages']);
+	gulp.watch(source.templates.views.watch, watchOpts, ['templates:views']);
+	gulp.watch(source.templates.app.watch, watchOpts, ['templates:app']);
+	gulp.watch('modules/**/*.js', watchOpts, ['modules:scripts']);
+	gulp.watch('modules/**/*.less', watchOpts, ['modules:styles']);
+	gulp.watch('modules/**/*.jade', watchOpts, ['modules:views']);
 
-	gulp.watch(source.scripts.watch,           ['scripts:app']);
-	gulp.watch(source.styles.app.watch,        ['styles:app', 'styles:app:rtl']);
-	gulp.watch(source.styles.themes.watch,     ['styles:themes']);
-	gulp.watch(source.bootstrap.watch,         ['styles:app']); //bootstrap
-	gulp.watch(source.templates.pages.watch,   ['templates:pages']);
-	gulp.watch(source.templates.views.watch,   ['templates:views']);
-	gulp.watch(source.templates.app.watch,     ['templates:app']);
-	gulp.watch('modules/**/*.js', ['modules:scripts']);
-	gulp.watch('modules/**/*.less', ['modules:styles']);
-	gulp.watch('modules/**/*.jade', ['modules:views']);
+	// gulp.watch([
+	// 		params.dist + '/app/**'
+	// ]).on('change', function(event) {
 
-	gulp.watch([
-			params.dist + '/app/**'
-	]).on('change', function(event) {
+	// 		livereload.changed( event.path );
+	// 		connect.reload();
 
-			livereload.changed( event.path );
-			connect.reload();
-
-	});
+	// });
 
 });
 // ----------------------------------------------------------------------------

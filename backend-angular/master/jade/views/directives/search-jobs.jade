@@ -14,7 +14,13 @@
               input(type="checkbox", checklist-model="optionsIds", checklist-value="option.id", checklist-change="searchJobs()")
               span.fa.fa-check
               |  {{option.name}} ({{option.count}})
-        
+        .form-group(ng-show="filterExecutables !== 'false' && executables")
+          label Executables
+          .c-checkbox.checkbox.needsclick(ng-repeat="exe in executables")
+            label
+              input(type="checkbox", checklist-model="executablesIds", checklist-value="exe.id", checklist-change="searchJobs()")
+              span.fa.fa-check
+              | {{exe.name}} ({{exe.count}})
         .form-group(ng-show="filterPlatforms !== 'false' && platforms")
           label Platforms
           .c-checkbox.checkbox.needsclick(ng-repeat="platform in platforms")

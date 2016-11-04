@@ -21,6 +21,66 @@ App
     'gray-light':             '#e4eaec',
     'gray-lighter':           '#edf1f2'
   })
+  .constant('APP_CHART_COLORS',
+  	[
+		   { // blue
+				fillColor: "rgba(151,187,205,0.2)",
+				borderColor: "rgba(151,187,205,1)",
+				pointColor: "rgba(151,187,205,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(151,187,205,0.8)"
+			},
+			{ // red
+				backgroundColor: "rgba(247,70,74,0.2)",
+				borderColor: "rgba(247,70,74,1)",
+				pointColor: "rgba(247,70,74,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(247,70,74,0.8)"
+			},
+			{ // green
+				fibackgroundColorllColor: "rgba(70,191,189,0.2)",
+				borderColor: "rgba(70,191,189,1)",
+				pointColor: "rgba(70,191,189,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(70,191,189,0.8)"
+			},
+			{ // yellow
+				backgroundColor: "rgba(253,180,92,0.2)",
+				borderColor: "rgba(253,180,92,1)",
+				pointColor: "rgba(253,180,92,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(253,180,92,0.8)"
+			},
+			{ // grey
+				backgroundColor: "rgba(148,159,177,0.2)",
+				borderColor: "rgba(148,159,177,1)",
+				pointColor: "rgba(148,159,177,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(148,159,177,0.8)"
+			},
+			{ // dark grey
+				backgroundColor: "rgba(77,83,96,0.2)",
+				borderColor: "rgba(77,83,96,1)",
+				pointColor: "rgba(77,83,96,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(77,83,96,1)"
+			},
+			{ // light grey
+				backgroundColor: "rgba(220,220,220,0.2)",
+				borderColor: "rgba(220,220,220,1)",
+				pointColor: "rgba(220,220,220,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(220,220,220,0.8)"
+			},
+	]
+  )
   .constant('APP_MEDIAQUERY', {
     'desktopLG':             1200,
     'desktop':                992,
@@ -101,7 +161,7 @@ App
                              'vendor/fullcalendar/dist/fullcalendar.css'],
       'gcal':               ['vendor/fullcalendar/dist/gcal.js'],
       'nestable':           ['vendor/nestable/jquery.nestable.js'],
-      'chartjs':            ['vendor/Chart.js/Chart.min.js'],
+      'chartjs':            ['app/vendor/chartjs/Chart.min.js'],
       'be-responsive': 			['vendor/be-responsive/be-responsive.css', 'vendor/be-responsive/be-responsive.js']
     },
     // Angular based script (use the right module name)

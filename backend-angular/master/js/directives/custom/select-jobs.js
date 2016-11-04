@@ -31,6 +31,7 @@ App.directive('selectJobs', ["ngTableParams", "ngDialog", "lhcbprResources", '$l
 							application: scope.searchParams.apps.join(','),
 							versions: scope.searchParams.versions.join(','),
 							options: scope.searchParams.options.join(','),
+							executables: scope.searchParams.executables.join(','),
 							platforms: scope.searchParams.platforms.join(','),
 							page: params.page(),
 							page_size: params.count()
