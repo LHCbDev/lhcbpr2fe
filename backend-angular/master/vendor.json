@@ -22,7 +22,6 @@
   "bower_components/weather-icons/font/*",
   "bower_components/skycons/skycons.js",
   "bower_components/whirl/dist/whirl.css",
-  "bower_components/jquery-classyloader/js/jquery.classyloader.min.js",
   "bower_components/animo.js/animo.js",
   "bower_components/modernizr/modernizr.js",
   "bower_components/fastclick/lib/fastclick.js",

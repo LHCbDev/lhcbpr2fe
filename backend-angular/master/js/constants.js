@@ -91,7 +91,7 @@ App
     // jQuery based and standalone scripts
     scripts: {
       'whirl':              ['vendor/whirl/dist/whirl.css'],
-      'classyloader':       ['vendor/jquery-classyloader/js/jquery.classyloader.min.js'],
+      'classyloader':       ['app/vendor/classyloader/jquery.classyloader.js'],
       'animo':              ['vendor/animo.js/animo.js'],
       'fastclick':          ['vendor/fastclick/lib/fastclick.js'],
       'modernizr':          ['vendor/modernizr/modernizr.js'],
@@ -190,7 +190,7 @@ App
       {name: 'ui.select',                 files: ['vendor/angular-ui-select/dist/select.js',
                                                   'vendor/angular-ui-select/dist/select.css']},
       {name: 'ui.codemirror',             files: ['vendor/angular-ui-codemirror/ui-codemirror.js']}
-        
+
     ]
 
   })
