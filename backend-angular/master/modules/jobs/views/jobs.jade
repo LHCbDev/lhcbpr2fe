@@ -23,7 +23,7 @@ div(select-jobs on-jobs-selected="compare(jobIds)", ng-show="isShowSearchForm")
         td {{attr.name}}
         td {{attr.description}}
         td {{attr.dtype}}
-        td 
+        td
           table.table-condensed
             tr(ng-repeat="jv in attr.jobvalues")
               td
@@ -42,7 +42,9 @@ script(type="text/ng-template", id="chartTemplate")
       h2 {{attr.name}}
       div
         mark {{mean | number}} &#177; {{err | number}}
-      canvas(id="attrChart", height='{{chartHeight()}}', width='{{chartWidth()}}')
+      .chart
+        //- canvas(id="attrChart", height='{{chartHeight()}}', width='{{chartWidth()}}')
+        canvas(id="attrChart", linechart='', options='lineOptions', data='lineData', height='chartHeight()', width='chartWidth()')
 
 script(type="text/ng-template", id="filesTemplate")
   .row

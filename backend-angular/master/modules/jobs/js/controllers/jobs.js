@@ -94,7 +94,7 @@ App.controller('JobsListController', ['$scope', '$filter', '$q', 'ngTableParams'
 		};
 
 		$scope.onJobsFound = function(params) {
-			console.log('AAA', params);
+
 			$scope.searchParams = params;
 			$scope.jobsTableParams.page(1);
 			$scope.jobsIds = [];
@@ -235,14 +235,14 @@ App.controller('JobsListController', ['$scope', '$filter', '$q', 'ngTableParams'
 				labels: labels,
 				datasets: datasets
 			};
+
 			$scope.$on('ngDialog.opened', function (e, $dialog) {
 				var ctx = $('#attrChart');
-				var chart = new Chart(ctx, {type: 'line',
-				data: $scope.lineData,
-				options: {
+				var chart = new Chart(ctx).Line($scope.lineData, {
         			responsive: true
-    			}});
+    			});
 			});
+
 			ngDialog.open({
 				template: 'chartTemplate',
 				className: 'chart-dialog',
