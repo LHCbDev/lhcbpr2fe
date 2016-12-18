@@ -17,16 +17,16 @@ App.directive('rootjs', function($timeout) {
 
           scope.json = [];
 
-          for ( key in values[0] ) {
-            if (angular.isString(key)){
-              scope.json.push(values[0]);
-              break;
-            }
-
-            if (angular.isObject(values[0][key])) {
-              scope.json.push(values[0][key]);
-            } else {
-            	scope.json.push(angular.fromJson(values[0][key]));
+          if (angular.isObject(values[0]) && ("_typename" in values[0]))
+          {
+            scope.json.push(values[0]);
+          }else{
+            for ( key in values[0] ) {
+              if (angular.isObject(values[0][key])) {
+                scope.json.push(values[0][key]);
+              } else {
+                scope.json.push(angular.fromJson(values[0][key]));
+              }
             }
           }
 
@@ -36,7 +36,6 @@ App.directive('rootjs', function($timeout) {
             obj.push(JSROOT.JSONR_unref(scope.json[key]));
           }
           var canvas = null;
-          debugger;
           if ( obj[0]._typename != 'TCanvas') {
             var primitives = [obj[0]];
           	if (obj[0]._typename == "TMultiGraph" ) {
