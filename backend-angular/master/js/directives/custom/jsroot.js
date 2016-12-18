@@ -2,40 +2,55 @@ App.directive('rootjs', function($timeout) {
   JSROOT.source_dir = 'app/vendor/jsroot/';
   return {
     restrict: 'E',
-    scope: {data: '=', width: '@', height: '@'},
-           template:
-               '<div ng-style="{\'width\': width, \'height\': height}"></div>',
+    scope: {
+      data: '=',
+      kstest: '=',
+      width: '@',
+      height: '@'
+    },
+    template: '<div ng-style="{\'width\': width, \'height\': height}"></div>',
     link: function(scope, element) {
-
-      scope.$watch('data', function(value) {
-        if (!value) return;
-        // console.log('data', value.fGraphs.arr);
+      scope.$watchGroup(['data', 'kstest'], function(values) {
+        console.log('rootjs watch', values);
+      	if(!values[0]) return;
         try {
-          if (angular.isObject(value)) {
-            scope.json = value;
-          } else {
-            scope.json = angular.fromJson(value);
-          }
-          var pad = element.children()[0];
-          var obj = JSROOT.JSONR_unref(scope.json);
-          var canvas = null;
-          if (obj._typename != 'TCanvas') {
-            var primitives = [obj];
-            if (obj._typename == "TMultiGraph") {
-              primitives.push(createLegend(obj));
+
+          scope.json = [];
+
+          for ( key in values[0] ) {
+            if (angular.isString(key)){
+              scope.json.push(values[0])
+            }else if (angular.isObject(values[0][key])) {
+              scope.json.push(values[0][key]);
+            } else {
+            	scope.json.push(angular.fromJson(values[0][key]));
             }
-            console.log(primitives);
-            canvas = createCanvas(primitives);
-          } else {
-            canvas = obj;
           }
 
-          pad.innerHTML = '';
-          $timeout(function(){JSROOT.draw(pad, canvas)}, 2);
+          var obj = [];
+          var pad = element.children()[0];
+          for ( key in scope.json ) {
+            obj.push(JSROOT.JSONR_unref(scope.json[key]));
+          }
+          var canvas = null;
+          if ( obj[0]._typename != 'TCanvas') {
+            var primitives = [obj[0]];
+          	if (obj[0]._typename == "TMultiGraph" ) {
+             	primitives.push(createLegend(obj[0]));
+            } else {
+              primitives = obj;
+            }
+	          canvas = createCanvas(primitives);
+	          if (obj[0]._typename != "TMultiGraph" && values[1]) {
+              canvas.fFillColor = evalKtest( values[1] );
+              _.forEach(obj, function(o) { o.fTitle = "Kolmogorov test result: " + values[1] })
+	          }
+          } else {
+	          canvas = obj[0];
+	        }
+          pad.innerHTML = "";
+          $timeout(function() {JSROOT.draw(pad, canvas)},2);
 
-
-          // setTimeout(function(){JSROOT.draw(pad, createLegend({}));},1000);
-          // JSROOT.draw(pad, createLegend({}));
         } catch (ex) {
           console.log('rootjs directive: ' + ex);
         }
@@ -53,8 +68,8 @@ App.directive('rootjs', function($timeout) {
       'fLineWidth': 1,
       'fFillColor': 0,
       'fFillStyle': 1001,
-      'fX1': 1.600000e-01,
-      'fY1': 7.500000e-01,
+      'fX1': 0.75,
+      'fY1': 0.85,
       'fX2': 0.99,
       'fY2': 0.99,
       'fX1NDC': -2.353437e-185,
@@ -202,8 +217,20 @@ App.directive('rootjs', function($timeout) {
       'kMenuBar': true
     });
 
-    var lst = JSROOT.CreateTList();
-    _.forEach(objArr, function(o) { lst.Add(o); });
+    var lst = JSROOT.Create("TList");
+    minval = 99999;
+    maxval = -99999;
+    _.forEach(objArr, function(o) {
+      minval = Math.min( minval, Math.min.apply( Math, o.fArray ) )
+      maxval = Math.max (maxval, Math.max.apply( Math, o.fArray ) )
+      lst.Add(o)
+    });
+    minval *= 1.1;
+    maxval *= 1.1;
+    _.forEach(objArr, function(o) {
+      o.fMinimum = minval;
+      o.fMaximum = maxval;
+    });
     canvas.fPrimitives = lst;
     return canvas;
   }
@@ -231,60 +258,114 @@ App.directive('rootjs', function($timeout) {
     };
     return entry;
   }
+
+
+
+  // evaluate the Kolmogorov test, return the color code for the canvas
+  function evalKtest( val ) {
+    if ( val >= 0.2 )
+        return 8 // green
+    else if ( val > 0.05 )
+        return 5 // yellow
+    else if ( val > 0 )
+        return 2 // red
+    else
+        return 18 // gray
+  }
+
+
+
 });
 
 App.directive('rootjsserver', function($http) {
   return {
-    restrict: 'E',
-    scope:
-        {entrypoint: '=', files: '=', items: '=', width: '@', height: '@'},
-        template:
-            '<rootjs data="data" width="{{width}}" height="{{height}}"></rootjs>',
-    link: function(scope) {
-      scope.$watchGroup(['files', 'items'], function(values) {
-        console.log('watch', values);
-        if (values[0] && values[1]) {
-          activate(values[0], values[1]);
+  restrict: 'E',
+  scope: {
+    entrypoint: '=',
+    files: '=',
+    items: '=',
+    compute: '=',
+    width: '@',
+    height: '@'
+  },
+  template: '<rootjs data="data" kstest="kstest" width="{{width}}" height="{{height}}"></rootjs>',
+  link: function(scope) {
+    scope.$watchGroup(['files', 'items', 'compute'], function(values) {
+    	if(values[0] && values[1]) {
+        if ( values[2] )
+          activateopt(values[0], values[1], values[2])
+        else
+      	  activate(values[0], values[1]);
+    	}
+    });
+
+    ///
+    function activate(files, items) {
+      var strFiles = _.map(_.keys(files), encodeURIComponent).join('__');
+      var url = scope.entrypoint + '/?files=' +
+      strFiles +
+      '&items=' + encodeURIComponent(items) +
+      '&callback=JSON_CALLBACK';
+      $http.jsonp(url).then(loaded, error);
+
+    }
+    function activateopt(files, items, option) {
+      var strFiles = _.map(_.keys(files), encodeURIComponent).join('__');
+      var url = scope.entrypoint + '/?files=' +
+      strFiles +
+      '&items=' + encodeURIComponent(items) +
+      '&compute=' +  encodeURIComponent(option) +
+      '&callback=JSON_CALLBACK';
+      $http.jsonp(url).then(loaded, error);
+
+    }
+
+    function loaded(data) {
+      var graph, mg, color;
+      var graphs = [];
+      var others = [];
+      color = 1;
+      _.forEach(data.data['result'], function(file) {
+        if ( file['computed_result'] ) {
+          other = JSROOT.JSONR_unref(file['computed_result']);
+          other.fLineColor = color++;
+          others.push(other);
         }
+
+        _.forEach(file['items'], function(value, key) {
+        	if(value['_typename'] == 'TGraph' || value['_typename'] == 'TGraphErrors'){
+	          graph = JSROOT.JSONR_unref(value);
+	          graph.fLineColor = color++;
+	          graph.fTitle = scope.files[file.root] + ' ' + graph.fTitle;
+	          graphs.push(graph);
+          } else {
+            other = JSROOT.JSONR_unref(value);
+            other.fLineColor = color++;
+            if ( scope.files[file.root] != "" ) {
+              other.fName = scope.files[file.root];  // used in ToolTips
+            }
+	          others.push(other);
+          }
+        });
+        if ( file['KSTest'] ) {
+          scope.kstest = file['KSTest']
+        }
+
       });
 
-      ///
-      function activate(files, items) {
-        console.log("activate", files, items);
-        var strFiles = _.map(_.keys(files), encodeURIComponent).join(',');
-        var url = scope.entrypoint + '/?files=' + strFiles + '&items=' +
-                  encodeURIComponent(items) + '&callback=JSON_CALLBACK';
-        $http.jsonp(url).then(loaded, error);
+
+      if (others.length > 0) {
+        scope.data = others;
+      } else {
+      	scope.data = JSROOT.CreateTMultiGraph.apply(this, graphs);
       }
-
-      function loaded(data) {
-        var graph, mg, color;
-        var graphs = [];
-        var others = [];
-        color = 1;
-        _.forEach(data.data['result'], function(file) {
-          _.forEach(file['items'], function(value, key) {
-            if (value['_typename'] == 'TGraph' ||
-                value['_typename'] == 'TGraphErrors') {
-              graph = JSROOT.JSONR_unref(value);
-              graph.fLineColor = color++;
-              graph.fTitle = scope.files[file.root] + ' ' + graph.fTitle;
-              graphs.push(graph);
-            } else {
-              others.push(JSROOT.JSONR_unref(value));
-            }
-          });
-        });
-
-        if (others.length > 0) {
-          scope.data = others[0];
-
-        } else {
-          scope.data = JSROOT.CreateTMultiGraph.apply(this, graphs);
-        }
-      }
-
-      function error(err) { console.error(err); }
     }
-  };
+
+    function error(err) {
+      console.error(err);
+    }
+  }
+};
 });
+
+
