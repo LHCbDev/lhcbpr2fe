@@ -1,0 +1,29 @@
+h3 DetailedTimingTest
+  small.text-muted
+#panelDetailedTiming1.panel.panel-default
+  .panel-heading
+    paneltool(tool-collapse)
+    .panel-title Search Detailed Timing in Volumes tests
+  .panel-wrapper(collapse="panelDetailedTiming1")
+    .panel-body
+      select-jobs(selected-app="GAUSS" selected-options="PRTEST-2016-SIM-P8-30000000-100evts-DetailedTiming" on-jobs-selected="analyze(jobIds)")
+
+.row
+  .col-lg-12
+    div(id="debugpane")
+
+.row
+  .col-lg-12
+    div(id="div_mainPlot")
+
+.row
+  .col-lg-12
+    div(id="div_ratioPlot")
+
+.row
+  .col-lg-12
+    div(id="div_trendPlot")
+
+.row
+  .col-lg-12
+    div(id="div_particlesTiming")
