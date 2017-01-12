@@ -4,7 +4,7 @@ Module.create('validations', 'Gauss', 2)
     sref: "app.validations",
     icon: "icon-grid"
   },
-  .addMenuItems([{
+  {
     text: "Detailed timing",
     sref: "app.detime",
     icon: "icon-grid"
@@ -25,6 +25,3 @@ Module.create('validations', 'Gauss', 2)
     resolve: ['validations', 'jsroot', 'ngTable', 'ngDialog']
   })
   .start();
-
-
-

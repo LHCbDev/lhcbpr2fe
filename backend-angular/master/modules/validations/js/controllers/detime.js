@@ -1,4 +1,4 @@
-App.controller('DetailedTimingController',
+App.controller('DetimeController',
   function ($scope, $http, lhcbprResourcesHelper, BUILD_PARAMS) {
     $scope.url = BUILD_PARAMS.url_root;
     $scope.analyze = function(jobIds) {
@@ -32,7 +32,7 @@ App.controller('DetailedTimingController',
       }
 
       // Construct and send the request
-      var request = $scope.url + '/detime/?callback=JSON_CALLBACK'
+      var request = $scope.url + '/hrtplot/?callback=JSON_CALLBACK'
                                + '&jobnames=' + jobs_names.join(',')
                                + '&values=' + summary_data_values.join(';')
                                + '&labels=' + summary_data_lables.join(',')
@@ -68,7 +68,7 @@ App.controller('DetailedTimingController',
       }
 
       // Construct and send the request
-      request = $scope.url + '/partiming/?callback=JSON_CALLBACK'
+      request = $scope.url + '/text2dhist/?callback=JSON_CALLBACK'
                            + '&values=' + list_of_values.join(';')
                            + '&xlabels=' + list_of_dets.join(';')
                            + '&ylabels=' + list_of_particles.join(';')
