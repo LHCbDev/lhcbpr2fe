@@ -1,6 +1,9 @@
+// Small title indicating what kind of analysis this is
+// TODO Make this inhert from the controller  
 h3 Validation Analysis
   small.text-muted LHCbPR
 
+// The default search panel. This should probably not be changed
 #panelSearch.panel.panel-default
   .panel-heading
     paneltool(tool-collapse)
@@ -9,6 +12,10 @@ h3 Validation Analysis
     .panel-body
       select-jobs(selected-app="DUMMYAPP" selected-options="100Evts-GAUSS-2015" on-jobs-selected="lookHistos(jobIds)")
 
+// Shows secondary panel selecting which plot to display from all ROOT files found in the selected jobs.
+// TODO there is a lot of logic here, this should be farmed out to the controller
+// TODO Currently _feels_ overcomplicated. Review to see if there is a more succint/meaningful way to do this
+// TODO make a directive for this. It should be obvious what each part does from each directive.
 #panelJobs.panel.panel-default
   .panel-heading
     paneltool(tool-collapse)
@@ -37,7 +44,9 @@ h3 Validation Analysis
                   option(value="ALL") ALL
                   option(ng-repeat="(path, val) in job" value="{{ path }}") {{ val }}
 
-
+// The following 2 divs are for different cases. It's not clear to me (nfarley) quite what these cases are yet, but I will examine them to see
+// TODO examine these two cases and see if they can be taken out into directives
+                  
 div(ng-if="jobId.split('__').length == 3")
   #panelOptions.panel.panel-default
     .panel-heading
@@ -70,9 +79,10 @@ div(ng-if="jobId.split('__').length == 2")
                   |  {{ option.text }}
 
 
+// This is the actual drawing place. A directive is used to plot (rootjsserver). 
 .row.traditional(ng-class="csspinner")
-  .col-lg-12
-      div(ng-if="data.optvalue=='Split'")
+  .col-lg-12(ng-switch="data.optvalue")
+      div(ng-switch-when="'Split'")
         table(style="width:100%")
           tr(ng-repeat="(item, title) in data.graphs", ng-hide="noJobData")
             td(ng-repeat="(file, name) in files_and_titles" ng-init="test[file] = name")
@@ -82,9 +92,7 @@ div(ng-if="jobId.split('__').length == 2")
                   items="item"
                   compute=""
                   width="500" height="375")
-
-
-      div(ng-if="data.optvalue!='Split'")
+      div(ng-switch-default)
         div(ng-repeat="(item, title) in data.graphs", ng-hide="noJobData")
           h3(style="color:red") {{ title }}
           rootjsserver(entrypoint="url"
