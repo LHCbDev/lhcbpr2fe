@@ -16,70 +16,59 @@ h3 Validation Analysis
   .panel-wrapper(collapse="panelJobs")
     .panel-body
       .alert.alert-info(ng-show="noJobData") No root file was found !
-      <div ng-repeat="(key, job) in data.treedirs", id="jobsTrees", ng-hide="noJobData">
-      <div ng-if="key.split(',').length > 1">
-      h3(style="color:red") Compare jobs:
-      </div>
-      <div ng-if="key.split(',').length == 1">
-      h3(style="color:red") Analyze job:
-      </div>
-      <ul>
-      <li style="font-size:150%; {{ 'color: ' + color[$index+1] }};", ng-repeat="file in key.split(',')">{{ getJobName(file.split('/')[0]) }}</li>
-      </ul>
-      .col-lg-6
-          <form name="myForm">
-          <select name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])">
-          <option ng-repeat="(path, val) in job" value="{{ path }}">{{ val }}</option>
-          </select>
-          <!-- <div class='btn-group-vertical' role='group' name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])"> -->
-          <!-- <button type='button' ng-repeat="(path, val) in job" value="{{ path }}">{{ val }}</button> -->
-          <!-- </div> -->
-          </form>
+      div(ng-repeat="(key, job) in data.treedirs", id="jobsTrees", ng-hide="noJobData")
+        div(ng-if="key.split(',').length > 1")
+          h3(style="color:red") Compare jobs:
+        div(ng-if="key.split(',').length == 1")
+          h3(style="color:red") Analyze job:
+        ul
+          li(style="font-size:150%; {{ 'color: ' + color[$index+1] }};", ng-repeat="file in key.split(',')")
+            | {{ getJobName(file.split('/')[0]) }}
+        .col-lg-6
+            form(name="myForm")
+              select(name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])")
+                option(ng-repeat="(path, val) in job" value="{{ path }}") 
+                  | {{ val }}
+        .col-lg-6
+            div(ng-repeat="(key, job) in data.treeplots", id="jobsPlots", ng-hide="noJobData")
+              form(name="myForm")
+                select(name="{{ 'plotSelect' + key }}" id="{{ 'plotSelect' + key }}" ng-model="data.plotSelect[key]" ng-change="showChart(key, data.plotSelect[key])")
+                  option(ng-selected="true" value="") -- select a plots --
+                  option(value="ALL") ALL
+                  option(ng-repeat="(path, val) in job" value="{{ path }}") {{ val }}
 
-      .col-lg-6
-          <div ng-repeat="(key, job) in data.treeplots", id="jobsPlots", ng-hide="noJobData">
-          <form name="myForm">
-          <select name="{{ 'plotSelect' + key }}" id="{{ 'plotSelect' + key }}" ng-model="data.plotSelect[key]" ng-change="showChart(key, data.plotSelect[key])">
-          <option ng-selected="true" value="">-- select a plots --</option>
-          <option value="ALL">ALL</option>
-          <option ng-repeat="(path, val) in job" value="{{ path }}">{{ val }}</option>
-          </select>
-          </form>
-          </div>
-      </div>
 
-<div ng-if="jobId.split('__').length == 3">
-#panelOptions.panel.panel-default
-  .panel-heading
-    paneltool(tool-collapse)
-    .panel-title Options
-  .panel-wrapper(collapse="panelOptions")
-    .panel-body
-       form.form-inline(role='form')
-        fieldset
-          .form-group.col-sm-6
-              label.radio-inline(ng-repeat="option in commonoptions")
-                input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
-                |  {{ option.text }}
-</div>
-<div ng-if="jobId.split('__').length == 2">
-#panelOptions.panel.panel-default
-  .panel-heading
-    paneltool(tool-collapse)
-    .panel-title Options
-  .panel-wrapper(collapse="panelOptions")
-    .panel-body
-       form.form-inline(role='form')
-        fieldset
-          .form-group.col-sm-6
-              label.radio-inline(ng-repeat="option in commonoptions")
-                input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
-                |  {{ option.text }}
-              label.radio-inline(ng-repeat="option in options")
-                input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
-                |  {{ option.text }}
+div(ng-if="jobId.split('__').length == 3")
+  #panelOptions.panel.panel-default
+    .panel-heading
+      paneltool(tool-collapse)
+      .panel-title Options
+    .panel-wrapper(collapse="panelOptions")
+      .panel-body
+         form.form-inline(role='form')
+          fieldset
+            .form-group.col-sm-6
+                label.radio-inline(ng-repeat="option in commonoptions")
+                  input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
+                  |  {{ option.text }}
 
-</div>
+div(ng-if="jobId.split('__').length == 2")
+  #panelOptions.panel.panel-default
+    .panel-heading
+      paneltool(tool-collapse)
+      .panel-title Options
+    .panel-wrapper(collapse="panelOptions")
+      .panel-body
+         form.form-inline(role='form')
+          fieldset
+            .form-group.col-sm-6
+                label.radio-inline(ng-repeat="option in commonoptions")
+                  input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
+                  |  {{ option.text }}
+                label.radio-inline(ng-repeat="option in options")
+                  input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
+                  |  {{ option.text }}
+
 
 .row.traditional(ng-class="csspinner")
   .col-lg-12
