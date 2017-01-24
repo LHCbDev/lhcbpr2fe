@@ -1,0 +1,42 @@
+h3 Tab Validation Analysis
+  small.text-muted LHCbPR
+
+div(select-jobs on-jobs-selected="lookTables(jobIds)", ng-show="isShowSearchForm")  
+.row.traditional(ng-class="csspinner", ng-show="!isShowSearchForm")
+  .col-lg-4
+    button.btn.btn-primary(type="button" ng-disabled="isShowSearchForm", ng-click="showSearchForm()")
+      | Show search form
+
+.row.traditional(ng-class="csspinner")  
+  .alert.alert-info(ng-show="noJobData") No data was found ! 
+  
+.row(style="margin-top: 10px")
+.row(style="margin-top: 10px", ng-show="!noJobData")
+  .col-lg-12
+    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="attrsTableParams", data-with-titles="true")
+      thead
+        th ID
+        th Name
+        th Description
+        th Type
+        th Values
+        th Actions
+      tr(ng-repeat="attr in $data")
+        td {{attr.id}}
+        td {{attr.name}}
+        td {{attr.description}}
+        td {{attr.dtype}}
+        td
+          table.table-condensed
+            tr(ng-repeat="jv in attr.jobvalues")
+              td
+                  a(ng-if="attr.dtype=='File'" href="{{media_url}}/{{jv.job.id}}/{{jv.value}}" target="_blank")
+                    | {{jv.value}}
+                  strong(ng-if="attr.dtype!='File'")
+                    | {{jv.value}}
+              td
+                | {{getJobName(jv.job.id)}}
+        td
+          button.btn.btn-info(ng-if="showCompareButton(attr.dtype, attr.jobvalues)" ng-click="showCompareDialog(attr)")
+            | Compare
+
