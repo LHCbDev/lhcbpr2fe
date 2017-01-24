@@ -31,6 +31,9 @@ h3 Validation Analysis
           <select name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])">
           <option ng-repeat="(path, val) in job" value="{{ path }}">{{ val }}</option>
           </select>
+          <!-- <div class='btn-group-vertical' role='group' name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])"> -->
+          <!-- <button type='button' ng-repeat="(path, val) in job" value="{{ path }}">{{ val }}</button> -->
+          <!-- </div> -->
           </form>
 
       .col-lg-6
@@ -80,29 +83,27 @@ h3 Validation Analysis
 
 .row.traditional(ng-class="csspinner")
   .col-lg-12
-      <div ng-if="data.optvalue=='Split'">
-      <table style="width:100%">
-      <tr ng-repeat="(item, title) in data.graphs", ng-hide="noJobData">
-      <td ng-repeat="(file, name) in files_and_titles" ng-init="test[file] = name">
-      h4(style="color:red") {{ title }} - {{ name }}
-      rootjsserver(entrypoint="url"
-          files="test"
-          items="item"
-          compute=""
-          width="500" height="375")
-      </td>
-      </tr>
-      </table>
-      </div>
-      <div ng-if="data.optvalue!='Split'">
-      <div ng-repeat="(item, title) in data.graphs", ng-hide="noJobData">
-      h3(style="color:red") {{ title }}
-      rootjsserver(entrypoint="url"
-          files="files_and_titles"
-          items="item"
-          compute="data.optvalue"
-          width="800" height="600")
-      </div>
-      </div>
+      div(ng-if="data.optvalue=='Split'")
+        table(style="width:100%")
+          tr(ng-repeat="(item, title) in data.graphs", ng-hide="noJobData")
+            td(ng-repeat="(file, name) in files_and_titles" ng-init="test[file] = name")
+              h4(style="color:red") {{ title }} - {{ name }}
+              rootjsserver(entrypoint="url"
+                  files="test"
+                  items="item"
+                  compute=""
+                  width="500" height="375")
+
+
+      div(ng-if="data.optvalue!='Split'")
+        div(ng-repeat="(item, title) in data.graphs", ng-hide="noJobData")
+          h3(style="color:red") {{ title }}
+          rootjsserver(entrypoint="url"
+              files="files_and_titles"
+              items="item"
+              compute="data.optvalue"
+              width="800" height="600")
+
+
 
 
