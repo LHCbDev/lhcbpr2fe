@@ -45,6 +45,10 @@
          optvalue: ""
        };
 
+       // TODO remove
+       // $scope.foobar = {bar: true};
+       $scope.foobar = 'bar';
+
        $scope.panelJobs = {toggle: false};
 
        $scope.sizeOf = function(obj) {
@@ -176,7 +180,26 @@
 
 
      }]);
+
+  App.directive('plotSplit', function($window) {
+    console.log("Angular version is: "+JSON.stringify(angular.version));
+    return {
+      restrict: 'E',
+      scope: {
+        graphs: '=',
+        filesAndTitles: '=',
+        test: '=',
+        url: '='
+      },
+      // TODO make this a less magic folder path, possibly by adding a method to
+      // the App or something
+      templateUrl: 'app/modules/gauss/views/muonmonisim_plots_split.html'
+    };
+  });
 })();
+
+
+
 
 // Local Variables:
 // js2-basic-offset: 2

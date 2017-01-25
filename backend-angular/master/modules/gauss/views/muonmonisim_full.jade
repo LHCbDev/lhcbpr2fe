@@ -10,7 +10,8 @@ h3 Validation Analysis
     .panel-title Select one or more jobs
   .panel-wrapper(collapse="panelSearch")
     .panel-body
-      select-jobs(selected-app="DUMMYAPP" selected-options="100Evts-GAUSS-2015" on-jobs-selected="lookHistos(jobIds)")
+      // select-jobs(selected-app="DUMMYAPP" selected-options="100Evts-GAUSS-2015" on-jobs-selected="lookHistos(jobIds)")
+      select-jobs(selected-options="100Evts-GAUSS-2015" on-jobs-selected="lookHistos(jobIds)")
 
 // Shows secondary panel selecting which plot to display from all ROOT files found in the selected jobs.
 // TODO there is a lot of logic here, this should be farmed out to the controller
@@ -81,18 +82,10 @@ div(ng-if="jobId.split('__').length == 2")
 
 // This is the actual drawing place. A directive is used to plot (rootjsserver). 
 .row.traditional(ng-class="csspinner")
-  .col-lg-12(ng-switch="data.optvalue")
-      div(ng-switch-when="'Split'")
-        table(style="width:100%")
-          tr(ng-repeat="(item, title) in data.graphs", ng-hide="noJobData")
-            td(ng-repeat="(file, name) in files_and_titles" ng-init="test[file] = name")
-              h4(style="color:red") {{ title }} - {{ name }}
-              rootjsserver(entrypoint="url"
-                  files="test"
-                  items="item"
-                  compute=""
-                  width="500" height="375")
-      div(ng-switch-default)
+  .col-lg-12
+      div(ng-if="data.optvalue === 'Split'")
+        plot-split(graphs="data.graphs", files-and-titles="files_and_titles", test='test', url='url')
+      div(ng-if="data.optvalue != 'Split'")
         div(ng-repeat="(item, title) in data.graphs", ng-hide="noJobData")
           h3(style="color:red") {{ title }}
           rootjsserver(entrypoint="url"
@@ -100,6 +93,9 @@ div(ng-if="jobId.split('__').length == 2")
               items="item"
               compute="data.optvalue"
               width="800" height="600")
+
+
+pre data.optvalue: {{data.optvalue}}
 
 
 
