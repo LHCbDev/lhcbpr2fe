@@ -5,6 +5,10 @@
     ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS',
      function($scope, $api, $apiroot, BUILD_PARAMS) {
 
+
+       // For the clock test
+       $scope.format = 'M/d/yy h:mm:ss a';
+
        $scope.color = {
          0: "white",
          1: "black",
@@ -196,10 +200,67 @@
       templateUrl: 'app/modules/gauss/views/muonmonisim_plots_split.html'
     };
   });
+
+  // TODO find better name than 'plot view'. It's too easily confused with 'view'.
+  App.directive('plotViewGenerator', function($window) {
+
+    function link(scope, element, attrs) {
+      // $window.alert(JSON.stringify(element));
+      var plotView = "defaultplotview";
+
+      function updateDOM() {
+        // element.text(plotView);
+        element.innerHTML = 'foo barrr';
+      };
+
+      scope.$watch(attrs.plotViewGenerator , function(value) {
+        plotView = value;
+        updateDOM();
+      });
+
+      // var generatedTemplate = '<pre><'+scope.plotView+' graphs="graphs" filesAndTitles="filesAndTitles" test="test" url="url"></'+scope.plotView+'></pre>';
+      // var generatedTemplate = '<b>Foo <i>BAR and ... '+scope.plotView+'</i><b>';
+      // element.parent().append($compile(generatedTemplate)(scope));
+    }
+    return {
+      scope: {
+        // plotView: '='              // Name of the plot view
+        graphs: '=',            // the rest of these go into the plot view
+        filesAndTitles: '=',
+        test: '=',
+        url: '='
+      },
+      // restrict: 'E',
+      link: link
+    };
+  });
+  // Example time directive! from https://docs.angularjs.org/guide/directive
+  App.directive('myCurrentTime', ['$compile', function($compile) {
+
+      function link(scope, element, attrs) {
+        var format;
+
+        function updateDOM() {
+          var sanitisedFormat = format || "span";
+          var generatedTemplate = '<' + sanitisedFormat + ' graphs="' 
+                + attrs.graphs + '", files-and-titles="' + attrs.filesAndTitles
+                + '", test="' + attrs.test + '", url="' + attrs.url 
+                + '"></' + sanitisedFormat + '>';
+          element.html($compile(generatedTemplate)(scope));
+        }
+
+        scope.$watch(attrs.myCurrentTime, function(value) {
+          format = value;
+          updateDOM();
+        });
+      }
+
+      return {
+        link: link,
+        restrict: 'E'
+      };
+    }]);
 })();
-
-
-
 
 // Local Variables:
 // js2-basic-offset: 2

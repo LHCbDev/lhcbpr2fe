@@ -80,23 +80,30 @@ div(ng-if="jobId.split('__').length == 2")
                   |  {{ option.text }}
 
 
-// This is the actual drawing place. A directive is used to plot (rootjsserver). 
-.row.traditional(ng-class="csspinner")
-  .col-lg-12
-      div(ng-if="data.optvalue === 'Split'")
-        plot-split(graphs="data.graphs", files-and-titles="files_and_titles", test='test', url='url')
-      div(ng-if="data.optvalue != 'Split'")
-        div(ng-repeat="(item, title) in data.graphs", ng-hide="noJobData")
-          h3(style="color:red") {{ title }}
-          rootjsserver(entrypoint="url"
-              files="files_and_titles"
-              items="item"
-              compute="data.optvalue"
-              width="800" height="600")
+// plot-view-generator(plot-view="data.optvalue", graphs="data.graphs", files-and-titles="files_and_titles", test='test', url='url')
+// plot-view-generator(plot-view="data.optvalue")
+| the results of the plotViewGenerator should be here:
+span(plot-view-generator="data.optvalue")
+
+// // This is the actual drawing place. A directive is used to plot (rootjsserver). 
+// .row.traditional(ng-class="csspinner")
+//   .col-lg-12
+//       div(ng-if="data.optvalue === 'Split'")
+//         plot-split(graphs="data.graphs", files-and-titles="files_and_titles", test='test', url='url')
+//       div(ng-if="data.optvalue != 'Split'")
+//         div(ng-repeat="(item, title) in data.graphs", ng-hide="noJobData")
+//           h3(style="color:red") {{ title }}
+//           rootjsserver(entrypoint="url"
+//               files="files_and_titles"
+//               items="item"
+//               compute="data.optvalue"
+//               width="800" height="600")
 
 
 pre data.optvalue: {{data.optvalue}}
 
-
-
-
+| Date format: 
+input(ng-model="data.optvalue")
+hr
+| Current time is:
+my-current-time(my-current-time="data.optvalue", graphs="data.graphs", files-and-titles="files_and_titles", test='test', url='url')
