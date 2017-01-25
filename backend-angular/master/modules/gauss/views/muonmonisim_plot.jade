@@ -1,0 +1,7 @@
+div(ng-repeat="(item, title) in graphs", ng-hide="noJobData")
+  h3(style="color:red") {{ title }}
+  rootjsserver(entrypoint="url"
+      files="filesAndTitles"
+      items="item"
+      compute="compute"
+      width="800" height="600")

@@ -102,8 +102,8 @@ span(plot-view-generator="data.optvalue")
 
 pre data.optvalue: {{data.optvalue}}
 
-| Date format: 
-input(ng-model="data.optvalue")
+label plot directive:
+  input(ng-model="data.optvalue")
 hr
-| Current time is:
-my-current-time(my-current-time="data.optvalue", graphs="data.graphs", files-and-titles="files_and_titles", test='test', url='url')
+h3 Plots:
+plot-view-generator(plot-view="data.optvalue", graphs="data.graphs", files-and-titles="files_and_titles", test='test', url='url')

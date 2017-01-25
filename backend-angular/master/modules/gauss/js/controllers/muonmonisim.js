@@ -185,8 +185,7 @@
 
      }]);
 
-  App.directive('plotSplit', function($window) {
-    console.log("Angular version is: "+JSON.stringify(angular.version));
+  App.directive('plotSplit', function() {
     return {
       restrict: 'E',
       scope: {
@@ -201,41 +200,50 @@
     };
   });
 
-  // TODO find better name than 'plot view'. It's too easily confused with 'view'.
-  App.directive('plotViewGenerator', function($window) {
-
-    function link(scope, element, attrs) {
-      // $window.alert(JSON.stringify(element));
-      var plotView = "defaultplotview";
-
-      function updateDOM() {
-        // element.text(plotView);
-        element.innerHTML = 'foo barrr';
+  function plotDirectiveFactory(name) {
+    App.directive(name, function() {
+      return {
+        restrict: 'E',
+        scope: {
+          graphs: '=',
+          filesAndTitles: '=',
+          test: '=',
+          url: '='
+        },
+        // TODO make this a less magic folder path, possibly by adding a method to
+        // the App or something
+        templateUrl: 'app/modules/gauss/views/muonmonisim_'+name+'.html'
       };
+    });
+  };
 
-      scope.$watch(attrs.plotViewGenerator , function(value) {
-        plotView = value;
-        updateDOM();
-      });
+  function defaultPlotDirectiveFactory(name, compute) {
+    App.directive(name, function() {
+      return {
+        restrict: 'E',
+        scope: {
+          graphs: '=',
+          filesAndTitles: '=',
+          test: '=',
+          url: '='
+        },
+        controller: function($scope) {
+          $scope.compute = compute;
+        },
+        // TODO make this a less magic folder path, possibly by adding a method to
+        // the App or something
+        templateUrl: 'app/modules/gauss/views/muonmonisim_plot.html'
+      };
+    });
+  };
 
-      // var generatedTemplate = '<pre><'+scope.plotView+' graphs="graphs" filesAndTitles="filesAndTitles" test="test" url="url"></'+scope.plotView+'></pre>';
-      // var generatedTemplate = '<b>Foo <i>BAR and ... '+scope.plotView+'</i><b>';
-      // element.parent().append($compile(generatedTemplate)(scope));
-    }
-    return {
-      scope: {
-        // plotView: '='              // Name of the plot view
-        graphs: '=',            // the rest of these go into the plot view
-        filesAndTitles: '=',
-        test: '=',
-        url: '='
-      },
-      // restrict: 'E',
-      link: link
-    };
-  });
-  // Example time directive! from https://docs.angularjs.org/guide/directive
-  App.directive('myCurrentTime', ['$compile', function($compile) {
+  plotDirectiveFactory('plotSpilt');
+  defaultPlotDirectiveFactory('plotSame', '');
+  defaultPlotDirectiveFactory('plotDifference', 'Difference');
+  defaultPlotDirectiveFactory('plotRatio', 'Ratio');
+  defaultPlotDirectiveFactory('plotKolmogorov', 'Kolmogorov');
+
+  App.directive('plotViewGenerator', ['$compile', function($compile) {
 
       function link(scope, element, attrs) {
         var format;
@@ -249,7 +257,7 @@
           element.html($compile(generatedTemplate)(scope));
         }
 
-        scope.$watch(attrs.myCurrentTime, function(value) {
+        scope.$watch(attrs.plotView, function(value) {
           format = value;
           updateDOM();
         });
