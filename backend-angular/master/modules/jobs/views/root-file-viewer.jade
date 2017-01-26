@@ -74,32 +74,11 @@ div(ng-if="jobId.split('__').length == 2")
             .form-group.col-sm-6
                 // label.radio-inline(ng-repeat="option in commonoptions")
                 label.radio-inline(ng-repeat="plotView in plotViews")
-                  input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue" )
+                  input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue" ng-checked="{{ plotView.directiveName === plotViews[0].directiveName }}")
                   |  {{ plotView.displayName }}
-                label.radio-inline(ng-repeat="option in options")
-                  input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
-                  |  {{ option.text }}
-
-
-// plot-view-generator(plot-view="data.optvalue", graphs="data.graphs", files-and-titles="files_and_titles", test='test', url='url')
-// plot-view-generator(plot-view="data.optvalue")
-// | the results of the plotViewGenerator should be here:
-// span(plot-view-generator="data.optvalue")
-
-// // This is the actual drawing place. A directive is used to plot (rootjsserver). 
-// .row.traditional(ng-class="csspinner")
-//   .col-lg-12
-//       div(ng-if="data.optvalue === 'Split'")
-//         plot-split(graphs="data.graphs", files-and-titles="files_and_titles", test='test', url='url')
-//       div(ng-if="data.optvalue != 'Split'")
-//         div(ng-repeat="(item, title) in data.graphs", ng-hide="noJobData")
-//           h3(style="color:red") {{ title }}
-//           rootjsserver(entrypoint="url"
-//               files="files_and_titles"
-//               items="item"
-//               compute="data.optvalue"
-//               width="800" height="600")
-
+                // label.radio-inline(ng-repeat="option in options")
+                //   input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
+                //   |  {{ option.text }}
 
 pre.
   data.optvalue: {{data.optvalue}}

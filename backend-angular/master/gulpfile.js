@@ -56,6 +56,12 @@ var vendor = {
 var source = {
   scripts: {
              app: [
+                    // Custom modules
+                    'js/custom_angular_modules/*/init.js',
+                    'js/custom_angular_modules/*/providers/*.js',
+                    'js/custom_angular_modules/*/controllers/*.js',
+                    'js/custom_angular_modules/*/directives/*.js',
+                    // Main app
                     'js/init.js',
                     'js/classes/*.js',
                     'js/*.js',
@@ -79,6 +85,8 @@ var source = {
               files:
                   ['jade/views/*.jade', 'jade/views/**/*.jade', ignored_files],
               watch: ['jade/views/**/*.jade', 'modules/*/views/**/*.jade']
+//                  ['jade/views/*.jade', 'jade/views/**/*.jade','jade/custom_angular_modules/**/*.jade', ignored_files],
+//              watch: ['jade/custom_angular_modules/**/*.jade', 'jade/views/**/*.jade', 'modules/*/views/**/*.jade']
             },
         pages: {files: ['jade/pages/*.jade'], watch: ['jade/pages/*.jade']}
       },

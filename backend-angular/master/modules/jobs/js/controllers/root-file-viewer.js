@@ -1,14 +1,11 @@
 (function() {
 
-  var CONTROLLER_NAME = 'MuonmonisimController';
+  var CONTROLLER_NAME = 'RootFileViewerController';
   App.controller(
     CONTROLLER_NAME,
     ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews',
      function($scope, $api, $apiroot, BUILD_PARAMS, plotViews) {
 
-       // TODO put this somewhere general
-       // plotViewService.registerPlotView('plotSplit','Split');
-       // $scope.pvServ = plotViews.getPlotViews();
        $scope.plotViews = plotViews;
 
 
@@ -52,7 +49,7 @@
          treeplots: {},
          tree: {},
          graphs: {},
-         optvalue: ""
+         optvalue: "",
        };
 
        // TODO remove
@@ -190,91 +187,6 @@
 
 
      }]);
-
-  // App.directive('plotSplit', function() {
-  //   return {
-  //     restrict: 'E',
-  //     scope: {
-  //       graphs: '=',
-  //       filesAndTitles: '=',
-  //       test: '=',
-  //       url: '='
-  //     },
-  //     // TODO make this a less magic folder path, possibly by adding a method to
-  //     // the App or something
-  //     templateUrl: 'app/modules/gauss/views/muonmonisim_plots_split.html'
-  //   };
-  // });
-
-  function plotDirectiveFactory(directiveName, displayName) {
-    App.directive(directiveName, function() {
-        return {
-          restrict: 'E',
-          scope: {
-            graphs: '=',
-            filesAndTitles: '=',
-            test: '=',
-            url: '='
-          },
-          // TODO make this a less magic folder path, possibly by adding a method to
-          // the App or something
-          templateUrl: 'app/modules/gauss/views/muonmonisim_'+directiveName+'.html'
-        };
-      });
-  };
-
-  function defaultPlotDirectiveFactory(directiveName, displayName, computeMethod) {
-    App.directive(directiveName, function() {
-        return {
-          restrict: 'E',
-          scope: {
-            graphs: '=',
-            filesAndTitles: '=',
-            test: '=',
-            url: '='
-          },
-          controller: function($scope) {
-            $scope.compute = computeMethod;
-          },
-          // TODO make this a less magic folder path, possibly by adding a method to
-          // the App or something
-          templateUrl: 'app/modules/gauss/views/muonmonisim_plot.html'
-        };
-      });
-  };
-
-  plotDirectiveFactory('plotSplit', 'Split');
-  defaultPlotDirectiveFactory('plotSame', 'Superimposed', '');
-  defaultPlotDirectiveFactory('plotDifference', 'Difference', 'Difference');
-  defaultPlotDirectiveFactory('plotRatio', 'Ratio', 'Ratio');
-  defaultPlotDirectiveFactory('plotKolmogorov', 'Kolmogorov', 'Kolmogorov');
-
-
-  App.directive('plotViewGenerator', ['$compile', function($compile) {
-
-      function link(scope, element, attrs) {
-        var format;
-
-        function updateDOM() {
-          var sanitisedFormat = format.replace(/([A-Z])/g, '-$1').toLowerCase() || "span";
-          var generatedTemplate = '<' + sanitisedFormat + ' graphs="' 
-                + attrs.graphs + '", files-and-titles="' + attrs.filesAndTitles
-                + '", test="' + attrs.test + '", url="' + attrs.url 
-                + '"></' + sanitisedFormat + '>';
-          element.html($compile(generatedTemplate)(scope));
-        }
-
-        scope.$watch(attrs.plotView, function(value) {
-          format = value;
-          updateDOM();
-        });
-      }
-
-      return {
-        link: link,
-        restrict: 'E'
-      };
-    }]);
 })();
 
 // Local Variables:
