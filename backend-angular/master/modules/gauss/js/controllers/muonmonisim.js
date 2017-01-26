@@ -1,9 +1,15 @@
 (function() {
+
   var CONTROLLER_NAME = 'MuonmonisimController';
   App.controller(
     CONTROLLER_NAME,
-    ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS',
-     function($scope, $api, $apiroot, BUILD_PARAMS) {
+    ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews',
+     function($scope, $api, $apiroot, BUILD_PARAMS, plotViews) {
+
+       // TODO put this somewhere general
+       // plotViewService.registerPlotView('plotSplit','Split');
+       // $scope.pvServ = plotViews.getPlotViews();
+       $scope.plotViews = plotViews;
 
 
        // For the clock test
@@ -185,63 +191,64 @@
 
      }]);
 
-  App.directive('plotSplit', function() {
-    return {
-      restrict: 'E',
-      scope: {
-        graphs: '=',
-        filesAndTitles: '=',
-        test: '=',
-        url: '='
-      },
-      // TODO make this a less magic folder path, possibly by adding a method to
-      // the App or something
-      templateUrl: 'app/modules/gauss/views/muonmonisim_plots_split.html'
-    };
-  });
+  // App.directive('plotSplit', function() {
+  //   return {
+  //     restrict: 'E',
+  //     scope: {
+  //       graphs: '=',
+  //       filesAndTitles: '=',
+  //       test: '=',
+  //       url: '='
+  //     },
+  //     // TODO make this a less magic folder path, possibly by adding a method to
+  //     // the App or something
+  //     templateUrl: 'app/modules/gauss/views/muonmonisim_plots_split.html'
+  //   };
+  // });
 
-  function plotDirectiveFactory(name) {
-    App.directive(name, function() {
-      return {
-        restrict: 'E',
-        scope: {
-          graphs: '=',
-          filesAndTitles: '=',
-          test: '=',
-          url: '='
-        },
-        // TODO make this a less magic folder path, possibly by adding a method to
-        // the App or something
-        templateUrl: 'app/modules/gauss/views/muonmonisim_'+name+'.html'
-      };
-    });
+  function plotDirectiveFactory(directiveName, displayName) {
+    App.directive(directiveName, function() {
+        return {
+          restrict: 'E',
+          scope: {
+            graphs: '=',
+            filesAndTitles: '=',
+            test: '=',
+            url: '='
+          },
+          // TODO make this a less magic folder path, possibly by adding a method to
+          // the App or something
+          templateUrl: 'app/modules/gauss/views/muonmonisim_'+directiveName+'.html'
+        };
+      });
   };
 
-  function defaultPlotDirectiveFactory(name, compute) {
-    App.directive(name, function() {
-      return {
-        restrict: 'E',
-        scope: {
-          graphs: '=',
-          filesAndTitles: '=',
-          test: '=',
-          url: '='
-        },
-        controller: function($scope) {
-          $scope.compute = compute;
-        },
-        // TODO make this a less magic folder path, possibly by adding a method to
-        // the App or something
-        templateUrl: 'app/modules/gauss/views/muonmonisim_plot.html'
-      };
-    });
+  function defaultPlotDirectiveFactory(directiveName, displayName, computeMethod) {
+    App.directive(directiveName, function() {
+        return {
+          restrict: 'E',
+          scope: {
+            graphs: '=',
+            filesAndTitles: '=',
+            test: '=',
+            url: '='
+          },
+          controller: function($scope) {
+            $scope.compute = computeMethod;
+          },
+          // TODO make this a less magic folder path, possibly by adding a method to
+          // the App or something
+          templateUrl: 'app/modules/gauss/views/muonmonisim_plot.html'
+        };
+      });
   };
 
-  plotDirectiveFactory('plotSpilt');
-  defaultPlotDirectiveFactory('plotSame', '');
-  defaultPlotDirectiveFactory('plotDifference', 'Difference');
-  defaultPlotDirectiveFactory('plotRatio', 'Ratio');
-  defaultPlotDirectiveFactory('plotKolmogorov', 'Kolmogorov');
+  plotDirectiveFactory('plotSplit', 'Split');
+  defaultPlotDirectiveFactory('plotSame', 'Superimposed', '');
+  defaultPlotDirectiveFactory('plotDifference', 'Difference', 'Difference');
+  defaultPlotDirectiveFactory('plotRatio', 'Ratio', 'Ratio');
+  defaultPlotDirectiveFactory('plotKolmogorov', 'Kolmogorov', 'Kolmogorov');
+
 
   App.directive('plotViewGenerator', ['$compile', function($compile) {
 
@@ -249,7 +256,7 @@
         var format;
 
         function updateDOM() {
-          var sanitisedFormat = format || "span";
+          var sanitisedFormat = format.replace(/([A-Z])/g, '-$1').toLowerCase() || "span";
           var generatedTemplate = '<' + sanitisedFormat + ' graphs="' 
                 + attrs.graphs + '", files-and-titles="' + attrs.filesAndTitles
                 + '", test="' + attrs.test + '", url="' + attrs.url 

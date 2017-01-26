@@ -12,6 +12,31 @@ if (typeof $ === 'undefined') {
     throw new Error('This application\'s JavaScript requires jQuery');
 }
 
+// Services App (used for defining providers)
+// ----------------------------------- 
+var Services = angular.module('lhcbprServices', []);
+Services.provider('plotViews', function () {
+    var plotViews = [];
+    this.registerPlotView = function(directiveName, displayName) {
+        plotViews.push({
+            directiveName: directiveName,
+            displayName: displayName
+        });
+    };
+    this.$get = function() {
+        return plotViews;
+    };
+});
+
+Services.config(['plotViewsProvider', function(plotViewsProvider) {
+    plotViewsProvider.registerPlotView('plotSplit', "Split");
+    plotViewsProvider.registerPlotView('plotSame', "Superimposed");
+    plotViewsProvider.registerPlotView('plotDifference', "Difference");
+    plotViewsProvider.registerPlotView('plotRatio', "Ratio");
+    plotViewsProvider.registerPlotView('plotKolmogorov', "Kolmogorov");
+}]);
+
+
 // APP START
 // ----------------------------------- 
 
@@ -28,7 +53,8 @@ var App = angular.module('angle', ['ngRoute',
         'ngResource',
         'restangular',
         'checklist-model',
-        'buildParams'
+        'buildParams',
+        'lhcbprServices'
     ])
     .run(["$rootScope", "$state", "$stateParams", '$window', '$templateCache',
         function($rootScope, $state, $stateParams, $window, $templateCache) {

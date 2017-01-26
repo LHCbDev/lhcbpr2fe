@@ -11,7 +11,7 @@ h3 Validation Analysis
   .panel-wrapper(collapse="panelSearch")
     .panel-body
       // select-jobs(selected-app="DUMMYAPP" selected-options="100Evts-GAUSS-2015" on-jobs-selected="lookHistos(jobIds)")
-      select-jobs(selected-options="100Evts-GAUSS-2015" on-jobs-selected="lookHistos(jobIds)")
+      select-jobs(on-jobs-selected="lookHistos(jobIds)")
 
 // Shows secondary panel selecting which plot to display from all ROOT files found in the selected jobs.
 // TODO there is a lot of logic here, this should be farmed out to the controller
@@ -72,9 +72,10 @@ div(ng-if="jobId.split('__').length == 2")
          form.form-inline(role='form')
           fieldset
             .form-group.col-sm-6
-                label.radio-inline(ng-repeat="option in commonoptions")
-                  input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
-                  |  {{ option.text }}
+                // label.radio-inline(ng-repeat="option in commonoptions")
+                label.radio-inline(ng-repeat="plotView in plotViews")
+                  input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue" )
+                  |  {{ plotView.displayName }}
                 label.radio-inline(ng-repeat="option in options")
                   input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
                   |  {{ option.text }}
@@ -82,8 +83,8 @@ div(ng-if="jobId.split('__').length == 2")
 
 // plot-view-generator(plot-view="data.optvalue", graphs="data.graphs", files-and-titles="files_and_titles", test='test', url='url')
 // plot-view-generator(plot-view="data.optvalue")
-| the results of the plotViewGenerator should be here:
-span(plot-view-generator="data.optvalue")
+// | the results of the plotViewGenerator should be here:
+// span(plot-view-generator="data.optvalue")
 
 // // This is the actual drawing place. A directive is used to plot (rootjsserver). 
 // .row.traditional(ng-class="csspinner")
@@ -100,7 +101,9 @@ span(plot-view-generator="data.optvalue")
 //               width="800" height="600")
 
 
-pre data.optvalue: {{data.optvalue}}
+pre.
+  data.optvalue: {{data.optvalue}}
+  directiveMapService: {{ plotViews }}
 
 label plot directive:
   input(ng-model="data.optvalue")

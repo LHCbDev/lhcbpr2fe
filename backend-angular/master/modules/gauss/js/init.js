@@ -7,9 +7,12 @@ Module.create('gauss', 'Gauss (Birmingham)', 2)
   ])
   .addStates({
     name: 'muonmonisim',
-    title: 'MuonMoniSim',
+    // controller: "MuonMoniSimController",
+    // title: 'MuonMoniSim',
     url: '/muonmonisim',
     templateUrl: 'muonmonisim_full.html',
-    resolve: ['gauss', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
+      resolve: ['gauss', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
   })
   .start();
+
+
