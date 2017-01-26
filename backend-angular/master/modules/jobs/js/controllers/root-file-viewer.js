@@ -57,6 +57,7 @@
        $scope.foobar = 'bar';
 
        $scope.panelJobs = {toggle: false};
+       $scope.hidePanelDebug = true;
 
        $scope.sizeOf = function(obj) {
          return Object.keys(obj).length;

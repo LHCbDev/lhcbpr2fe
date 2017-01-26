@@ -48,44 +48,73 @@ h3 Validation Analysis
 // The following 2 divs are for different cases. It's not clear to me (nfarley) quite what these cases are yet, but I will examine them to see
 // TODO examine these two cases and see if they can be taken out into directives
                   
-div(ng-if="jobId.split('__').length == 3")
-  #panelOptions.panel.panel-default
-    .panel-heading
-      paneltool(tool-collapse)
-      .panel-title Options
-    .panel-wrapper(collapse="panelOptions")
-      .panel-body
-         form.form-inline(role='form')
-          fieldset
-            .form-group.col-sm-6
-                label.radio-inline(ng-repeat="option in commonoptions")
-                  input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
-                  |  {{ option.text }}
+// div(ng-if="jobId.split('__').length == 3")
+//   #panelOptions.panel.panel-default
+//     .panel-heading
+//       paneltool(tool-collapse)
+//       .panel-title Options
+//     .panel-wrapper(collapse="panelOptions")
+//       .panel-body
+//          form.form-inline(role='form')
+//           fieldset
+//             .form-group.col-sm-6
+//                 label.radio-inline(ng-repeat="option in commonoptions")
+//                   input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
+//                   |  {{ option.text }}
 
-div(ng-if="jobId.split('__').length == 2")
-  #panelOptions.panel.panel-default
-    .panel-heading
-      paneltool(tool-collapse)
-      .panel-title Options
-    .panel-wrapper(collapse="panelOptions")
-      .panel-body
-         form.form-inline(role='form')
-          fieldset
-            .form-group.col-sm-6
-                // label.radio-inline(ng-repeat="option in commonoptions")
-                label.radio-inline(ng-repeat="plotView in plotViews")
-                  input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue" ng-checked="{{ plotView.directiveName === plotViews[0].directiveName }}")
-                  |  {{ plotView.displayName }}
-                // label.radio-inline(ng-repeat="option in options")
-                //   input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
-                //   |  {{ option.text }}
+// div(ng-if="jobId.split('__').length == 2")
+//   #panelOptions.panel.panel-default
+//     .panel-heading
+//       paneltool(tool-collapse)
+//       .panel-title Options
+//     .panel-wrapper(collapse="panelOptions")
+//       .panel-body
+//          form.form-inline(role='form')
+//           fieldset
+//             .form-group.col-sm-6
+//                 // label.radio-inline(ng-repeat="option in commonoptions")
+//                 label.radio-inline(ng-repeat="plotView in plotViews")
+//                   input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue" ng-checked="{{ plotView.directiveName === plotViews[0].directiveName }}")
+//                   |  {{ plotView.displayName }}
+//                 // label.radio-inline(ng-repeat="option in options")
+//                 //   input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
+//                 //   |  {{ option.text }}
 
-pre.
-  data.optvalue: {{data.optvalue}}
-  directiveMapService: {{ plotViews }}
+#panelOptions.panel.panel-default
+  .panel-heading
+    paneltool(tool-collapse)
+    .panel-title PlotViews
+  .panel-wrapper(collapse="panelOptions")
+    .panel-body
+      p
+        i Please select a view after selecting a plot (above).
+      form.form-inline(role='form')
+        fieldset
+          .form-group.col-sm-6
+              // label.radio-inline(ng-repeat="option in commonoptions")
+              label.radio-inline(ng-repeat="plotView in plotViews")
+                input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue")
+                |  {{ plotView.displayName }}
+              // label.radio-inline(ng-repeat="option in options")
+              //   input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
+              //   |  {{ option.text }}
 
-label plot directive:
-  input(ng-model="data.optvalue")
-hr
+
 h3 Plots:
 plot-view-generator(plot-view="data.optvalue", graphs="data.graphs", files-and-titles="files_and_titles", test='test', url='url')
+
+#panelDebug.panel.panel-default
+  .panel-heading
+    paneltool(tool-collapse)
+    .panel-title Debug info
+  .panel-wrapper(collapse="panelOptions")
+    .panel-body
+      p.
+        The details here are for debug purposes. They can be safely ignored unless
+        you are doing active plot view development.
+      pre.
+        data.optvalue: {{data.optvalue}}
+        directiveMapService: {{ plotViews }}
+
+      label plot directive:
+        input(ng-model="data.optvalue")
