@@ -14,11 +14,11 @@
 var Module = function(name, title, position, settings){
 	this.name = name;
 	this.menu = {
-	    text: title,
-	    position: position,
-	    sref: "#",
-	    icon: "icon-doc",
-	    submenu: []
+	  text: title,
+	  position: position,
+	  sref: "#",
+	  icon: "icon-doc",
+	  submenu: []
 	};
 	if(undefined !== settings && undefined !== settings.folder)
 		this.folder = settings.folder;
@@ -37,13 +37,17 @@ Module.create = function(name, title, position, settings){
 }
 
 Module.prototype.addMenuItems = function(items){
-	var self = this;
-	if(Array === items.constructor)
-		items.forEach(function(item){
-			self.menu.submenu.push(item);
-		});
-	else
-		self.menu.submenu.push(items);
+  /**
+   * Adds submenu items to menu.
+   */
+	if(Array === items.constructor) {
+    for(let item in items) {
+			this.menu.submenu.push(item);
+    }
+  } else {
+    console.error("Module.prototype.addMenuItems must "
+                  + "be passed an Array of menu items!");
+  }
 	return this;
 };
 
@@ -139,3 +143,9 @@ Module.prototype.start = function(){
 		});
 	}]);
 };
+
+// Local Variables:
+// js2-basic-offset: 2
+// js-indent-level: 2
+// indent-tabs-mode: nil
+// End:
