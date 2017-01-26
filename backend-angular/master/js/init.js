@@ -12,6 +12,7 @@ if (typeof $ === 'undefined') {
     throw new Error('This application\'s JavaScript requires jQuery');
 }
 
+
 // APP START
 // ----------------------------------- 
 
@@ -28,7 +29,8 @@ var App = angular.module('angle', ['ngRoute',
         'ngResource',
         'restangular',
         'checklist-model',
-        'buildParams'
+        'buildParams',
+        'lhcbprPlotViews'
     ])
     .run(["$rootScope", "$state", "$stateParams", '$window', '$templateCache',
         function($rootScope, $state, $stateParams, $window, $templateCache) {

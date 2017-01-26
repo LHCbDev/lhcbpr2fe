@@ -3,16 +3,30 @@ Module.create('jobs', 'LHCbPR Jobs', 1)
 		{
 			text: "Job Descriptions",
 			sref: "app.job_descriptions.list",
-			icon: "icon-grid",
-			alert: "new"
+			icon: "icon-grid"
+			// alert: "new"
 		},
 		{
 			text: "Jobs",
 			sref: "app.jobs.list",
-			icon: "icon-grid",
-			alert: "new"
-		}
+			icon: "icon-grid"
+			// alert: "new"
+		},
+    {
+      text: "ROOT file viewer",
+      sref: "app.root_file_viewer",
+      icon: "icon-grid"
+      // alert: "new"
+    }
 	])
+  .addState({
+    name: 'root_file_viewer',
+    title: 'ROOT file viewer',
+    url: '/rootfileviewer',
+    controller: 'RootFileViewerController',
+    templateUrl: 'root-file-viewer.html',
+    resolve: ['jobs', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
+  })
 	.addState({
 		name: 'job_descriptions',
 		abstract: true,
@@ -62,8 +76,14 @@ Module.create('jobs', 'LHCbPR Jobs', 1)
 	})
 	.addState({
 		name: 'trends.chart',
-        url: '/option/:option/attribute/:attribute',
-        templateUrl: 'trends.chart.html',
+    url: '/option/:option/attribute/:attribute',
+    templateUrl: 'trends.chart.html',
 		resolve: ['chartjs']
 	})
 	.start();
+
+// Local Variables:
+// js2-basic-offset: 2
+// js-indent-level: 2
+// indent-tabs-mode: nil
+// End:

@@ -1,4 +1,4 @@
-App.directive('rootjs', function($timeout) {
+lhcbprPlotModule.directive('rootjs', function($timeout) {
   JSROOT.source_dir = 'app/vendor/jsroot/';
   return {
     restrict: 'E',
@@ -280,7 +280,7 @@ App.directive('rootjs', function($timeout) {
 
 });
 
-App.directive('rootjsserver', function($http) {
+lhcbprPlotModule.directive('rootjsserver', function($http) {
   return {
   restrict: 'E',
   scope: {
