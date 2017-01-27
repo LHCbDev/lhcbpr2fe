@@ -28,9 +28,9 @@ function defaultPlotDirectiveFactory(directiveName, displayName, computeMethod) 
         test: '=',
         url: '='
       },
-      controller: function($scope) {
+      controller: ['$scope', function($scope) {
         $scope.compute = computeMethod;
-      },
+      }],
       // TODO make this a less magic folder path, possibly by adding a method to
       // the lhcbprPlotModule or something
       // templateUrl: 'app/modules/gauss/views/muonmonisim_plot.html'
