@@ -1,9 +1,9 @@
 Module.create('histograms', 'Histograms', 2)
-  .addMenuItems([{
+  .addMenuItem({
     text: "Histograms",
     sref: "app.histograms",
     icon: "icon-grid"
-  }])
+  })
 	.addState({
 		name: 'histograms',
 		title: 'Histograms',

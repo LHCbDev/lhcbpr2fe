@@ -1,9 +1,9 @@
 Module.create('trend', 'Trends', 2)
-  .addMenuItems([{
+  .addMenuItem({
     text: "Trends",
     sref: "app.trend",
     icon: "icon-grid"
-  }])
+  })
 	.addState({
 		name: 'trend',
 		title: 'Trends',

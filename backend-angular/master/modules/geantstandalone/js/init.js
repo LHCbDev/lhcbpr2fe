@@ -1,20 +1,19 @@
 Module.create('geantstandalone', 'GEANT', 2)
-	.addMenuItems([{
+	.addMenuItem({
 		text: "Hadronic",
 		sref: "app.geantstandalone",
 		icon: "icon-grid"
-	},
-	{
+	})
+	.addMenuItem({
 		text: 'TestEm3',
 		sref: 'app.geanttestem3',
 		icon: "icon-grid"
-	},
-	{
-		text: 'TestEm5',
-		sref: 'app.geanttestem5',
-		icon: "icon-grid"
-	},
-	])
+	})
+	.addMenuItem({
+	text: 'TestEm5',
+	sref: 'app.geanttestem5',
+	icon: "icon-grid"
+  })
 	.addState({
 		name: 'geantstandalone',
 		title: 'Hadronic',
@@ -37,3 +36,9 @@ Module.create('geantstandalone', 'GEANT', 2)
 		resolve: ['geantstandalone','jsroot','ngTable', 'ngDialog']
 	})
 	.start();
+
+// Local Variables:
+// js2-basic-offset: 2
+// js-indent-level: 2
+// indent-tabs-mode: nil
+// End:

@@ -34,31 +34,13 @@ var Module = function(name, title, position, settings){
 
 Module.create = function(name, title, position, settings){
 	return new Module(name, title, position, settings);
-}
-
-Module.prototype.addMenuItems = function(items){
-  /**
-   * Adds submenu items to menu.
-   */
-	if(Array === items.constructor) {
-    for(let item in items) {
-			this.menu.submenu.push(item);
-    }
-  } else {
-    console.error("Module.prototype.addMenuItems must "
-                  + "be passed an Array of menu items!");
-  }
-	return this;
 };
 
-Module.prototype.addStates = function(states){
-	var self = this;
-	if(Array === states.constructor)
-		states.forEach(function(state){
-			self.addState(state);
-		});
-	else
-		self.addState(states);
+Module.prototype.addMenuItem = function(item){
+  /**
+   * Adds submenu item to menu.
+   */
+  this.menu.submenu.push(item);
 	return this;
 };
 

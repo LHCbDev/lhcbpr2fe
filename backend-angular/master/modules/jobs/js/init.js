@@ -1,25 +1,17 @@
 (function () {                  // Start of closure
   var module = Module.create('jobs', 'LHCbPR Jobs', 1);
-  module.addMenuItems([
-    {
-      text: "Job Descriptions",
-      sref: "app.job_descriptions.list",
-      icon: "icon-grid"
-      // alert: "new"
-    },
-    {
-      text: "Jobs",
-      sref: "app.jobs.list",
-      icon: "icon-grid"
-      // alert: "new"
-    },
-    {
-      text: "ROOT file viewer",
-      sref: "app.root_file_viewer",
-      icon: "icon-grid"
-      // alert: "new"
-    }
-  ])
+  module.addMenuItem({
+    text: "Job Descriptions",
+    sref: "app.job_descriptions.list",
+    icon: "icon-grid"
+    // alert: "new"
+  });
+  module.addMenuItem({
+    text: "Jobs",
+    sref: "app.jobs.list",
+    icon: "icon-grid"
+    // alert: "new"
+  })
     .addState({
       name: 'job_descriptions',
       abstract: true,
@@ -74,6 +66,13 @@
       resolve: ['chartjs']
     })
 
+  // ROOT file viewer stuff
+  module.addMenuItem({
+    text: "ROOT file viewer",
+    sref: "app.root_file_viewer",
+    icon: "icon-grid"
+    // alert: "new"
+  })
   module.addState({
     name: 'root_file_viewer',
     title: 'ROOT file viewer',
