@@ -14,39 +14,46 @@
   })
     .addState({
       name: 'job_descriptions',
+      controller: 'JobDescriptionsController',
       abstract: true,
       template: '<ui-view/>',
       resolve: ['jobs']
     })
     .addState({
       name: 'job_descriptions.list',
+      controller: 'JobDescriptionsListController',
       title: 'Job Descriptions',
       templateUrl: 'job-descriptions.html'
     })
     .addState({
       name: 'job_descriptions.add',
+      controller: 'JobDescriptionsAddController',
       title: 'Add Job Description',
       templateUrl: 'job-description.html'
     })
     .addState({
       name: 'jobs',
+      controller: 'JobsController',
       abstract: true,
       template: '<ui-view/>',
       resolve: ['jobs']
     })
     .addState({
       name: 'jobs.list',
+      controller: 'JobsListController',
       title: 'Jobs',
       templateUrl: 'jobs.html',
       resolve: ['chartjs','ngTable', 'ngDialog']
     })
     .addState({
       name: 'jobs.example',
+      controller: 'JobsExampleController',
       templateUrl: 'jobs.example.html',
       resolve: ['ngTable']
     })
     .addState({
       name: 'jobs.detail',
+      controller: 'JobsDetailController',
       url: '/detail/:job',
       title: 'Jobs',
       templateUrl: 'job.html',
@@ -61,6 +68,7 @@
     })
     .addState({
       name: 'trends.chart',
+      controller: 'TrendsChartController',
       url: '/option/:option/attribute/:attribute',
       templateUrl: 'trends.chart.html',
       resolve: ['chartjs']

@@ -6,6 +6,7 @@ Module.create('trend', 'Trends', 2)
   })
 	.addState({
 		name: 'trend',
+    controller: "TrendController",
 		title: 'Trends',
 		templateUrl: 'trends.html',
 		resolve: ['trend', 'chartjs', 'ngTable', 'ngDialog']

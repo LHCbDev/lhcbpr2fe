@@ -16,6 +16,7 @@ Module.create('geantstandalone', 'GEANT', 2)
   })
 	.addState({
 		name: 'geantstandalone',
+    controller:'GeantstandaloneController',
 		title: 'Hadronic',
 		url: '/geantstandalone',
 		templateUrl: 'geantstandalone.html',
@@ -23,6 +24,7 @@ Module.create('geantstandalone', 'GEANT', 2)
 	})
 	.addState({
 		name: 'geanttestem3',
+		controller: 'Geanttestem3Controller',
 		title: 'TestEm3',
 		url: '/geanttestem3',
 		templateUrl: 'geanttestem3.html',
@@ -30,6 +32,7 @@ Module.create('geantstandalone', 'GEANT', 2)
 	})
 	.addState({
 		name: 'geanttestem5',
+		controller: 'Geanttestem5Controller',
 		title: 'TestEm5',
 		url: '/geanttestem5',
 		templateUrl: 'geanttestem5.html',
