@@ -72,7 +72,7 @@
       url: '/option/:option/attribute/:attribute',
       templateUrl: 'trends.chart.html',
       resolve: ['chartjs']
-    })
+    });
 
   // ROOT file viewer stuff
   module.addMenuItem({
@@ -80,15 +80,14 @@
     sref: "app.root_file_viewer",
     icon: "icon-grid"
     // alert: "new"
-  })
+  });
   module.addState({
     name: 'root_file_viewer',
     title: 'ROOT file viewer',
     url: '/rootfileviewer',
-    controller: 'RootFileViewerController',
     templateUrl: 'root-file-viewer.html',
     resolve: ['jobs', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
-  })
+  });
 
   module.start();
 })();                           // End of closure
