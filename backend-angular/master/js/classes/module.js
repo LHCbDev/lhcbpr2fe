@@ -4,6 +4,12 @@
  * to add to the angular application
  */
 
+// TODO make registerTest function
+// TODO make default resolve for default controller (found rootfileviewer addState)
+// TODO Pass title and other info to default controller for customisation
+// TODO add restrict keyword to registerTest function to pass to select-jobs directive
+// TODO generally trim default controller
+
 /**
  * Module Constructor
  * @param {string} name      name of the module
@@ -274,28 +280,29 @@ Module.prototype.addState = function(state){
     state.title = parts.join(' ');
     console.log("Title for "+state.name+" automatically set to be "+state.title);
   }
-  if(undefined === state.templateUrl && undefined === state.template){
-    state.templateUrl = 'app/modules/' + this.folder + '/views/' + words.join('-') + '.html';
-    console.log("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
-  } else if(undefined !== state.templateUrl){
-    state.templateUrl = 'app/modules/' + this.folder + '/views/' + state.templateUrl;
-    console.log("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
-  }
-  if(undefined === state.controller){
-    // TODO remove this logic. One should not have to guess what a controller is called!
-    // state.controller = [];
-    // var parts = state.name.split('.');
-    // parts.forEach(function(part){
-    //   part.split('_').forEach(function(word){
-    //     state.controller.push(word.charAt(0).toUpperCase() + word.substr(1));
-    //   });
-    // });
-    // state.controller = state.controller.join('') + 'Controller';
-    // console.log("Controller for "+state.name+" automatically set to be "+state.controller);
-    // console.error("Controller is not defined for "+state.name+"! Expect breakages.");
+
+  // If controller, templateUrl and template not provided, create a default
+  // controller with default template. Else if controller is not defined (but
+  // templateUrl or template are), complain and continue.
+  if(undefined === state.controller && undefined == state.templateUrl && undefined === state.template) {
     ModuleHelpers.defaultControllerFactory(state.name);
     state.controller = ModuleHelpers.nameOfDefaultController(state.name);
     console.log("Default controller made for "+state.name+".");
+    state.templateUrl = "app/views/default_controller/default-controller.html";
+    // TODO remove all references of this 
+    state.DEFAULT_TEMPLATE_USED = true;
+    console.log("Default template used for "+state.name+".");
+  } else if (undefined === state.controller) {
+    console.error("template or templateUrl specified, but no controller specified for "+state.name+". Default controller not provided, expect breakages!");
+  }
+
+  // TODO properly document what templateUrl and template do.
+  if(undefined === state.templateUrl && undefined === state.template && !state.DEFAULT_TEMPLATE_USED){
+    state.templateUrl = 'app/modules/' + this.folder + '/views/' + words.join('-') + '.html';
+    console.log("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
+  } else if(undefined !== state.templateUrl && !state.DEFAULT_TEMPLATE_USED){
+    state.templateUrl = 'app/modules/' + this.folder + '/views/' + state.templateUrl;
+    console.log("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
   }
 
   if(undefined === state.resolve) {

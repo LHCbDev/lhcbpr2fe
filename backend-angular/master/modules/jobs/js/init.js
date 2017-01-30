@@ -85,7 +85,6 @@
     name: 'root_file_viewer',
     title: 'ROOT file viewer',
     url: '/rootfileviewer',
-    templateUrl: 'root-file-viewer.html',
     resolve: ['jobs', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
   });
 
