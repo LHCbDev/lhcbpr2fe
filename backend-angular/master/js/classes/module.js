@@ -45,30 +45,42 @@ Module.prototype.addMenuItem = function(item){
 };
 
 Module.prototype.addState = function(state){
+  /**
+   * Expects a completed states.
+   *
+   * Tries to make intelligent decisions on how to fill in missing keys.
+   */
 	if(undefined === state.name){
 		console.error('Cannot add a state without a name !');
 		return;
 	}
 	// words in the last name (after last '.')
 	// assuming that words are seperated with '_'
-	var words = state.name.split('.');
-	words = words[words.length - 1];
-	words = words.split('_');
+  //
+  // ... assuming makes things very difficult to debug. Refactoring code.
+	var words = state.name.split('.'); // Split name into Array
+	words = words[words.length - 1];   // Get last element of Array
+	words = words.split('_');          // Split on '_'
 	if(undefined === state.url){
 		state.url = '/' + words.join('-');
+    console.log("Url for "+state.name+" automatically set to be "+state.url);
 	}
 	if(undefined === state.title){ 
 		var parts = [];
 		for(var i in words)
 			parts.push(words[i].charAt(0).toUpperCase() + words[i].substr(1));
 		state.title = parts.join(' ');
+    console.log("Title for "+state.name+" automatically set to be "+state.title);
 	}
 	if(undefined === state.templateUrl && undefined === state.template){
 		state.templateUrl = 'app/modules/' + this.folder + '/views/' + words.join('-') + '.html';
+    console.log("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
 	} else if(undefined !== state.templateUrl){
 		state.templateUrl = 'app/modules/' + this.folder + '/views/' + state.templateUrl;
+    console.log("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
 	}
 	if(undefined === state.controller){
+    // TODO remove this logic. One should not have to guess what a controller is called!
 		state.controller = [];
 		var parts = state.name.split('.');
 		parts.forEach(function(part){
@@ -77,18 +89,24 @@ Module.prototype.addState = function(state){
 			});
 		});
 		state.controller = state.controller.join('') + 'Controller';
+    console.log("Controller for "+state.name+" automatically set to be "+state.controller);
 	}
 	if(undefined !== state.resolve){
 		Deps.commonModules.forEach(function(cm){
 			state.resolve.push(cm);
 		});
 		state.resolve = this.makePromises(state.resolve);
+    console.log("Resolve for "+state.name+" automatically set to be "+JSON.stringify(state.resolve));
 	} else {
 		state.resolve = this.makePromises(Deps.commonModules);
+    console.log("Resolve for "+state.name+" automatically set to be "+JSON.stringify(state.resolve));
 	}
 	
+  console.log("Final state for "+state.name+" is:");
 	state.name = 'app.' + state.name;
+  console.log(JSON.stringify(state, null, 2));
 	this.states.push(state);
+
 	return this;
 };
 

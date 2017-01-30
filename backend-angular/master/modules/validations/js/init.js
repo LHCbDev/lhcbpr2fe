@@ -9,7 +9,7 @@ Module.create('validations', 'Gauss', 2)
         sref: "app.detime",
         icon: "icon-grid"
     })
-    .addStates({
+    .addState({
         name: 'validations',
         title: 'Validation',
         url: '/validations',
