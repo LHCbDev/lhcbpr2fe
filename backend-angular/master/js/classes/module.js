@@ -34,10 +34,15 @@ var ModuleHelpers = new function() {
     return ['jobs', 'chartjs', 'ngTable', 'ngDialog', 'jsroot'];
   };
 
-  this.defaultControllerFactory = function(name) {
+  this.defaultControllerFactory = function(options) {
     // TODO farm most of the functionality of this controller out to custom
     // services so that they are loaded only once (and the code is not so
     // monolithic).
+    var name = options.name || logger.error("No name provided for default controller.");
+    var title = options.title || name;
+    var restrict = options.restrict || {};
+    var plotViews = options.plotViews; // or leave undefined
+
     var controller_name = that.nameOfDefaultController(name);
     App.controller(
       controller_name,
@@ -45,6 +50,9 @@ var ModuleHelpers = new function() {
        function($scope, $api, $apiroot, BUILD_PARAMS, plotViews) {
 
          $scope.plotViews = plotViews;
+
+         $scope.selectedApp = restrict.selectedApp;
+         $scope.selectedOptions = restrict.selectedOptions;
 
          $scope.color = {
            0: "white",
@@ -342,7 +350,6 @@ Module.prototype.registerTestView = function(options) {
   var alert = options.alert; // or keep undefined
   var url = options.url || "/"+name;
 
-  // TODO get this to restrict which tests this TestView processes
   var restrict = options.restrict || {};
 
   // TODO get the plotViews allowed into the default controller
@@ -358,7 +365,11 @@ Module.prototype.registerTestView = function(options) {
   //
   // TODO provide support for custom controllers
   if(undefined === options.controller && undefined === options.templateUrl) {
-    ModuleHelpers.defaultControllerFactory(name);
+    ModuleHelpers.defaultControllerFactory({
+      name: name,
+      title:title,
+      restrict: restrict
+    });
     var controller = ModuleHelpers.nameOfDefaultController(name);
     var resolve = ModuleHelpers.resolveOfDefaultController();
     var fullTemplateUrl = "app/views/default_controller/default-controller.html";
@@ -375,7 +386,6 @@ Module.prototype.registerTestView = function(options) {
     icon: icon,
     alert: alert
   };
-  // TODO get resolve to be automatic in addState
   state = {
     name: appName,
     url: url,
