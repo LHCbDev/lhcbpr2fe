@@ -78,7 +78,7 @@
   module.addMenuItem({
     text: "ROOT file viewer",
     sref: "app.root_file_viewer",
-    icon: "icon-grid"
+    icon: "icon-graph"
     // alert: "new"
   });
   module.addState({

@@ -2,7 +2,8 @@
 script(type='text/ng-template', id="sidebar-renderer.html")
   span(ng-if="item.heading", translate="{{item.translate}}") {{item.text}}
   a(ng-if="!item.heading", ng-href="{{$state.href(item.sref)}}", title="{{item.text}}")
-    em(class="{{item.icon}}", ng-hide="inSubmenu")
+    // em(class="{{item.icon}}", ng-hide="inSubmenu")
+    em(class="{{item.icon}}", ng-if="item.icon")&nbsp;
     .label.label-success.pull-right(ng-if="item.alert") {{item.alert}}
     span(translate="{{item.translate}}") {{item.text}}
   ul(class="nav sidebar-subnav", ng-if="item.submenu", collapse="isCollapse(pIndex)",  ng-init="addCollapse(pIndex, item)", ng-click="$event.stopPropagation();")
