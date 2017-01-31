@@ -11,7 +11,7 @@ h3 Validation Analysis
   .panel-wrapper(collapse="panelSearch")
     .panel-body
       // select-jobs(selected-app="DUMMYAPP" selected-options="100Evts-GAUSS-2015" on-jobs-selected="lookHistos(jobIds)")
-      select-jobs(on-jobs-selected="lookHistos(jobIds)")
+      select-jobs(ng-attr-selected-app="{{selectedApp}}", ng-attr-selected-options="{{selectedOptions}}", on-jobs-selected="lookHistos(jobIds)")
 
 // Shows secondary panel selecting which plot to display from all ROOT files found in the selected jobs.
 // TODO there is a lot of logic here, this should be farmed out to the controller
@@ -112,9 +112,9 @@ plot-view-generator(plot-view="data.optvalue", graphs="data.graphs", files-and-t
       p.
         The details here are for debug purposes. They can be safely ignored unless
         you are doing active plot view development.
-      pre.
-        data.optvalue: {{data.optvalue}}
-        directiveMapService: {{ plotViews }}
+      pre data.optvalue: {{data.optvalue}}
+      pre directiveMapService: {{ plotViewsFromProvider }}
+      pre plotViewsFromArgs: {{ plotViewsFromArgs }}
 
       label plot directive:
         input(ng-model="data.optvalue")
