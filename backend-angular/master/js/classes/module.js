@@ -41,15 +41,29 @@ var ModuleHelpers = new function() {
     var name = options.name || logger.error("No name provided for default controller.");
     var title = options.title || name;
     var restrict = options.restrict || {};
-    var plotViews = options.plotViews; // or leave undefined
+    var plotViewsFromArgs = options.plotViews; // or leave undefined
 
     var controller_name = that.nameOfDefaultController(name);
     App.controller(
       controller_name,
       ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews',
-       function($scope, $api, $apiroot, BUILD_PARAMS, plotViews) {
+       function($scope, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider) {
 
-         $scope.plotViews = plotViews;
+         $scope.plotViews = [];
+         $scope.plotViewsFromProvider = plotViewsFromProvider;
+         if(undefined !== plotViewsFromArgs) {
+           for(let plotview of plotViewsFromProvider) {
+             let index = _.findIndex(
+               plotViewsFromArgs,
+               function(o) {return o === plotview.directiveName;});
+             if(index > -1) {
+               $scope.plotViews.push(plotview);
+             }
+           }
+         } else {
+           $scope.plotViews = plotViewsFromProvider;
+         }
+         // TODO check for plotViews requested but not found
 
          $scope.selectedApp = restrict.selectedApp;
          $scope.selectedOptions = restrict.selectedOptions;
@@ -343,6 +357,8 @@ Module.prototype.makePromises = function(deps) {
 };
 
 Module.prototype.registerTestView = function(options) {
+  console.debug(
+    "Options submitted to registerTestView:\n"+JSON.stringify(options, null, 2));
   var title = options.title || logger.error("No title defined! Expect breakages!");
   var name = options.name || (_.camelCase(title)).toLowerCase();
   var appName = options.appName || "app."+name;
@@ -368,7 +384,8 @@ Module.prototype.registerTestView = function(options) {
     ModuleHelpers.defaultControllerFactory({
       name: name,
       title:title,
-      restrict: restrict
+      restrict: restrict,
+      plotViews: plotViews
     });
     var controller = ModuleHelpers.nameOfDefaultController(name);
     var resolve = ModuleHelpers.resolveOfDefaultController();

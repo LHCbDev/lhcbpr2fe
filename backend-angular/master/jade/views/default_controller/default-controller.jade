@@ -112,9 +112,9 @@ plot-view-generator(plot-view="data.optvalue", graphs="data.graphs", files-and-t
       p.
         The details here are for debug purposes. They can be safely ignored unless
         you are doing active plot view development.
-      pre.
-        data.optvalue: {{data.optvalue}}
-        directiveMapService: {{ plotViews }}
+      pre data.optvalue: {{data.optvalue}}
+      pre directiveMapService: {{ plotViewsFromProvider }}
+      pre plotViewsFromArgs: {{ plotViewsFromArgs }}
 
       label plot directive:
         input(ng-model="data.optvalue")
