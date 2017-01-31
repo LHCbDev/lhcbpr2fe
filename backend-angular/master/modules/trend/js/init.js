@@ -5,7 +5,7 @@ Module.create('trend', 'Trends', 2)
     icon: "icon-grid"
   })
 	.addState({
-		name: 'trend',
+		name: 'app.trend',
     controller: "TrendController",
 		templateUrl: 'trends.html',
 		resolve: ['trend', 'chartjs', 'ngTable', 'ngDialog']

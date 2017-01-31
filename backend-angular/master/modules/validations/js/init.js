@@ -10,14 +10,14 @@ Module.create('validations', 'Gauss', 2)
         icon: "icon-grid"
     })
     .addState({
-        name: 'validations',
+        name: 'app.validations',
         controller:"ValidationsController",
         url: '/validations',
         templateUrl: 'validations.html',
         resolve: ['validations', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
     })
     .addState({
-        name: 'detime',
+        name: 'app.detime',
         controller:"DetimeController",
         url: '/detime',
         templateUrl: 'detime.html',

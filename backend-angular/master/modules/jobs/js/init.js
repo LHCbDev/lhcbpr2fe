@@ -13,46 +13,46 @@
     // alert: "new"
   })
     .addState({
-      name: 'job_descriptions',
+      name: 'app.job_descriptions',
       controller: 'JobDescriptionsController',
       abstract: true,
       template: '<ui-view/>',
       resolve: ['jobs']
     })
     .addState({
-      name: 'job_descriptions.list',
+      name: 'app.job_descriptions.list',
       controller: 'JobDescriptionsListController',
       title: 'Job Descriptions',
       templateUrl: 'job-descriptions.html'
     })
     .addState({
-      name: 'job_descriptions.add',
+      name: 'app.job_descriptions.add',
       controller: 'JobDescriptionsAddController',
       title: 'Add Job Description',
       templateUrl: 'job-description.html'
     })
     .addState({
-      name: 'jobs',
+      name: 'app.jobs',
       controller: 'JobsController',
       abstract: true,
       template: '<ui-view/>',
       resolve: ['jobs']
     })
     .addState({
-      name: 'jobs.list',
+      name: 'app.jobs.list',
       controller: 'JobsListController',
       title: 'Jobs',
       templateUrl: 'jobs.html',
       resolve: ['chartjs','ngTable', 'ngDialog']
     })
     .addState({
-      name: 'jobs.example',
+      name: 'app.jobs.example',
       controller: 'JobsExampleController',
       templateUrl: 'jobs.example.html',
       resolve: ['ngTable']
     })
     .addState({
-      name: 'jobs.detail',
+      name: 'app.jobs.detail',
       controller: 'JobsDetailController',
       url: '/detail/:job',
       title: 'Jobs',
@@ -60,14 +60,14 @@
       resolve: ['ngTable']
     })
     .addState({
-      name: 'trends',
+      name: 'app.trends',
       abstract: true,
       template: '<ui-view/>',
       controller: 'NullController',
       resolve: ['jobs']
     })
     .addState({
-      name: 'trends.chart',
+      name: 'app.trends.chart',
       controller: 'TrendsChartController',
       url: '/option/:option/attribute/:attribute',
       templateUrl: 'trends.chart.html',
@@ -82,7 +82,7 @@
     // alert: "new"
   });
   module.addState({
-    name: 'root_file_viewer',
+    name: 'app.root_file_viewer',
     url: '/rootfileviewer',
     resolve: ['jobs', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
   });

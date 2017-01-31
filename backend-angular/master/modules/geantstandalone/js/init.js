@@ -15,21 +15,21 @@ Module.create('geantstandalone', 'GEANT', 2)
 	icon: "icon-grid"
   })
 	.addState({
-		name: 'geantstandalone',
+		name: 'app.geantstandalone',
     controller:'GeantstandaloneController',
 		url: '/geantstandalone',
 		templateUrl: 'geantstandalone.html',
 		resolve: ['geantstandalone', 'jsroot','ngTable', 'ngDialog']
 	})
 	.addState({
-		name: 'geanttestem3',
+		name: 'app.geanttestem3',
 		controller: 'Geanttestem3Controller',
 		url: '/geanttestem3',
 		templateUrl: 'geanttestem3.html',
 		resolve: ['geantstandalone','jsroot','ngTable', 'ngDialog', 'chartjs']
 	})
 	.addState({
-		name: 'geanttestem5',
+		name: 'app.geanttestem5',
 		controller: 'Geanttestem5Controller',
 		url: '/geanttestem5',
 		templateUrl: 'geanttestem5.html',

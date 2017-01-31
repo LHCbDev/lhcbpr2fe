@@ -5,7 +5,7 @@ Module.create('histograms', 'Histograms', 2)
     icon: "icon-grid"
   })
 	.addState({
-		name: 'histograms',
+		name: 'app.histograms',
     controller: 'HistogramsController',
 		url: '/histograms',
 		templateUrl: 'histograms.html',

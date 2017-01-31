@@ -308,7 +308,6 @@ Module.prototype.addState = function(state){
   state.resolve = this.makePromises(state.resolve);
 
   console.log("Final state for "+state.name+" is:");
-  state.name = 'app.' + state.name;
   console.log(JSON.stringify(state, null, 2));
   this.states.push(state);
 
