@@ -52,12 +52,12 @@ var ModuleHelpers = new function() {
          $scope.plotViews = [];
          $scope.plotViewsFromProvider = plotViewsFromProvider;
          if(undefined !== plotViewsFromArgs) {
-           for(let plotview of plotViewsFromProvider) {
+           for(let i in plotViewsFromProvider) {
              let index = _.findIndex(
                plotViewsFromArgs,
-               function(o) {return o === plotview.directiveName;});
+               function(o) {return o === plotViewsFromProvider[i].directiveName;});
              if(index > -1) {
-               $scope.plotViews.push(plotview);
+               $scope.plotViews.push(plotViewsFromProvider[i]);
              }
            }
          } else {
