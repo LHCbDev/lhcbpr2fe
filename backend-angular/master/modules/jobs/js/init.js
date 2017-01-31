@@ -75,7 +75,7 @@
     });
 
   // ROOT file viewer stuff
-  module.registerTest({
+  module.registerTestView({
     title: "ROOT file viewer"
   });
 

@@ -30,6 +30,10 @@ var ModuleHelpers = new function() {
     return controller_name;
   };
 
+  this.resolveOfDefaultController = function() {
+    return ['jobs', 'chartjs', 'ngTable', 'ngDialog', 'jsroot'];
+  };
+
   this.defaultControllerFactory = function(name) {
     // TODO farm most of the functionality of this controller out to custom
     // services so that they are loaded only once (and the code is not so
@@ -216,7 +220,7 @@ var ModuleHelpers = new function() {
 
          };
        }]);
-  }
+  };
 };
 
 var Module = function(name, title, position, settings){
@@ -274,29 +278,25 @@ Module.prototype.addState = function(state){
     console.log("Url for "+state.name+" automatically set to be "+state.url);
   }
 
-  // If controller, templateUrl and template not provided, create a default
-  // controller with default template. Else if controller is not defined (but
-  // templateUrl or template are), complain and continue.
-  if(undefined === state.controller && undefined == state.templateUrl && undefined === state.template) {
-    ModuleHelpers.defaultControllerFactory(state.name);
-    state.controller = ModuleHelpers.nameOfDefaultController(state.name);
-    console.log("Default controller made for "+state.name+".");
-    state.templateUrl = "app/views/default_controller/default-controller.html";
-    // TODO remove all references of this 
-    state.DEFAULT_TEMPLATE_USED = true;
-    console.log("Default template used for "+state.name+".");
-  } else if (undefined === state.controller) {
-    console.error("template or templateUrl specified, but no controller specified for "+state.name+". Default controller not provided, expect breakages!");
+  if (undefined === state.controller) {
+    console.error("No controller specified. Expect breakages!");
   }
 
   // TODO properly document what templateUrl and template do.
-  if(undefined === state.templateUrl && undefined === state.template && !state.DEFAULT_TEMPLATE_USED){
+  if(undefined === state.templateUrl && undefined === state.template){
     state.templateUrl = 'app/modules/' + this.folder + '/views/' + words.join('-') + '.html';
     console.log("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
-  } else if(undefined !== state.templateUrl && !state.DEFAULT_TEMPLATE_USED){
+  } else if(undefined !== state.templateUrl){
     state.templateUrl = 'app/modules/' + this.folder + '/views/' + state.templateUrl;
     console.log("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
   }
+  // NOTE: this overrides any templateUrl which has been given.
+  //
+  // TODO either phase out templateUrl, or make it not second guess the programmer.
+  if(undefined !== state.fullTemplateUrl) {
+    state.templateUrl = state.fullTemplateUrl;
+    state.fullTemplateUrl = undefined;
+  };
 
   if(undefined === state.resolve) {
     state.resolve = [];
@@ -334,15 +334,40 @@ Module.prototype.makePromises = function(deps) {
   };
 };
 
-Module.prototype.registerTest = function(options) {
-  title = options.title || logger.error("No title defined! Expect breakages!");
-  name = options.name || (_.camelCase(title)).toLowerCase();
-  appName = options.appName || "app."+name;
-  icon = options.icon || "icon-speedometer";
-  alert = options.alert; // or keep undefined
-  url = options.url || "/"+name;
+Module.prototype.registerTestView = function(options) {
+  var title = options.title || logger.error("No title defined! Expect breakages!");
+  var name = options.name || (_.camelCase(title)).toLowerCase();
+  var appName = options.appName || "app."+name;
+  var icon = options.icon || "icon-speedometer";
+  var alert = options.alert; // or keep undefined
+  var url = options.url || "/"+name;
+
+  // TODO get this to restrict which tests this TestView processes
+  var restrict = options.restrict || {};
+
+  // TODO get the plotViews allowed into the default controller
+  var plotViews = options.plotViews; // or keep undefined
 
   // TODO add more state options
+
+  // TODO add the automatic default controller creation here, instead of in the
+  // add state
+
+  // Usually, physicists using registerTestView will be doing so in order to use
+  // the default controller.
+  //
+  // TODO provide support for custom controllers
+  if(undefined === options.controller && undefined === options.templateUrl) {
+    ModuleHelpers.defaultControllerFactory(name);
+    var controller = ModuleHelpers.nameOfDefaultController(name);
+    var resolve = ModuleHelpers.resolveOfDefaultController();
+    var fullTemplateUrl = "app/views/default_controller/default-controller.html";
+  } else {
+    console.error("registerTestView currently does not support custom controllers.");
+    console.error("Aborting creation of test view.");
+    return undefined;
+  }
+
 
   menuItem = {
     text: title,
@@ -353,8 +378,10 @@ Module.prototype.registerTest = function(options) {
   // TODO get resolve to be automatic in addState
   state = {
     name: appName,
-    url: "/"+name,
-    resolve: ['jobs', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
+    url: url,
+    resolve: resolve,
+    controller: controller,
+    fullTemplateUrl: fullTemplateUrl
   };
 
   this.addMenuItem(menuItem);
