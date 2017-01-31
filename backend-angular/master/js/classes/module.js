@@ -334,6 +334,33 @@ Module.prototype.makePromises = function(deps) {
   };
 };
 
+Module.prototype.registerTest = function(options) {
+  title = options.title || logger.error("No title defined! Expect breakages!");
+  name = options.name || (_.camelCase(title)).toLowerCase();
+  appName = options.appName || "app."+name;
+  icon = options.icon || "icon-speedometer";
+  alert = options.alert; // or keep undefined
+  url = options.url || "/"+name;
+
+  // TODO add more state options
+
+  menuItem = {
+    text: title,
+    sref: appName,
+    icon: icon,
+    alert: alert
+  };
+  // TODO get resolve to be automatic in addState
+  state = {
+    name: appName,
+    url: "/"+name,
+    resolve: ['jobs', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
+  };
+
+  this.addMenuItem(menuItem);
+  this.addState(state);
+}
+
 
 Module.prototype.start = function(){
   var self = this;

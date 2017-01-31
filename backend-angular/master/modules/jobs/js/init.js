@@ -75,16 +75,8 @@
     });
 
   // ROOT file viewer stuff
-  module.addMenuItem({
-    text: "ROOT file viewer",
-    sref: "app.root_file_viewer",
-    icon: "icon-graph"
-    // alert: "new"
-  });
-  module.addState({
-    name: 'app.root_file_viewer',
-    url: '/rootfileviewer',
-    resolve: ['jobs', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
+  module.registerTest({
+    title: "ROOT file viewer"
   });
 
   module.start();
