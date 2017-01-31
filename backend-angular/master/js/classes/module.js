@@ -273,13 +273,6 @@ Module.prototype.addState = function(state){
     state.url = '/' + words.join('-');
     console.log("Url for "+state.name+" automatically set to be "+state.url);
   }
-  if(undefined === state.title){
-    var parts = [];
-    for(var i in words)
-      parts.push(words[i].charAt(0).toUpperCase() + words[i].substr(1));
-    state.title = parts.join(' ');
-    console.log("Title for "+state.name+" automatically set to be "+state.title);
-  }
 
   // If controller, templateUrl and template not provided, create a default
   // controller with default template. Else if controller is not defined (but

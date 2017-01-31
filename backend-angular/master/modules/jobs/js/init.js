@@ -83,7 +83,6 @@
   });
   module.addState({
     name: 'root_file_viewer',
-    title: 'ROOT file viewer',
     url: '/rootfileviewer',
     resolve: ['jobs', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
   });

@@ -12,7 +12,6 @@ Module.create('validations', 'Gauss', 2)
     .addState({
         name: 'validations',
         controller:"ValidationsController",
-        title: 'Validation',
         url: '/validations',
         templateUrl: 'validations.html',
         resolve: ['validations', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
@@ -20,7 +19,6 @@ Module.create('validations', 'Gauss', 2)
     .addState({
         name: 'detime',
         controller:"DetimeController",
-        title: 'Detailed timing',
         url: '/detime',
         templateUrl: 'detime.html',
         resolve: ['validations', 'jsroot', 'ngTable', 'ngDialog']

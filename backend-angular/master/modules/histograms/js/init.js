@@ -7,7 +7,6 @@ Module.create('histograms', 'Histograms', 2)
 	.addState({
 		name: 'histograms',
     controller: 'HistogramsController',
-    title: 'Histograms',
 		url: '/histograms',
 		templateUrl: 'histograms.html',
 		resolve: ['histograms', 'chartjs', 'slider', 'ngTable', 'ngDialog']
