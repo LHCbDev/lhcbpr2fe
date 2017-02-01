@@ -413,6 +413,8 @@ Module.prototype.registerTestView = function(options) {
 
   this.addMenuItem(menuItem);
   this.addState(state);
+
+  return this;
 }
 
 
