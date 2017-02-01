@@ -49,6 +49,11 @@ var ModuleHelpers = new function() {
       ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews',
        function($scope, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider) {
 
+         $apiroot.lookupFileContents(["11/MuonMoniSim_histos.root"]).then( function(resp) {
+           $scope.apiroot = resp;
+         });
+
+
          $scope.plotViews = [];
          $scope.plotViewsFromProvider = plotViewsFromProvider;
          if(undefined !== plotViewsFromArgs) {
@@ -81,17 +86,6 @@ var ModuleHelpers = new function() {
            9: "rgb(89,84,217)"
          };
 
-         $scope.options = [
-           {value: 'Difference', text: 'Plot difference'},
-           {value: 'Ratio', text: 'Plot ratio'},
-           {value: 'Kolmogorov', text: 'Apply Kolmogorv test'},
-         ];
-
-         $scope.commonoptions = [
-           {value: '', text: 'Superimposed'},
-           {value: 'Split', text: 'Separated'}
-         ];
-
          $scope.jobId = [];
          $scope.folders = ['/'];
          $scope.noJobData = true;
@@ -108,17 +102,12 @@ var ModuleHelpers = new function() {
            optvalue: ""
          };
 
-         // TODO remove
-         // $scope.foobar = {bar: true};
-         $scope.foobar = 'bar';
-
          $scope.panelJobs = {toggle: false};
          $scope.hidePanelDebug = true;
 
          $scope.sizeOf = function(obj) {
            return Object.keys(obj).length;
          };
-
 
          $scope.showSearchForm = function() {
            $scope.isShowSearchForm = true;
@@ -185,6 +174,9 @@ var ModuleHelpers = new function() {
          };
 
          $scope.readTree = function() {
+           /**
+            * Reads tree using LHCbPR2ROOT. Adds dir to $scope.data.treedirs
+            */
            if ($scope.jobId && $scope.jobId.length > 0) {
              var parameters = {
                files: $scope.jobId,
@@ -197,7 +189,8 @@ var ModuleHelpers = new function() {
                var intersect = Object.keys(response[ listfn[0] ]['/']);
                for ( key = 1; key < listfn.length; key++ ) {
                  var list = Object.keys(response[ listfn[key] ]['/']);
-                 intersect = $(list).filter(intersect)
+                 // intersect becomes inner join of intersect and list
+                 intersect = $(list).filter(intersect);
                }
                $scope.data.treedirs[listfn.join(',')] = {};
                for ( key = 0; key < intersect.length; key++ ) {

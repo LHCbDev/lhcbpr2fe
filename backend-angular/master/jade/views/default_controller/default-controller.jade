@@ -34,9 +34,14 @@ h3 Validation Analysis
             | {{ getJobName(file.split('/')[0]) }}
         .col-lg-6
             form(name="myForm")
-              select(name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])")
-                option(ng-repeat="(path, val) in job" value="{{ path }}") 
-                  | {{ val }}
+              // select(name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])")
+              //   option(ng-repeat="(path, val) in job" value="{{ path }}") 
+              //     | {{ val }}
+              // select(name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])")
+              div(ng-repeat="(path, val) in job")
+                input(type="radio" name="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" value="{{ path }}" ng-change="showPlots(key, data.repeatSelect[key])")
+                | {{ val }}
+              br
         .col-lg-6
             div(ng-repeat="(key, job) in data.treeplots", id="jobsPlots", ng-hide="noJobData")
               form(name="myForm")
@@ -115,6 +120,8 @@ plot-view-generator(plot-view="data.optvalue", graphs="data.graphs", files-and-t
       pre data.optvalue: {{data.optvalue}}
       pre directiveMapService: {{ plotViewsFromProvider }}
       pre plotViewsFromArgs: {{ plotViewsFromArgs }}
+
+      pre apiroot: {{ apiroot }}
 
       label plot directive:
         input(ng-model="data.optvalue")
