@@ -98,7 +98,8 @@ var ModuleHelpers = new function() {
            treedirs: {},
            treeplots: {},
            tree: {},
-           graphs: {},
+           // graphs: {},
+           graphs: [],
            optvalue: ""
          };
 
@@ -157,7 +158,7 @@ var ModuleHelpers = new function() {
              $api.all('compare')
                .getList(requestParams)
                .then(function(attr) { // When we receive the response
-                 res = [];
+                 var res = [];
                  for (i = 0; i < attr.length; i++) {
                    for (j = 0; j < attr[i].jobvalues.length; j++) {
                      if ( attr[i].jobvalues[j].value.endsWith(".root") ) {
@@ -166,11 +167,38 @@ var ModuleHelpers = new function() {
                      }
                    }
                  }
+                 // TODO look into whether it's really worth this jobId double
+                 // underscore join thing or whether one should only use
+                 // $scope.files for files, and $scope.jobId for showing pretty
+                 // things (e.g. titles on the page).
+                 $scope.files = res;
+                 // TODO find the best place to initialise this
+                 $scope.url = BUILD_PARAMS.url_root;
+                 // debugger;
                  $scope.jobId = res.join("__");
                  $scope.folders = ['/'];
-                 $scope.readTree();
+                 $scope.readFiles();
                });
            }
+         };
+
+         $scope.readFiles = function () {
+           if ($scope.jobId && $scope.jobId.length > 0) {
+             var parameters = {
+               files: $scope.jobId,
+               folders: $scope.folders
+             };
+             $apiroot.lookupFileContents($scope.jobId).then (function(response) {
+               var i;
+               var retVal;
+               // gets the last one in response
+               for(i in response) {
+                 retVal = response[i];
+               }
+
+               $scope.data.treedirs = retVal;
+             });
+           };
          };
 
          $scope.readTree = function() {
@@ -203,37 +231,37 @@ var ModuleHelpers = new function() {
            }
          };
 
-         $scope.showPlots = function(file, namecat) {
-           if ( $scope.data.plotSelect != null ) $scope.data.plotSelect[file] = "";
-           var listfn = file.split(',');
-           var intersect = $scope.data.tree[listfn[0]]['/'][namecat];
+         // $scope.showPlots = function(file, namecat) {
+         //   if ( $scope.data.plotSelect != null ) $scope.data.plotSelect[file] = "";
+         //   var listfn = file.split(',');
+         //   var intersect = $scope.data.tree[listfn[0]]['/'][namecat];
 
-           for ( key = 1; key < listfn.length; key++ ) {
-             var keys = {};
-             for (var i in intersect)
-               if (i in $scope.data.tree[listfn[key]]['/'][namecat])
-                 keys[i] = $scope.data.tree[listfn[key]]['/'][namecat][i];
-             intersect = keys;
-           }
-           $scope.data.treeplots[file] = intersect;
-         };
+         //   for ( key = 1; key < listfn.length; key++ ) {
+         //     var keys = {};
+         //     for (var i in intersect)
+         //       if (i in $scope.data.tree[listfn[key]]['/'][namecat])
+         //         keys[i] = $scope.data.tree[listfn[key]]['/'][namecat][i];
+         //     intersect = keys;
+         //   }
+         //   $scope.data.treeplots[file] = intersect;
+         // };
 
-         $scope.showChart = function(file, title) {
-           files={}
-           var listfn = file.split(',');
-           for ( key in listfn ) {
-             files[listfn[key]] = 'Job ID: ' + listfn[key].split('/')[0];
-           }
-           titles={}
-           titles[title] = $scope.data.treeplots[file][title];
-           $scope.url = BUILD_PARAMS.url_root;
-           $scope.files_and_titles = files;
-           if ( title == "ALL" )
-             $scope.data.graphs = $scope.data.treeplots[file];
-           else
-             $scope.data.graphs = titles;
+         // $scope.showChart = function(file, title) {
+         //   files={}
+         //   var listfn = file.split(',');
+         //   for ( key in listfn ) {
+         //     files[listfn[key]] = 'Job ID: ' + listfn[key].split('/')[0];
+         //   }
+         //   titles={}
+         //   titles[title] = $scope.data.treeplots[file][title];
+         //   $scope.url = BUILD_PARAMS.url_root;
+         //   $scope.files_and_titles = files;
+         //   if ( title == "ALL" )
+         //     $scope.data.graphs = $scope.data.treeplots[file];
+         //   else
+         //     $scope.data.graphs = titles;
 
-         };
+         // };
        }]);
   };
 };

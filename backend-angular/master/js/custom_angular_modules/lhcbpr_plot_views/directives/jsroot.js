@@ -294,6 +294,7 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
   template: '<rootjs data="data" kstest="kstest" width="{{width}}" height="{{height}}"></rootjs>',
   link: function(scope) {
     scope.$watchGroup(['files', 'items', 'compute'], function(values) {
+        debugger;
     	if(values[0] && values[1]) {
         if ( values[2] )
           activateopt(values[0], values[1], values[2])
@@ -304,17 +305,19 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
 
     ///
     function activate(files, items) {
-      var strFiles = _.map(_.keys(files), encodeURIComponent).join('__');
+      var strFiles = _.map(files, encodeURIComponent).join('__');
       var url = scope.entrypoint + '/?files=' +
       strFiles +
       '&items=' + encodeURIComponent(items) +
       '&callback=JSON_CALLBACK';
+      console.debug("Making request: "+url);
       $http.jsonp(url).then(loaded, error);
 
     }
     function activateopt(files, items, option) {
-      var strFiles = _.map(_.keys(files), encodeURIComponent).join('__');
+      var strFiles = _.map(files, encodeURIComponent).join('__');
       var url = scope.entrypoint + '/?files=' +
+      console.debug("Making request: "+url);
       strFiles +
       '&items=' + encodeURIComponent(items) +
       '&compute=' +  encodeURIComponent(option) +
@@ -339,17 +342,18 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
         	if(value['_typename'] == 'TGraph' || value['_typename'] == 'TGraphErrors'){
 	          graph = JSROOT.JSONR_unref(value);
 	          graph.fLineColor = color++;
-	          graph.fTitle = scope.files[file.root] + ' ' + graph.fTitle;
+	          // graph.fTitle = scope.files[file.root] + ' ' + graph.fTitle;
 	          graphs.push(graph);
           } else {
             other = JSROOT.JSONR_unref(value);
             other.fLineColor = color++;
-            if ( scope.files[file.root] != "" ) {
-              other.fName = scope.files[file.root];  // used in ToolTips
-            }
+            // if ( scope.files[file.root] != "" ) {
+            //   other.fName = scope.files[file.root];  // used in ToolTips
+            // }
 	          others.push(other);
           }
         });
+        // TODO figure out what this condition is for
         if ( file['KSTest'] ) {
           scope.kstest = file['KSTest']
         }

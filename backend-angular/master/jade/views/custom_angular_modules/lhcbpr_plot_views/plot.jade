@@ -1,7 +1,8 @@
-div(ng-repeat="(item, title) in graphs", ng-hide="noJobData")
-  h3(style="color:red") {{ title }}
+div(ng-repeat="item in graphs track by $index", ng-hide="noJobData")
+  pre item: {{ item }}
+  h3(style="color:red") {{ item.fTitle }}
     rootjsserver(entrypoint="url"
-                  files="filesAndTitles"
+                  files="files"
                   items="item"
                   compute="compute"
                   width="800" height="600")
