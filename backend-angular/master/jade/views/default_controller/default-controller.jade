@@ -13,6 +13,21 @@ h3 Validation Analysis
       // select-jobs(selected-app="DUMMYAPP" selected-options="100Evts-GAUSS-2015" on-jobs-selected="lookHistos(jobIds)")
       select-jobs(ng-attr-selected-app="{{selectedApp}}", ng-attr-selected-options="{{selectedOptions}}", on-jobs-selected="lookHistos(jobIds)")
 
+
+// Recursive template
+script(type="text/ng-template" id="categoryTree")
+  label
+    input(type="checkbox" ng-model="obj.isExpanded")
+    | {{ obj.name }}
+  // label.radio(ng-repeat="folder in data.treedirsStructure[files[0]].children | filter:hasChildren")
+  //   input(type="radio" data-checklist-value="folder")
+  //   | {{ folder.name }}
+  div(ng-if="obj.children && obj.isExpanded")
+    // li(ng-repeat="obj in obj.children" ng-include="'categoryTree'")
+    // label(ng-repeat="obj in obj.children" ng-include="'categoryTree'")
+    //   input(type="checkbox" ng-model="obj.isExpanded")
+    div(ng-repeat="obj in obj.children" ng-include="'categoryTree'") 
+
 // Shows secondary panel selecting which plot to display from all ROOT files found in the selected jobs.
 // TODO there is a lot of logic here, this should be farmed out to the controller
 // TODO Currently _feels_ overcomplicated. Review to see if there is a more succint/meaningful way to do this
@@ -24,17 +39,14 @@ h3 Validation Analysis
   .panel-wrapper(collapse="panelJobs")
     .panel-body
       .alert.alert-info(ng-show="noJobData") No root file was found !
-      // table
-      //   tr
-      //     td(ng-repeat="(key, val) in selectionLevels | sort")
-      //       {{key, val}}
-      //       .btn-group-vertical(ng-repeat="(btnkey, btnval) in val")
-      //         button.btn.btn-primary(type="button" ng-click="addSelectionLevel(key)") {{ btnkey }}
-      div(ng-repeat="path in data.treedirs")
-        label
-          input(type="checkbox" checklist-model="data.graphs" checklist-value="path")
-          | {{ path }}
-        br
+      div(ng-repeat="obj in data.treedirsStructure[files[0]].children | filter:hasChildren" ng-include="'categoryTree'")
+
+
+      // div(ng-repeat="path in data.treedirs")
+      //   label
+      //     input(type="checkbox" checklist-model="data.graphs" checklist-value="path")
+      //     | {{ path }}
+      //   br
 
 #panelOptions.panel.panel-default
   .panel-heading
@@ -73,6 +85,7 @@ plot-view-generator(plot-view="data.optvalue", graphs="data.graphs", files="file
       pre plotViewsFromArgs: {{ plotViewsFromArgs }}
       pre jobId: {{ jobId }}
       pre data.graphs: {{ data.graphs }}
+      pre data.treedirsStructure: {{ data.treedirsStructure }}
 
       pre apiroot: {{ apiroot }}
 

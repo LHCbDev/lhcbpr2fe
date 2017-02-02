@@ -56,7 +56,7 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PAR
       var parsed = {
         name: "/",
         location: "/",
-        children: {}
+        children: []
       };
       var i;
       var j;
@@ -82,8 +82,8 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PAR
 
           if(existingObjs.length === 1) {
             // Find it, add it
-            // partialParsedPath.push(_.indexOf(_.get(parsed, partialParsedPath), existingObjs[0]));
-            partialParsedPath.push(objName);
+            partialParsedPath.push(_.indexOf(_.get(parsed, partialParsedPath), existingObjs[0]));
+            // partialParsedPath.push(objName);
             if(_.includes(path, "/"+objName+"/")) {
               partialParsedPath.push("children");
             };
@@ -91,16 +91,17 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PAR
             console.error("Something has gone wrong!");
             debugger;
           } else {
-            // partialParsedPath.push(_.get(parsed, partialParsedPath).length);
-            partialParsedPath.push(objName);
+            partialParsedPath.push(_.get(parsed, partialParsedPath).length);
+            // partialParsedPath.push(objName);
             _.set(parsed, partialParsedPath, {
               name: objName,
-              location: "/"+_.slice(splitPath, 0, Number(j)+1).join('/') // If you pass this location to jsroot, it will fetch the object with objName
+              location: "/"+_.slice(splitPath, 0, Number(j)+1).join('/'), // If you pass this location to jsroot, it will fetch the object with objName
+              isExpanded: false
             });
             // If it's a directory, give it children.
             if(_.includes(path, "/"+objName+"/")) {
               partialParsedPath.push("children");
-              _.set(parsed, partialParsedPath, {});
+              _.set(parsed, partialParsedPath, []);
             };
           }
           // So, it does exist. What now?
@@ -139,10 +140,10 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PAR
       retObj[key] = parsePathArray(value);
     });
 
-    console.debug(JSON.stringify(retObj, null, 2));
+    // console.debug(JSON.stringify(retObj, null, 2));
 
     return retObj;
-  }
+  };
 
 
 

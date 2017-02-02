@@ -180,6 +180,7 @@ var ModuleHelpers = new function() {
            }
          };
 
+
          $scope.readFiles = function () {
            $scope.noJobData = ($scope.jobId.length < 1);
            if ($scope.jobId && $scope.jobId.length > 0) {
@@ -199,6 +200,10 @@ var ModuleHelpers = new function() {
                $scope.data.treedirsStructure = $apiroot.sortFileContentsToJSON(response);
              });
            };
+         };
+
+         $scope.hasChildren = function(val, ind) {
+           return val.children;
          };
 
        }]);
