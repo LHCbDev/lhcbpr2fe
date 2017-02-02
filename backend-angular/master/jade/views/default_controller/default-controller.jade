@@ -24,6 +24,12 @@ h3 Validation Analysis
   .panel-wrapper(collapse="panelJobs")
     .panel-body
       .alert.alert-info(ng-show="noJobData") No root file was found !
+      // table
+      //   tr
+      //     td(ng-repeat="(key, val) in selectionLevels | sort")
+      //       {{key, val}}
+      //       .btn-group-vertical(ng-repeat="(btnkey, btnval) in val")
+      //         button.btn.btn-primary(type="button" ng-click="addSelectionLevel(key)") {{ btnkey }}
       div(ng-repeat="path in data.treedirs")
         label
           input(type="checkbox" checklist-model="data.graphs" checklist-value="path")
