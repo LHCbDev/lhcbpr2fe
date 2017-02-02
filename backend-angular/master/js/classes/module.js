@@ -206,6 +206,13 @@ var ModuleHelpers = new function() {
            return val.children;
          };
 
+         $scope.hasNoChildren = function(val, ind) {
+           /**
+            * Needed to get around jade/pug's fussiness around '!'s.
+            */
+           return !$scope.hasChildren(val, ind);
+         };
+
        }]);
   };
 };
