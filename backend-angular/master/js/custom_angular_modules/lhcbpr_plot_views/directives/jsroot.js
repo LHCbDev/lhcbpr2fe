@@ -294,7 +294,6 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
   template: '<rootjs data="data" kstest="kstest" width="{{width}}" height="{{height}}"></rootjs>',
   link: function(scope) {
     scope.$watchGroup(['files', 'items', 'compute'], function(values) {
-        debugger;
     	if(values[0] && values[1]) {
         if ( values[2] )
           activateopt(values[0], values[1], values[2])
