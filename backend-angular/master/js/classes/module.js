@@ -21,7 +21,6 @@
 var ModuleHelpers = new function() {
   var that = this;
   this.nameOfDefaultController = function(name) {
-    // debugger;
     if("" === name) {
       console.error("No name provided to create default controller name!");
       return "";
@@ -42,17 +41,14 @@ var ModuleHelpers = new function() {
     var title = options.title || name;
     var restrict = options.restrict || {};
     var plotViewsFromArgs = options.plotViews; // or leave undefined
+    var defaultPlots = options.defaultPlots || [];
+    var defaultPlotView = options.defaultPlotView || "plotSplit";
 
     var controller_name = that.nameOfDefaultController(name);
     App.controller(
       controller_name,
       ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews',
        function($scope, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider) {
-
-         $apiroot.lookupFileContents(["11/MuonMoniSim_histos.root"]).then( function(resp) {
-           $scope.apiroot = resp;
-         });
-
 
          $scope.plotViews = [];
          $scope.plotViewsFromProvider = plotViewsFromProvider;
@@ -74,7 +70,6 @@ var ModuleHelpers = new function() {
          $scope.selectionLevels = {};
          $scope.addSelectionLevel = function(currentLevel, newLevelData) {
            // TODO remove lower levels
-           $scope.data.treedirsStructure
            $scope.selectionLevels[currentLevel] = newLevelData;
          };
 
@@ -100,15 +95,15 @@ var ModuleHelpers = new function() {
          $scope.isShowSearchForm = true;
          $scope.cachedJobs = {};
 
+         // TODO this is defined twice. Not sure why. Find out, and take appropriate action.
          $scope.data = {
            repeatSelect: null,
            plotSelect: null,
            treedirs: {},
            treeplots: {},
            tree: {},
-           // graphs: {},
-           graphs: [],
-           optvalue: ""
+           graphs: defaultPlots,
+           optvalue: defaultPlotView
          };
 
          $scope.panelJobs = {toggle: false};
@@ -134,8 +129,8 @@ var ModuleHelpers = new function() {
              treedirs: {},
              treeplots: {},
              tree: {},
-             graphs: {},
-             optvalue: ""
+             graphs: defaultPlots,
+             optvalue: defaultPlotView
            };
 
            var requestParams = {
@@ -172,7 +167,6 @@ var ModuleHelpers = new function() {
                  $scope.files = res;
                  // TODO find the best place to initialise this
                  $scope.url = BUILD_PARAMS.url_root;
-                 // debugger;
                  $scope.jobId = res.join("__");
                  $scope.folders = ['/'];
                  $scope.readFiles();
@@ -337,6 +331,8 @@ Module.prototype.registerTestView = function(options) {
   var icon = options.icon || "icon-speedometer";
   var alert = options.alert; // or keep undefined
   var url = options.url || "/"+name;
+  var defaultPlots = options.defaultPlots; // or keep undefined
+  var defaultPlotView = options.defaultPlotView; // or keep undefined
 
   var restrict = options.restrict || {};
 
@@ -357,7 +353,9 @@ Module.prototype.registerTestView = function(options) {
       name: name,
       title:title,
       restrict: restrict,
-      plotViews: plotViews
+      plotViews: plotViews,
+      defaultPlots: defaultPlots,
+      defaultPlotView: defaultPlotView
     });
     var controller = ModuleHelpers.nameOfDefaultController(name);
     var resolve = ModuleHelpers.resolveOfDefaultController();
