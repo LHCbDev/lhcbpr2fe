@@ -50,6 +50,8 @@ var ModuleHelpers = new function() {
       ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews',
        function($scope, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider) {
 
+         $scope.defaultPlots = angular.copy(defaultPlots);
+         $scope.defaultPlotView = angular.copy(defaultPlotView);
          $scope.plotViews = [];
          $scope.plotViewsFromProvider = plotViewsFromProvider;
          if(undefined !== plotViewsFromArgs) {
@@ -102,8 +104,8 @@ var ModuleHelpers = new function() {
            treedirs: {},
            treeplots: {},
            tree: {},
-           graphs: defaultPlots,
-           optvalue: defaultPlotView
+           graphs: angular.copy(defaultPlots),
+           optvalue: angular.copy(defaultPlotView)
          };
 
          $scope.panelJobs = {toggle: false};
@@ -129,8 +131,8 @@ var ModuleHelpers = new function() {
              treedirs: {},
              treeplots: {},
              tree: {},
-             graphs: defaultPlots,
-             optvalue: defaultPlotView
+             graphs: angular.copy(defaultPlots),
+             optvalue: angular.copy(defaultPlotView)
            };
 
            var requestParams = {

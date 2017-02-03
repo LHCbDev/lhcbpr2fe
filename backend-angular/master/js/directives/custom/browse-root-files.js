@@ -9,10 +9,12 @@ App.directive('browseRootFiles', [function () {
         scope: {
             folders: '=',
             // TODO change this name
-            graphsChecklistModel: '='
+            graphsChecklistModel: '=',
+            defaultPlots: '='
         },
-        controller: function() {
+        controller: ['$scope', function($scope) {
             var that = this;
+            $scope.defaultPlots = angular.copy($scope.defaultPlots);
             this.hasChildren = function(val, ind) {
                 return val.children;
             };
@@ -40,8 +42,18 @@ App.directive('browseRootFiles', [function () {
                 } else {
                     return "icon-folder";
                 }
-            }
-        },
+            };
+
+            this.clearAll = function() {
+                _.forEach($scope.graphsChecklistModel, function() {$scope.graphsChecklistModel.pop();});
+            };
+
+            this.selectDefaults = function() {
+                that.clearAll();
+                _.forEach($scope.defaultPlots, function(val, ind) {$scope.graphsChecklistModel.push(val);});
+            };
+
+        }],
         controllerAs: "ctrl"
     };
 }]);

@@ -12,17 +12,13 @@ script(type="text/ng-template" id="browseRootFilesTemplate")
       span.icon-graph
       | &nbsp;
       | {{ folder.name }}
-  // label.radio(ng-repeat="folder in data.treedirsStructure[files[0]].children | filter:hasChildren")
-  //   input(type="radio" data-checklist-value="folder")
-  //   | {{ folder.name }}
   ul(ng-if="folder.children && folder.isExpanded")
-    // li(ng-repeat="folder in folder.children" ng-include="'categoryTree'")
-    // label(ng-repeat="folder in folder.children" ng-include="'categoryTree'")
-    //   input(type="checkbox" ng-model="folder.isExpanded")
     li(ng-repeat="folder in folder.children" ng-include="'browseRootFilesTemplate'") 
 
 
-pre folders: {{folders}}
-pre graphsChecklistModel: {{graphsChecklistModel}}
+.btn-group
+  button.btn-primary.btn(type="button" ng-click="ctrl.selectDefaults()") Select Defaults
+  button.btn-danger.btn(type="button" ng-click="ctrl.clearAll()") Clear All
+pre Currently selected plots: {{ graphsChecklistModel }}
 ul
   li(ng-repeat="folder in folders" ng-include="'browseRootFilesTemplate'")
