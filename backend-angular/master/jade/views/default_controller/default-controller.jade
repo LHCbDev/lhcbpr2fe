@@ -17,7 +17,6 @@ h3 Validation Analysis
 // Recursive template
 script(type="text/ng-template" id="categoryTree")
   div(ng-if="hasChildren(obj)")
-    pre {{ hasChildren(obj) }}
     label
       input(type="checkbox" ng-model="obj.isExpanded")
       | &nbsp;
@@ -25,7 +24,6 @@ script(type="text/ng-template" id="categoryTree")
       | &nbsp;
       | {{ obj.name }}
   div(ng-if="hasNoChildren(obj)")
-    pre {{ hasNoChildren(obj) }}
     label
       input(type="checkbox" checklist-model="data.graphs" checklist-value="obj.location")
       | &nbsp;
@@ -41,6 +39,7 @@ script(type="text/ng-template" id="categoryTree")
     //   input(type="checkbox" ng-model="obj.isExpanded")
     div(ng-repeat="obj in obj.children" ng-include="'categoryTree'") 
 
+
 // Shows secondary panel selecting which plot to display from all ROOT files found in the selected jobs.
 // TODO there is a lot of logic here, this should be farmed out to the controller
 // TODO Currently _feels_ overcomplicated. Review to see if there is a more succint/meaningful way to do this
@@ -52,14 +51,8 @@ script(type="text/ng-template" id="categoryTree")
   .panel-wrapper(collapse="panelJobs")
     .panel-body
       .alert.alert-info(ng-show="noJobData") No root file was found !
-      div(ng-repeat="obj in data.treedirsStructure[files[0]].children | filter:hasChildren" ng-include="'categoryTree'")
+      browse-root-files(folder="data.treedirsStructure[files[0]]" graphs-checklist-model="data.graphs")
 
-
-      // div(ng-repeat="path in data.treedirs")
-      //   label
-      //     input(type="checkbox" checklist-model="data.graphs" checklist-value="path")
-      //     | {{ path }}
-      //   br
 
 #panelOptions.panel.panel-default
   .panel-heading

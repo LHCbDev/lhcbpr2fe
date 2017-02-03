@@ -76,7 +76,12 @@
 
   // ROOT file viewer stuff
   module.registerTestView({
-    title: "ROOT file viewer"
+    title: "ROOT file viewer",
+    defaultPlots: ["/GenMonitorAlg/4", "/GenMonitorAlg/44"]
+    // defaultPlotView: "plotSame",
+    // restrict: {
+    //   selectedOptions: "GEANT_TESTEM3"
+    // }
   });
 
   module.start();

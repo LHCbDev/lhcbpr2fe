@@ -1,0 +1,28 @@
+// Recursive template
+script(type="text/ng-template" id="browseRootFilesTemplate")
+  div(ng-if="ctrl.hasChildren(folder)")
+    label
+      input(type="checkbox" ng-model="folder.isExpanded")
+      | &nbsp;
+      span.icon-folder
+      | &nbsp;
+      | {{ folder.name }}
+  div(ng-if="ctrl.hasNoChildren(folder)")
+    label
+      input(type="checkbox" checklist-model="checklistModel" checklist-value="folder.location")
+      | &nbsp;
+      span.icon-graph
+      | &nbsp;
+      | {{ folder.name }}
+  // label.radio(ng-repeat="folder in data.treedirsStructure[files[0]].children | filter:hasChildren")
+  //   input(type="radio" data-checklist-value="folder")
+  //   | {{ folder.name }}
+  div(ng-if="folder.children && folder.isExpanded")
+    // li(ng-repeat="folder in folder.children" ng-include="'categoryTree'")
+    // label(ng-repeat="folder in folder.children" ng-include="'categoryTree'")
+    //   input(type="checkbox" ng-model="folder.isExpanded")
+    div(ng-repeat="folder in folder.children" ng-include="'browseRootFilesTemplate'") 
+
+
+pre Foo pre: {{folder}}
+div(ng-repeat="folder in folder.children" ng-include="'browseRootFilesTemplate'")
