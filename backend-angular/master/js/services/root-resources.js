@@ -52,95 +52,84 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PAR
      * If it does not, this is a bug!
      */
 
-    var parsePathArray = function(paths) {
-      var parsed = {
-        name: "/",
-        location: "/",
-        children: []
-      };
+    var parsePathArray = function(files) {
+      // var parsed = {
+      //   name: "/",
+      //   location: "/",
+      //   children: []
+      // };
+      var parsed = [];
       var i;
       var j;
-      for(i in paths) {
-        var path = paths[i];
-        var splitPath = path.split('/');
+      var fileName;
+      for(fileName in files){
+        var paths = files[fileName];
+        // var partialParsedPath = [parsed.length];
+        parsed.push({
+          name: fileName,
+          fileName: fileName,
+          children: []
+        });
 
-        // Remove falsy values like "" from splitPath
-        splitPath = _.remove(splitPath);
+        // partialParsedPath.push("children");
 
-        var partialParsedPath = ["children"];
+        for(i in paths) {
+          var partialParsedPath = [parsed.length-1, "children"];
+          var path = paths[i];
+          var splitPath = path.split('/');
 
-        for(j in splitPath) {
-          var objName = splitPath[j];
-          // Check if the obj is a directory
-          // If this parsedPath does not exist, create it
-          // TODO tidy up
-          var existingObjs = _.filter(
-            _.get(parsed, partialParsedPath),
-            function(val, key, coll) {
-              return typeof val === "object" && val.name === objName;
-            });
+          // Remove falsy values like "" from splitPath
+          splitPath = _.remove(splitPath);
 
-          if(existingObjs.length === 1) {
-            // Find it, add it
-            partialParsedPath.push(_.indexOf(_.get(parsed, partialParsedPath), existingObjs[0]));
-            // partialParsedPath.push(objName);
-            if(_.includes(path, "/"+objName+"/")) {
-              partialParsedPath.push("children");
-            };
-          } else if(existingObjs.length > 1) {
-            console.error("Something has gone wrong!");
-            debugger;
-          } else {
-            partialParsedPath.push(_.get(parsed, partialParsedPath).length);
-            // partialParsedPath.push(objName);
-            _.set(parsed, partialParsedPath, {
-              name: objName,
-              location: "/"+_.slice(splitPath, 0, Number(j)+1).join('/'), // If you pass this location to jsroot, it will fetch the object with objName
-              isExpanded: false
-            });
-            // If it's a directory, give it children.
-            if(_.includes(path, "/"+objName+"/")) {
-              partialParsedPath.push("children");
-              _.set(parsed, partialParsedPath, []);
-            };
-          }
-          // So, it does exist. What now?
-          //
-          // If it's a directory, then this loop will continue and needs a
-          // reference to the last element in children of this object. If not,
-          // do nothing and the loop should discontinue
+          for(j in splitPath) {
+            var objName = splitPath[j];
+            // Check if the obj is a directory
+            // If this parsedPath does not exist, create it
+            // TODO tidy up
+            var existingObjs = _.filter(
+              _.get(parsed, partialParsedPath),
+              function(val, key, coll) {
+                return typeof val === "object" && val.name === objName;
+              });
 
-          // if(_.includes(path, "/"+objName+"/")) {
-          //   // TODO assert that partialParsedPath ends in children at this point!
-
-          //   // Add a reference to the last+1th element.
-          //   // debugger;
-          //   partialParsedPath.push(""+_.get(parsed, partialParsedPath).length);
-          // };
-        };
-      };
-      // var parsed = {};
-      // for(var i = 0; i < paths.length; i++) {
-      //   var position = parsed;
-      //   var split = paths[i].split('/');
-      //   for(var j = 0; j < split.length; j++) {
-      //     if(split[j] !== "") {
-      //       if(typeof position[split[j]] === 'undefined')
-      //         position[split[j]] = {};
-      //       position = position[split[j]];
-      //     }
-      //   }
-      // }
+            if(existingObjs.length === 1) {
+              // Find it, add it
+              partialParsedPath.push(_.indexOf(_.get(parsed, partialParsedPath), existingObjs[0]));
+              // partialParsedPath.push(objName);
+              if(_.includes(path, "/"+objName+"/")) {
+                partialParsedPath.push("children");
+              };
+            } else if(existingObjs.length > 1) {
+              console.error("Something has gone wrong!");
+            } else {
+              partialParsedPath.push(_.get(parsed, partialParsedPath).length);
+              // partialParsedPath.push(objName);
+              _.set(parsed, partialParsedPath, {
+                name: objName,
+                location: "/"+_.slice(splitPath, 0, Number(j)+1).join('/'), // If you pass this location to jsroot, it will fetch the object with objName
+                fileName: fileName,
+                isExpanded: false
+              });
+              // If it's a directory, give it children.
+              if(_.includes(path, "/"+objName+"/")) {
+                partialParsedPath.push("children");
+                _.set(parsed, partialParsedPath, []);
+              };
+            }
+          };
+        }};
       return parsed;
     };
 
-    var retObj = {};
+    // var retObj = {};
 
-    _.forEach(filesJSON, function(value, key) {
-      retObj[key] = parsePathArray(value);
-    });
+    // _.forEach(filesJSON, function(value, key) {
+    //   retObj[key] = parsePathArray(value);
+    // });
 
     // console.debug(JSON.stringify(retObj, null, 2));
+
+    var retObj = parsePathArray(filesJSON);
 
     return retObj;
   };

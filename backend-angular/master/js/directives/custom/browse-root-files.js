@@ -7,7 +7,7 @@ App.directive('browseRootFiles', [function () {
         templateUrl: 'app/views/directives/browse-root-files.html',
         restrict: 'E',
         scope: {
-            folder: '=',
+            folders: '=',
             // TODO change this name
             graphsChecklistModel: '='
         },
@@ -23,6 +23,24 @@ App.directive('browseRootFiles', [function () {
                  */
                 return !that.hasChildren(val, ind);
             };
+
+            this.toggleExpanded = function(val) {
+                if(val.isExpanded) {
+                    val.isExpanded = false;
+                } else {
+                    val.isExpanded = true;
+                }
+
+                return val;
+            };
+
+            this.chooseFolderIcon = function(val) {
+                if(val.isExpanded) {
+                    return "icon-folder-alt";
+                } else {
+                    return "icon-folder";
+                }
+            }
         },
         controllerAs: "ctrl"
     };
