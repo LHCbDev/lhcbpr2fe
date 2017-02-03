@@ -1,8 +1,7 @@
 table(style="width:100%")
   tr(ng-repeat="item in graphs", ng-hide="noJobData")
     td(ng-repeat="file in files")
-      h4(style="color:red") FOO TODO REPLACE
-        rootjsserver(entrypoint="url"
-                      files="file"
-                      items="item"
-                      width="500" height="375")
+      rootjsserver(entrypoint="url"
+                    files="file"
+                    items="item"
+                    width="500" height="375")
