@@ -1,0 +1,24 @@
+// Recursive template
+script(type="text/ng-template" id="browseRootFilesTemplate")
+  .btn.btn-secondary(ng-if="ctrl.hasChildren(folder)"  ng-click="ctrl.toggleExpanded(folder)")
+    label
+      span(ng-class="ctrl.chooseFolderIcon(folder)")
+      | &nbsp;
+      | {{ folder.name }}
+  div(ng-if="ctrl.hasNoChildren(folder)")
+    label
+      input(type="checkbox" checklist-model="graphsChecklistModel" checklist-value="folder.location")
+      | &nbsp;
+      span.icon-graph
+      | &nbsp;
+      | {{ folder.name }}
+  ul(ng-if="folder.children && folder.isExpanded")
+    li(ng-repeat="folder in folder.children" ng-include="'browseRootFilesTemplate'") 
+
+
+.btn-group
+  button.btn-primary.btn(type="button" ng-click="ctrl.selectDefaults()") Select Defaults
+  button.btn-danger.btn(type="button" ng-click="ctrl.clearAll()") Clear All
+pre Currently selected plots: {{ graphsChecklistModel }}
+ul
+  li(ng-repeat="folder in folders" ng-include="'browseRootFilesTemplate'")

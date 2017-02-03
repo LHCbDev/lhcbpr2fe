@@ -12,7 +12,7 @@ lhcbprPlotModule.directive('rootjs', function($timeout) {
     link: function(scope, element) {
       scope.$watchGroup(['data', 'kstest'], function(values) {
         console.log('rootjs watch', values);
-      	if(!values[0]) return;
+        if(!values[0]) return;
         try {
 
           scope.json = [];
@@ -38,19 +38,19 @@ lhcbprPlotModule.directive('rootjs', function($timeout) {
           var canvas = null;
           if ( obj[0]._typename != 'TCanvas') {
             var primitives = [obj[0]];
-          	if (obj[0]._typename == "TMultiGraph" ) {
-             	primitives.push(createLegend(obj[0]));
+            if (obj[0]._typename == "TMultiGraph" ) {
+              primitives.push(createLegend(obj[0]));
             } else {
               primitives = obj;
             }
-	          canvas = createCanvas(primitives);
-	          if (obj[0]._typename != "TMultiGraph" && values[1]) {
+            canvas = createCanvas(primitives);
+            if (obj[0]._typename != "TMultiGraph" && values[1]) {
               canvas.fFillColor = evalKtest( values[1] );
               _.forEach(obj, function(o) { o.fTitle = "Kolmogorov test result: " + values[1] })
-	          }
+            }
           } else {
-	          canvas = obj[0];
-	        }
+            canvas = obj[0];
+          }
           pad.innerHTML = "";
           $timeout(function() {JSROOT.draw(pad, canvas)},2);
 
@@ -267,13 +267,13 @@ lhcbprPlotModule.directive('rootjs', function($timeout) {
   // evaluate the Kolmogorov test, return the color code for the canvas
   function evalKtest( val ) {
     if ( val >= 0.2 )
-        return 8 // green
+      return 8 // green
     else if ( val > 0.05 )
-        return 5 // yellow
+      return 5 // yellow
     else if ( val > 0 )
-        return 2 // red
+      return 2 // red
     else
-        return 18 // gray
+      return 18 // gray
   }
 
 
@@ -282,93 +282,92 @@ lhcbprPlotModule.directive('rootjs', function($timeout) {
 
 lhcbprPlotModule.directive('rootjsserver', function($http) {
   return {
-  restrict: 'E',
-  scope: {
-    entrypoint: '=',
-    files: '=',
-    items: '=',
-    compute: '=',
-    width: '@',
-    height: '@'
-  },
-  template: '<rootjs data="data" kstest="kstest" width="{{width}}" height="{{height}}"></rootjs>',
-  link: function(scope) {
-    scope.$watchGroup(['files', 'items', 'compute'], function(values) {
-    	if(values[0] && values[1]) {
-        if ( values[2] )
-          activateopt(values[0], values[1], values[2])
-        else
-      	  activate(values[0], values[1]);
-    	}
-    });
-
-    ///
-    function activate(files, items) {
-      var strFiles = _.map(_.keys(files), encodeURIComponent).join('__');
-      var url = scope.entrypoint + '/?files=' +
-      strFiles +
-      '&items=' + encodeURIComponent(items) +
-      '&callback=JSON_CALLBACK';
-      $http.jsonp(url).then(loaded, error);
-
-    }
-    function activateopt(files, items, option) {
-      var strFiles = _.map(_.keys(files), encodeURIComponent).join('__');
-      var url = scope.entrypoint + '/?files=' +
-      strFiles +
-      '&items=' + encodeURIComponent(items) +
-      '&compute=' +  encodeURIComponent(option) +
-      '&callback=JSON_CALLBACK';
-      $http.jsonp(url).then(loaded, error);
-
-    }
-
-    function loaded(data) {
-      var graph, mg, color;
-      var graphs = [];
-      var others = [];
-      color = 1;
-      _.forEach(data.data['result'], function(file) {
-        if ( file['computed_result'] ) {
-          other = JSROOT.JSONR_unref(file['computed_result']);
-          other.fLineColor = color++;
-          others.push(other);
+    restrict: 'E',
+    scope: {
+      entrypoint: '=',
+      files: '=',
+      items: '=',
+      compute: '=',
+      width: '@',
+      height: '@'
+    },
+    template: '<rootjs data="data" kstest="kstest" width="{{width}}" height="{{height}}"></rootjs>',
+    link: function(scope) {
+      scope.$watchGroup(['files', 'items', 'compute'], function(values) {
+        if(values[0] && values[1]) {
+          activate(values[0], values[1], values[2]);
         }
-
-        _.forEach(file['items'], function(value, key) {
-        	if(value['_typename'] == 'TGraph' || value['_typename'] == 'TGraphErrors'){
-	          graph = JSROOT.JSONR_unref(value);
-	          graph.fLineColor = color++;
-	          graph.fTitle = scope.files[file.root] + ' ' + graph.fTitle;
-	          graphs.push(graph);
-          } else {
-            other = JSROOT.JSONR_unref(value);
-            other.fLineColor = color++;
-            if ( scope.files[file.root] != "" ) {
-              other.fName = scope.files[file.root];  // used in ToolTips
-            }
-	          others.push(other);
-          }
-        });
-        if ( file['KSTest'] ) {
-          scope.kstest = file['KSTest']
-        }
-
       });
 
+      ///
+      function activate(files, items, option) {
+        if(typeof files === "object") {
+          var strFiles = _.map(files, encodeURIComponent).join('__');
+        } else if(typeof files === "string") {
+          var strFiles = files;
+        }
 
-      if (others.length > 0) {
-        scope.data = others;
-      } else {
-      	scope.data = JSROOT.CreateTMultiGraph.apply(this, graphs);
+        var url = scope.entrypoint + '/?files=' +
+              strFiles +
+              '&items=' + encodeURIComponent(items) +
+              (option ? '&compute=' +  encodeURIComponent(option) : "") +
+              '&callback=JSON_CALLBACK';
+        console.debug("Making request: "+url);
+        $http.jsonp(url).then(loaded, error);
+
+      }
+
+      function loaded(data) {
+        var graph, mg, color;
+        var graphs = [];
+        var others = [];
+        color = 1;
+        _.forEach(data.data['result'], function(file) {
+          if ( file['computed_result'] ) {
+            other = JSROOT.JSONR_unref(file['computed_result']);
+            other.fLineColor = color++;
+            others.push(other);
+          }
+
+          _.forEach(file['items'], function(value, key) {
+            if(value['_typename'] == 'TGraph' || value['_typename'] == 'TGraphErrors'){
+              graph = JSROOT.JSONR_unref(value);
+              graph.fLineColor = color++;
+              // graph.fTitle = scope.files[file.root] + ' ' + graph.fTitle;
+              graphs.push(graph);
+            } else {
+              other = JSROOT.JSONR_unref(value);
+              other.fLineColor = color++;
+              // if ( scope.files[file.root] != "" ) {
+              //   other.fName = scope.files[file.root];  // used in ToolTips
+              // }
+              others.push(other);
+            }
+          });
+          // TODO figure out what this condition is for
+          if ( file['KSTest'] ) {
+            scope.kstest = file['KSTest']
+          }
+
+        });
+
+
+        if (others.length > 0) {
+          scope.data = others;
+        } else {
+          scope.data = JSROOT.CreateTMultiGraph.apply(this, graphs);
+        }
+      }
+
+      function error(err) {
+        console.error(err);
       }
     }
-
-    function error(err) {
-      console.error(err);
-    }
-  }
-};
+  };
 });
 
-
+// Local Variables:
+// js2-basic-offset: 2
+// js-indent-level: 2
+// indent-tabs-mode: nil
+// End:

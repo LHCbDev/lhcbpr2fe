@@ -21,7 +21,6 @@
 var ModuleHelpers = new function() {
   var that = this;
   this.nameOfDefaultController = function(name) {
-    // debugger;
     if("" === name) {
       console.error("No name provided to create default controller name!");
       return "";
@@ -42,6 +41,8 @@ var ModuleHelpers = new function() {
     var title = options.title || name;
     var restrict = options.restrict || {};
     var plotViewsFromArgs = options.plotViews; // or leave undefined
+    var defaultPlots = options.defaultPlots || [];
+    var defaultPlotView = options.defaultPlotView || "plotSplit";
 
     var controller_name = that.nameOfDefaultController(name);
     App.controller(
@@ -49,10 +50,13 @@ var ModuleHelpers = new function() {
       ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews',
        function($scope, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider) {
 
+         $scope.defaultPlots = angular.copy(defaultPlots);
+         $scope.defaultPlotView = angular.copy(defaultPlotView);
          $scope.plotViews = [];
          $scope.plotViewsFromProvider = plotViewsFromProvider;
          if(undefined !== plotViewsFromArgs) {
-           for(let i in plotViewsFromProvider) {
+           let i;
+           for(i in plotViewsFromProvider) {
              let index = _.findIndex(
                plotViewsFromArgs,
                function(o) {return o === plotViewsFromProvider[i].directiveName;});
@@ -64,6 +68,12 @@ var ModuleHelpers = new function() {
            $scope.plotViews = plotViewsFromProvider;
          }
          // TODO check for plotViews requested but not found
+
+         $scope.selectionLevels = {};
+         $scope.addSelectionLevel = function(currentLevel, newLevelData) {
+           // TODO remove lower levels
+           $scope.selectionLevels[currentLevel] = newLevelData;
+         };
 
          $scope.selectedApp = restrict.selectedApp;
          $scope.selectedOptions = restrict.selectedOptions;
@@ -81,62 +91,36 @@ var ModuleHelpers = new function() {
            9: "rgb(89,84,217)"
          };
 
-         $scope.options = [
-           {value: 'Difference', text: 'Plot difference'},
-           {value: 'Ratio', text: 'Plot ratio'},
-           {value: 'Kolmogorov', text: 'Apply Kolmogorv test'},
-         ];
-
-         $scope.commonoptions = [
-           {value: '', text: 'Superimposed'},
-           {value: 'Split', text: 'Separated'}
-         ];
-
-         $scope.jobId = [];
+         $scope.jobsRootFiles = [];
          $scope.folders = ['/'];
          $scope.noJobData = true;
          $scope.isShowSearchForm = true;
          $scope.cachedJobs = {};
 
+         // TODO this is defined twice. Not sure why. Find out, and take appropriate action.
          $scope.data = {
            repeatSelect: null,
            plotSelect: null,
            treedirs: {},
            treeplots: {},
            tree: {},
-           graphs: {},
-           optvalue: ""
+           graphs: angular.copy(defaultPlots),
+           optvalue: angular.copy(defaultPlotView)
          };
-
-         // TODO remove
-         // $scope.foobar = {bar: true};
-         $scope.foobar = 'bar';
 
          $scope.panelJobs = {toggle: false};
          $scope.hidePanelDebug = true;
 
-         $scope.sizeOf = function(obj) {
-           return Object.keys(obj).length;
-         };
-
+         // $scope.sizeOf = function(obj) {
+         //   return Object.keys(obj).length;
+         // };
 
          $scope.showSearchForm = function() {
            $scope.isShowSearchForm = true;
          };
 
-         $scope.getJobName = function(id) {
-           var job = $scope.cachedJobs[id];
-           if (job) {
-             var av = job.job_description.application_version;
-             var opt = job.job_description.option;
-             return 'Job ID ' + job.id + ': ' + av.application.name + ' ' + av.version + ' - ' + job.platform.content + ' - ' + opt.description;
-           } else {
-             return 'undefined';
-           }
-         };
-
          $scope.lookHistos = function(jids) {
-           $scope.jobId = [];
+           $scope.jobsRootFiles = [];
            $scope.folders = ['/'];
            $scope.noJobData = true;
            $scope.isShowSearchForm = false;
@@ -147,8 +131,8 @@ var ModuleHelpers = new function() {
              treedirs: {},
              treeplots: {},
              tree: {},
-             graphs: {},
-             optvalue: ""
+             graphs: angular.copy(defaultPlots),
+             optvalue: angular.copy(defaultPlotView)
            };
 
            var requestParams = {
@@ -168,8 +152,9 @@ var ModuleHelpers = new function() {
              $api.all('compare')
                .getList(requestParams)
                .then(function(attr) { // When we receive the response
-                 res = [];
+                 var res = [];
                  for (i = 0; i < attr.length; i++) {
+                   let j;
                    for (j = 0; j < attr[i].jobvalues.length; j++) {
                      if ( attr[i].jobvalues[j].value.endsWith(".root") ) {
                        var file = attr[i].jobvalues[j].job.id + '/' + attr[i].jobvalues[j].value;
@@ -177,70 +162,61 @@ var ModuleHelpers = new function() {
                      }
                    }
                  }
-                 $scope.jobId = res.join("__");
+                 // TODO find the best place to initialise this
+                 $scope.url = BUILD_PARAMS.url_root;
+                 $scope.jobsRootFiles = res;
+                 $scope.jobIds = angular.copy(jids);
                  $scope.folders = ['/'];
-                 $scope.readTree();
+                 $scope.readFiles();
                });
            }
          };
 
-         $scope.readTree = function() {
-           if ($scope.jobId && $scope.jobId.length > 0) {
-             var parameters = {
-               files: $scope.jobId,
-               folders: $scope.folders
-             };
-             $apiroot.lookupDirs(parameters).then(function (response) {
-               $scope.noJobData = (response.length < 1);
-               $scope.data.tree = response;
-               listfn = Object.keys(response);
-               var intersect = Object.keys(response[ listfn[0] ]['/']);
-               for ( key = 1; key < listfn.length; key++ ) {
-                 var list = Object.keys(response[ listfn[key] ]['/']);
-                 intersect = $(list).filter(intersect)
+         // this.differenceInDatasets = function(files, jids) {
+         //   var filesPerJob = {};
+         //   var i;
+         //   for(i in files) {
+         //     filesPerJob[files[i]] = {
+         //       fromJobRegExp: RegExp("^"+files[i]+"/"),
+         //       files: {}
+         //     };
+
+         //     _.forEach(files, function(val) {
+         //       filesPerJob[files[i]].fromJobRegExp.test();
+         //     };
+         //   };
+         // };
+
+         $scope.readFiles = function () {
+           $scope.noJobData = ($scope.jobsRootFiles.length < 1);
+           if ($scope.jobsRootFiles && $scope.jobsRootFiles.length > 0) {
+             $apiroot.lookupFileContents($scope.jobsRootFiles).then (function(response) {
+               // Before it goes in, figure out which plots/files exist in all tests
+               // HACK strip the job number from the filename.
+               // TODO remove this hack with proper logic!
+               var regex = /^\d+?\//;
+               var key;
+               var newResponse = {};
+               for(key in response) {
+                 var strippedKey = key.replace(regex, '');
+                 newResponse[strippedKey] = response[key];
                }
-               $scope.data.treedirs[listfn.join(',')] = {};
-               for ( key = 0; key < intersect.length; key++ ) {
-                 namecat = intersect[key].replace(/List_*/, "/").replace("__","/");
-                 $scope.data.treedirs[listfn.join(',')][intersect[key]] = namecat;
-               }
+               $scope.data.treedirsStructure = $apiroot.sortFileContentsToJSON(newResponse);
              });
-           } else {
-             $scope.noJobData = ($scope.jobId.length < 1);
-           }
+           };
          };
 
-         $scope.showPlots = function(file, namecat) {
-           if ( $scope.data.plotSelect != null ) $scope.data.plotSelect[file] = "";
-           var listfn = file.split(',');
-           var intersect = $scope.data.tree[listfn[0]]['/'][namecat];
-
-           for ( key = 1; key < listfn.length; key++ ) {
-             var keys = {};
-             for (var i in intersect)
-               if (i in $scope.data.tree[listfn[key]]['/'][namecat])
-                 keys[i] = $scope.data.tree[listfn[key]]['/'][namecat][i];
-             intersect = keys;
-           }
-           $scope.data.treeplots[file] = intersect;
+         $scope.hasChildren = function(val, ind) {
+           return val.children;
          };
 
-         $scope.showChart = function(file, title) {
-           files={}
-           var listfn = file.split(',');
-           for ( key in listfn ) {
-             files[listfn[key]] = 'Job ID: ' + listfn[key].split('/')[0];
-           }
-           titles={}
-           titles[title] = $scope.data.treeplots[file][title];
-           $scope.url = BUILD_PARAMS.url_root;
-           $scope.files_and_titles = files;
-           if ( title == "ALL" )
-             $scope.data.graphs = $scope.data.treeplots[file];
-           else
-             $scope.data.graphs = titles;
-
+         $scope.hasNoChildren = function(val, ind) {
+           /**
+            * Needed to get around jade/pug's fussiness around '!'s.
+            */
+           return !$scope.hasChildren(val, ind);
          };
+
        }]);
   };
 };
@@ -365,6 +341,8 @@ Module.prototype.registerTestView = function(options) {
   var icon = options.icon || "icon-speedometer";
   var alert = options.alert; // or keep undefined
   var url = options.url || "/"+name;
+  var defaultPlots = options.defaultPlots; // or keep undefined
+  var defaultPlotView = options.defaultPlotView; // or keep undefined
 
   var restrict = options.restrict || {};
 
@@ -385,7 +363,9 @@ Module.prototype.registerTestView = function(options) {
       name: name,
       title:title,
       restrict: restrict,
-      plotViews: plotViews
+      plotViews: plotViews,
+      defaultPlots: defaultPlots,
+      defaultPlotView: defaultPlotView
     });
     var controller = ModuleHelpers.nameOfDefaultController(name);
     var resolve = ModuleHelpers.resolveOfDefaultController();
@@ -413,6 +393,8 @@ Module.prototype.registerTestView = function(options) {
 
   this.addMenuItem(menuItem);
   this.addState(state);
+
+  return this;
 }
 
 

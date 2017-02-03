@@ -4,7 +4,7 @@ function plotDirectiveFactory(directiveName, displayName) {
       restrict: 'E',
       scope: {
         graphs: '=',
-        filesAndTitles: '=',
+        files: '=',
         test: '=',
         url: '='
       },
@@ -24,7 +24,7 @@ function defaultPlotDirectiveFactory(directiveName, displayName, computeMethod) 
       restrict: 'E',
       scope: {
         graphs: '=',
-        filesAndTitles: '=',
+        files: '=',
         test: '=',
         url: '='
       },
@@ -57,7 +57,7 @@ lhcbprPlotModule.directive('plotViewGenerator', ['$compile', function($compile) 
     function updateDOM() {
       var sanitisedFormat = format.replace(/([A-Z])/g, '-$1').toLowerCase() || "span";
       var generatedTemplate = '<' + sanitisedFormat + ' graphs="' 
-            + attrs.graphs + '", files-and-titles="' + attrs.filesAndTitles
+            + attrs.graphs + '", files="' + attrs.files
             + '", test="' + attrs.test + '", url="' + attrs.url 
             + '"></' + sanitisedFormat + '>';
       element.html($compile(generatedTemplate)(scope));

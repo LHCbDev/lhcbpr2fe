@@ -87,7 +87,7 @@
     "angular-ui-codemirror": "~0.2.2",
     "lodash-compat": "^3.10.1",
     "restangular": "1.4.0",
-    "checklist-model": "0.2.4",
+    "checklist-model": "0.10.0",
     "be-responsive": "~1.0.1"
   },
   "resolutions": {

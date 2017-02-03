@@ -1,10 +1,7 @@
-// TODO get rid of ng-init and put it into the directive
 table(style="width:100%")
-  tr(ng-repeat="(item, title) in graphs", ng-hide="noJobData")
-    td(ng-repeat="(file, name) in filesAndTitles" ng-init="test[file] = name")
-      h4(style="color:red") {{ title }} - {{ name }}
-        rootjsserver(entrypoint="url"
-                      files="test"
-                      items="item"
-                      compute="Split"
-                      width="500" height="375")
+  tr(ng-repeat="item in graphs", ng-hide="noJobData")
+    td(ng-repeat="file in files")
+      rootjsserver(entrypoint="url"
+                    files="file"
+                    items="item"
+                    width="500" height="375")
