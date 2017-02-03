@@ -91,7 +91,7 @@ var ModuleHelpers = new function() {
            9: "rgb(89,84,217)"
          };
 
-         $scope.jobId = [];
+         $scope.jobsRootFiles = [];
          $scope.folders = ['/'];
          $scope.noJobData = true;
          $scope.isShowSearchForm = true;
@@ -120,7 +120,7 @@ var ModuleHelpers = new function() {
          };
 
          $scope.lookHistos = function(jids) {
-           $scope.jobId = [];
+           $scope.jobsRootFiles = [];
            $scope.folders = ['/'];
            $scope.noJobData = true;
            $scope.isShowSearchForm = false;
@@ -162,38 +162,46 @@ var ModuleHelpers = new function() {
                      }
                    }
                  }
-                 // TODO look into whether it's really worth this jobId double
-                 // underscore join thing or whether one should only use
-                 // $scope.files for files, and $scope.jobId for showing pretty
-                 // things (e.g. titles on the page).
-                 $scope.files = res;
                  // TODO find the best place to initialise this
                  $scope.url = BUILD_PARAMS.url_root;
-                 $scope.jobId = res.join("__");
+                 $scope.jobsRootFiles = res;
+                 $scope.jobIds = angular.copy(jids);
                  $scope.folders = ['/'];
                  $scope.readFiles();
                });
            }
          };
 
+         // this.differenceInDatasets = function(files, jids) {
+         //   var filesPerJob = {};
+         //   var i;
+         //   for(i in files) {
+         //     filesPerJob[files[i]] = {
+         //       fromJobRegExp: RegExp("^"+files[i]+"/"),
+         //       files: {}
+         //     };
+
+         //     _.forEach(files, function(val) {
+         //       filesPerJob[files[i]].fromJobRegExp.test();
+         //     };
+         //   };
+         // };
 
          $scope.readFiles = function () {
-           $scope.noJobData = ($scope.jobId.length < 1);
-           if ($scope.jobId && $scope.jobId.length > 0) {
-             var parameters = {
-               files: $scope.jobId,
-               folders: $scope.folders
-             };
-             $apiroot.lookupFileContents($scope.jobId).then (function(response) {
-               var i;
-               var retVal;
-               // gets the last one in response
-               for(i in response) {
-                 retVal = response[i];
+           $scope.noJobData = ($scope.jobsRootFiles.length < 1);
+           if ($scope.jobsRootFiles && $scope.jobsRootFiles.length > 0) {
+             $apiroot.lookupFileContents($scope.jobsRootFiles).then (function(response) {
+               // Before it goes in, figure out which plots/files exist in all tests
+               // HACK strip the job number from the filename.
+               // TODO remove this hack with proper logic!
+               var regex = /^\d+?\//;
+               var key;
+               var newResponse = {};
+               for(key in response) {
+                 var strippedKey = key.replace(regex, '');
+                 newResponse[strippedKey] = response[key];
                }
-
-               $scope.data.treedirs = retVal;
-               $scope.data.treedirsStructure = $apiroot.sortFileContentsToJSON(response);
+               $scope.data.treedirsStructure = $apiroot.sortFileContentsToJSON(newResponse);
              });
            };
          };

@@ -23,6 +23,10 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PAR
   };
 
   this.lookupFileContents = function(files) {
+    // If files is an array, make it a string just like jsroot likes.
+    if(typeof files === "object") {
+      files = files.join('__');
+    }
     var url = urlBase + 
           '/?files=' + encodeURIComponent(files) +
           '&folders=' + encodeURIComponent(["/"]) +
