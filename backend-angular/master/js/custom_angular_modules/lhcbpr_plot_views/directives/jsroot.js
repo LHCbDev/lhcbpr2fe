@@ -46,13 +46,13 @@ lhcbprPlotModule.directive('rootjs', function($timeout) {
             canvas = createCanvas(primitives);
             if (obj[0]._typename != "TMultiGraph" && values[1]) {
               canvas.fFillColor = evalKtest( values[1] );
-              _.forEach(obj, function(o) { o.fTitle = "Kolmogorov test result: " + values[1] })
+              _.forEach(obj, function(o) { o.fTitle = "Kolmogorov test result: " + values[1]; });
             }
           } else {
             canvas = obj[0];
           }
           pad.innerHTML = "";
-          $timeout(function() {JSROOT.draw(pad, canvas)},2);
+          $timeout(function() {JSROOT.draw(pad, canvas);},2);
 
         } catch (ex) {
           console.log('rootjs directive: ' + ex);
@@ -346,7 +346,7 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
           });
           // TODO figure out what this condition is for
           if ( file['KSTest'] ) {
-            scope.kstest = file['KSTest']
+            scope.kstest = file['KSTest'];
           }
 
         });
