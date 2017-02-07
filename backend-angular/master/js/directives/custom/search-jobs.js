@@ -85,12 +85,12 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 						scope.optionsIds = []
 						if (scope.selectedOptions) {
 							var selectedOptionsArr = [];
-              var parsed = JSON.parse(scope.selectedOptions);
-							if (angular.isString(parsed)){
-								selectedOptionsArr.push(parsed)
-							}else{
-								selectedOptionsArr = parsed;
-							}
+              try{
+                var parsed = JSON.parse(scope.selectedOptions);
+                selectedOptionsArr = parsed;
+              } catch(e) {
+                selectedOptionsArr.push(scope.selectedOptions);
+              }
 
 							options.forEach(function(opt){
 								if (selectedOptionsArr.indexOf(opt.name) != -1) {
