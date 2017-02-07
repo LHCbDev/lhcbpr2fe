@@ -1,7 +1,4 @@
 table(style="width:100%")
   tr(ng-repeat="item in graphs", ng-hide="noJobData")
     td(ng-repeat="file in files")
-      rootjsserver(entrypoint="url"
-                    files="file"
-                    items="item"
-                    width="500" height="375")
+      draw-root-object(file-location="file" object-location="item")

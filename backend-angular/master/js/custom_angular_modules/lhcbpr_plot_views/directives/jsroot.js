@@ -318,15 +318,16 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
       }
 
       function loaded(data) {
-        var graph, mg, color;
+        console.debug("Attempting to load:\n"+JSON.stringify(data, null, 2));
+        var graph, mg, color, notGraph;
         var graphs = [];
-        var others = [];
+        var notGraphs = [];
         color = 1;
         _.forEach(data.data['result'], function(file) {
           if ( file['computed_result'] ) {
-            other = JSROOT.JSONR_unref(file['computed_result']);
-            other.fLineColor = color++;
-            others.push(other);
+            notGraph = JSROOT.JSONR_unref(file['computed_result']);
+            notGraph.fLineColor = color++;
+            notGraphs.push(notGraph);
           }
 
           _.forEach(file['items'], function(value, key) {
@@ -336,12 +337,12 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
               // graph.fTitle = scope.files[file.root] + ' ' + graph.fTitle;
               graphs.push(graph);
             } else {
-              other = JSROOT.JSONR_unref(value);
-              other.fLineColor = color++;
+              notGraph = JSROOT.JSONR_unref(value);
+              notGraph.fLineColor = color++;
               // if ( scope.files[file.root] != "" ) {
-              //   other.fName = scope.files[file.root];  // used in ToolTips
+              //   notGraph.fName = scope.files[file.root];  // used in ToolTips
               // }
-              others.push(other);
+              notGraphs.push(notGraph);
             }
           });
           // TODO figure out what this condition is for
@@ -352,8 +353,8 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
         });
 
 
-        if (others.length > 0) {
-          scope.data = others;
+        if (notGraphs.length > 0) {
+          scope.data = notGraphs;
         } else {
           scope.data = JSROOT.CreateTMultiGraph.apply(this, graphs);
         }
@@ -362,6 +363,34 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
       function error(err) {
         console.error(err);
       }
+    }
+  };
+});
+
+lhcbprPlotModule.directive('drawRootObject', function() {
+  JSROOT.source_dir = 'app/vendor/jsroot/';
+  return {
+    restrict: 'E',
+    scope: {
+      fileLocation: '=',
+      objectLocation: '='
+    },
+    templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/drawRootObject.html',
+    controllerAs: "ctrl",
+    controller: ['BUILD_PARAMS', '$scope', function(BUILD_PARAMS, $scope) {
+      $scope.BUILD_PARAMS = BUILD_PARAMS;
+    }],
+    link: function(scope, element) {
+      var pad = element.children()[0];
+      pad.innerHTML = "";
+      JSROOT.OpenFile("/api/media/jobs/"+scope.fileLocation, function(file) {
+        console.debug(file);
+        file.ReadObject(scope.objectLocation, function(obj) {
+          console.debug(obj);
+          obj = JSROOT.JSONR_unref(obj);
+          JSROOT.draw(pad, obj);
+        });
+      });
     }
   };
 });

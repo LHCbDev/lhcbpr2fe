@@ -39,13 +39,9 @@ h3 Validation Analysis
       form.form-inline(role='form')
         fieldset
           .form-group.col-sm-6
-              // label.radio-inline(ng-repeat="option in commonoptions")
               label.radio-inline(ng-repeat="plotView in plotViews")
                 input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue")
                 |  {{ plotView.displayName }}
-              // label.radio-inline(ng-repeat="option in options")
-              //   input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
-              //   |  {{ option.text }}
 
 
 h3 Plots:
