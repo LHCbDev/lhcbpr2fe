@@ -85,15 +85,16 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 						scope.optionsIds = []
 						if (scope.selectedOptions) {
 							var selectedOptionsArr = [];
-							if (angular.isString(scope.selectedOptions)){
-								selectedOptionsArr.push(scope.selectedOptions)
+              var parsed = JSON.parse(scope.selectedOptions);
+							if (angular.isString(parsed)){
+								selectedOptionsArr.push(parsed)
 							}else{
-								selectedOptionsArr = scope.selectedOptions;
+								selectedOptionsArr = parsed;
 							}
 
 							options.forEach(function(opt){
 								if (selectedOptionsArr.indexOf(opt.name) != -1) {
-									scope.optionsIds.push(opt.id); 
+									scope.optionsIds.push(opt.id);
 									scope.options.push(opt);
 								}
 							});
