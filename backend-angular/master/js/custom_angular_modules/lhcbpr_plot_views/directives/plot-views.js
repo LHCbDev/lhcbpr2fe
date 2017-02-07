@@ -48,7 +48,6 @@ defaultPlotDirectiveFactory('plotDifference', 'Difference', 'Difference');
 defaultPlotDirectiveFactory('plotRatio', 'Ratio', 'Ratio');
 defaultPlotDirectiveFactory('plotKolmogorov', 'Kolmogorov', 'Kolmogorov');
 
-
 lhcbprPlotModule.directive('plotViewGenerator', ['$compile', function($compile) {
 
   function link(scope, element, attrs) {

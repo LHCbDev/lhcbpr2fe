@@ -51,10 +51,35 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PAR
   this.sortFileContentsToJSON = function(filesJSON) {
     /**
      * This is designed to take the output of this.lookupFileContents and output
-     * it into somehthing more reasonable to navigate in javascript.
+     * it into something more reasonable to navigate in javascript.
      *
      * If it does not, this is a bug!
      */
+
+    // TODO find a better name for this function
+    var getPathUpToLevel = function(path, level) {
+      /**
+       * Takes a path and a level and returns the path up to that level.
+       *
+       * NOTE: the 0th level is the first level.
+       *
+       * e.g.
+       * getLocationFromLevel("/foo/bar/baz", 1); => "/foo/bar"
+       * 
+       */
+      var splitPath = path.split('/');
+      // Remove falsy values like "" from splitPath
+      splitPath = _.remove(splitPath);
+
+      return "/"+_.slice(splitPath, 0, Number(level)+1).join('/');
+    };
+
+    var createLocation = function(locationInFile, fileInJob) {
+      return {
+        locationInFile: locationInFile,
+        fileInJob: fileInJob
+      };
+    };
 
     var parsePathArray = function(files) {
       // var parsed = {
@@ -110,8 +135,12 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PAR
               // partialParsedPath.push(objName);
               _.set(parsed, partialParsedPath, {
                 name: objName,
-                location: "/"+_.slice(splitPath, 0, Number(j)+1).join('/'), // If you pass this location to jsroot, it will fetch the object with objName
-                fileName: fileName,
+                // If you pass this location to jsroot, it will fetch the object
+                // with objName
+                location: createLocation(
+                  getPathUpToLevel(path, j),
+                  fileName
+                ),
                 isExpanded: false
               });
               // If it's a directory, give it children.
