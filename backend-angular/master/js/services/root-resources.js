@@ -1,6 +1,7 @@
-App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PARAMS) {
+App.service('rootResources', ['$http', 'BUILD_PARAMS', 'resourceParser', '$q', function($http, BUILD_PARAMS, resourceParser, $q) {
 
   var urlBase = BUILD_PARAMS.url_root;
+  var that = this;
 
   this.lookupDirs = function ( params ) {
     var url = urlBase +
@@ -23,6 +24,13 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PAR
   };
 
   this.lookupFileContents = function(files) {
+    /**
+     * Gets the contents of given files and returns an object with filenames as
+     * keys, and objects in files as lists.
+     *
+     * e.g. lookupFileContents(['abc.root']) returns:
+     * {'abc.root': ['/h1', '/dir1/h2']}
+     */
     // If files is an array, make it a string just like jsroot likes.
     if(typeof files === "object") {
       files = files.join('__');
@@ -46,6 +54,72 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PAR
 
         return files;
       });
+  };
+
+  // TODO find better function names
+  this.lookupSingleFileContents = function(file) {
+    if (typeof file !== "string") {
+      console.error("lookupFileContents takes a string!");
+      return undefined;
+    }
+    var url = urlBase +
+          '/?files=' + encodeURIComponent(file) +
+          '&folders=' + encodeURIComponent(["/"]) +
+          '&callback=JSON_CALLBACK';
+    console.debug("Making request: "+url);
+    return $http.jsonp(url)
+      .then(function(response) {
+        var objectsInFile = [];
+        _.forEach(response.data['result'], function(file) {
+          _.forEach(file['trees']['/'], function(value, key) {
+            _.forEach(value, function(title, path) {
+              objectsInFile.push(path);
+            });
+          });
+        });
+        return objectsInFile;
+      });
+
+  };
+
+  this.lookupSingleFileResourceContents = function(resource) {
+    /**
+     * This function takes a file resource and returns the objects found in it,
+     * or errors and returns undefined.
+     */
+    if(resourceParser.getType(resource) !== "File") {
+      console.error("Resource is no of type File!");
+      return undefined;
+    }
+    var fileName = resourceParser.getCommonValue(resource);
+    var jobIds = resourceParser.getJobIds(resource);
+
+    var i;
+    var fileLocations = _.map(jobIds, function(value) {
+      return value + "/" + fileName;
+    });
+
+    // TODO find better name
+    var filesRootObjects = _.mapValues(_.indexBy(fileLocations), function(value) {
+      return that.lookupSingleFileContents(value);
+    });
+
+    return $q.all(filesRootObjects).then(function(response) {
+      var arraysOfObjectsInFiles = _.reduce(_.values(response), function(a, b) {
+        return _.union(a, b);
+      });
+      var objectsNotInAllFiles = _.reduce(_.values(response), function(a, b) {
+        return _.xor(a, b);
+      });
+      debugger;
+      if(objectsNotInAllFiles.length > 0) {
+        console.error("The following objects not found in all files:");
+        console.error(JSON.stringify(objectsNotInAllFiles, null, 2));
+        console.error("Ignoring them and returning objects in common...");
+      }
+      var objectsInAllFiles = _.intersection(arraysOfObjectsInFiles);
+      return objectsInAllFiles;
+    });
   };
 
   this.sortFileContentsToJSON = function(filesJSON) {
@@ -75,10 +149,11 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', function($http, BUILD_PAR
     };
 
     var createLocation = function(locationInFile, fileInJob) {
-      return {
-        locationInFile: locationInFile,
-        fileInJob: fileInJob
-      };
+      // return {
+      //   locationInFile: locationInFile,
+      //   fileInJob: fileInJob
+      // };
+      return locationInFile;
     };
 
     var parsePathArray = function(files) {

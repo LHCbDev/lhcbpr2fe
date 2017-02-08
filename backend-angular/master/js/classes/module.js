@@ -47,8 +47,8 @@ var ModuleHelpers = new function() {
     var controller_name = that.nameOfDefaultController(name);
     App.controller(
       controller_name,
-      ['$scope', 'resourceParser', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews',
-       function($scope, resourceParser, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider) {
+      ['$scope', 'resourceParser', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews', '$q',
+       function($scope, resourceParser, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider, $q) {
 
          $scope.defaultPlots = angular.copy(defaultPlots);
          $scope.defaultPlotView = angular.copy(defaultPlotView);
@@ -152,14 +152,15 @@ var ModuleHelpers = new function() {
              $api.all('compare')
                .getList(requestParams)
                .then(function(attr) { // When we receive the response
+                 // var resource = $apiroot.lookupSingleFileResourceContents(attr[0]).then(function() {
+                 //   // TODO delete this bit!
+                 // });
                  var res = [];
                  for (i = 0; i < attr.length; i++) {
                    let j;
-                   let value = resourceParser.getValue(attr[i]);
+                   let value = resourceParser.getCommonValue(attr[i]);
                    let jobIds = resourceParser.getJobIds(attr[i]);
-                   // for (j = 0; j < attr[i].jobvalues.length; j++) {
                    for (j in jobIds) {
-                     // if ( attr[i].jobvalues[j].value.endsWith(".root") ) {
                      if ( value.endsWith(".root") ) {
                        var file = jobIds[j] + '/' + value;
                        res.push(file);
@@ -167,6 +168,7 @@ var ModuleHelpers = new function() {
                    }
                  }
                  // TODO find the best place to initialise this
+                 $scope.resources = attr;
                  $scope.url = BUILD_PARAMS.url_root;
                  $scope.jobsRootFiles = res;
                  $scope.jobIds = angular.copy(jids);
@@ -194,7 +196,14 @@ var ModuleHelpers = new function() {
          $scope.readFiles = function () {
            $scope.noJobData = ($scope.jobsRootFiles.length < 1);
            if ($scope.jobsRootFiles && $scope.jobsRootFiles.length > 0) {
-             $apiroot.lookupFileContents($scope.jobsRootFiles).then (function(response) {
+             var objectOfResources = _.indexBy($scope.resources, function(value) {
+               return value.id;
+             });
+             var objectOfPromises = _.mapValues(objectOfResources, function(value) {
+               return $apiroot.lookupSingleFileResourceContents(value);
+             });
+             $q.all(objectOfPromises).then (function(response) {
+               debugger;
                // Before it goes in, figure out which plots/files exist in all tests
                // HACK strip the job number from the filename.
                // TODO remove this hack with proper logic!

@@ -19,10 +19,10 @@ lhcbprResourcesModule.service('resourceParser', function() {
    * from the documentation, this is a bug (either in docs or in the code).
    */
 
-  this.getValue = function(resource) {
+  this.getCommonValue = function(resource) {
     /**
-     * Get single value from resource. If more than one value (or no value) is
-     * found, log it and return undefined.
+     * Get single common value from resource. If more than one value (or no
+     * value) is found, log it and return undefined.
      */
     var i;
     var values = [];
@@ -74,6 +74,10 @@ lhcbprResourcesModule.service('resourceParser', function() {
       console.error("This resource does not contain any jobs!");
       return undefined;
     }
+  };
+
+  this.getType = function(resource) {
+    return resource.dtype;
   };
 
 });
