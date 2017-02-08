@@ -47,8 +47,8 @@ var ModuleHelpers = new function() {
     var controller_name = that.nameOfDefaultController(name);
     App.controller(
       controller_name,
-      ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews',
-       function($scope, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider) {
+      ['$scope', 'resourceParser', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews',
+       function($scope, resourceParser, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider) {
 
          $scope.defaultPlots = angular.copy(defaultPlots);
          $scope.defaultPlotView = angular.copy(defaultPlotView);
@@ -155,9 +155,13 @@ var ModuleHelpers = new function() {
                  var res = [];
                  for (i = 0; i < attr.length; i++) {
                    let j;
-                   for (j = 0; j < attr[i].jobvalues.length; j++) {
-                     if ( attr[i].jobvalues[j].value.endsWith(".root") ) {
-                       var file = attr[i].jobvalues[j].job.id + '/' + attr[i].jobvalues[j].value;
+                   let value = resourceParser.getValue(attr[i]);
+                   let jobIds = resourceParser.getJobIds(attr[i]);
+                   // for (j = 0; j < attr[i].jobvalues.length; j++) {
+                   for (j in jobIds) {
+                     // if ( attr[i].jobvalues[j].value.endsWith(".root") ) {
+                     if ( value.endsWith(".root") ) {
+                       var file = jobIds[j] + '/' + value;
                        res.push(file);
                      }
                    }
