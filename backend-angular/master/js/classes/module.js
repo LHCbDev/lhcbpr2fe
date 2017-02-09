@@ -137,7 +137,6 @@ var ModuleHelpers = new function() {
          };
 
          $scope.setNoJobData = function () {
-           debugger;
            if($scope.data.resources.length < 1) {
              $scope.noJobData = true;
            } else {

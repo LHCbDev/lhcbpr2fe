@@ -17,6 +17,9 @@ function plotDirectiveFactory(directiveName, displayName) {
       controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
 
         $scope.$watch('resources', function() {
+          if(undefined === $scope.resources) {
+            return;
+          }
           var res = [];
           let i;
           for (i = 0; i < $scope.resources.length; i++) {
@@ -62,6 +65,9 @@ function defaultPlotDirectiveFactory(directiveName, displayName, computeMethod) 
         $scope.compute = computeMethod;
 
         $scope.$watch('resources', function() {
+          if(undefined === $scope.resources) {
+            return;
+          }
           var res = [];
           let i;
           for (i = 0; i < $scope.resources.length; i++) {
