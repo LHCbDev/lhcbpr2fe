@@ -78,24 +78,9 @@ var ModuleHelpers = new function() {
          $scope.selectedApp = restrict.selectedApp;
          $scope.selectedOptions = restrict.selectedOptions;
 
-         $scope.color = {
-           0: "white",
-           1: "black",
-           2: "red",
-           3: "green",
-           4: "blue",
-           5: "yellow",
-           6: "magenta",
-           7: "cyan",
-           8: "rgb(89,212,84)",
-           9: "rgb(89,84,217)"
-         };
-
-         $scope.jobsRootFiles = [];
          $scope.folders = ['/'];
          $scope.noJobData = true;
          $scope.isShowSearchForm = true;
-         $scope.cachedJobs = {};
 
          // TODO this is defined twice. Not sure why. Find out, and take appropriate action.
          $scope.data = {
@@ -111,16 +96,11 @@ var ModuleHelpers = new function() {
          $scope.panelJobs = {toggle: false};
          $scope.hidePanelDebug = true;
 
-         // $scope.sizeOf = function(obj) {
-         //   return Object.keys(obj).length;
-         // };
-
          $scope.showSearchForm = function() {
            $scope.isShowSearchForm = true;
          };
 
          $scope.lookHistos = function(jids) {
-           $scope.jobsRootFiles = [];
            $scope.folders = ['/'];
            $scope.noJobData = true;
            $scope.isShowSearchForm = false;
@@ -139,95 +119,30 @@ var ModuleHelpers = new function() {
              ids: jids.join(),
              type: "File"
            };
-           for (var i = 0, l = jids.length; i < l; ++i) {
-             $api.one('jobs', jids[i]).get().then(
-               function(job) {
-                 $scope.cachedJobs[job.id] = job;
-               }
-             );
-           }
 
            var result = {};
            if (jids && jids.length > 0) {
              $api.all('compare')
                .getList(requestParams)
                .then(function(attr) { // When we receive the response
-                 // var resource = $apiroot.lookupSingleFileResourceContents(attr[0]).then(function() {
-                 //   // TODO delete this bit!
-                 // });
-                 var res = [];
-                 for (i = 0; i < attr.length; i++) {
-                   let j;
-                   let value = resourceParser.getCommonValue(attr[i]);
-                   let jobIds = resourceParser.getJobIds(attr[i]);
-                   for (j in jobIds) {
-                     if ( value.endsWith(".root") ) {
-                       var file = jobIds[j] + '/' + value;
-                       res.push(file);
-                     }
-                   }
-                 }
+
                  // TODO find the best place to initialise this
-                 $scope.resources = attr;
+                 $scope.data.resources = attr;
                  $scope.url = BUILD_PARAMS.url_root;
-                 $scope.jobsRootFiles = res;
                  $scope.jobIds = angular.copy(jids);
                  $scope.folders = ['/'];
-                 $scope.readFiles();
+                 $scope.setNoJobData();
                });
            }
          };
 
-         // this.differenceInDatasets = function(files, jids) {
-         //   var filesPerJob = {};
-         //   var i;
-         //   for(i in files) {
-         //     filesPerJob[files[i]] = {
-         //       fromJobRegExp: RegExp("^"+files[i]+"/"),
-         //       files: {}
-         //     };
-
-         //     _.forEach(files, function(val) {
-         //       filesPerJob[files[i]].fromJobRegExp.test();
-         //     };
-         //   };
-         // };
-
-         $scope.readFiles = function () {
-           $scope.noJobData = ($scope.jobsRootFiles.length < 1);
-           if ($scope.jobsRootFiles && $scope.jobsRootFiles.length > 0) {
-             var objectOfResources = _.indexBy($scope.resources, function(value) {
-               return value.id;
-             });
-             var objectOfPromises = _.mapValues(objectOfResources, function(value) {
-               return $apiroot.lookupSingleFileResourceContents(value);
-             });
-             $q.all(objectOfPromises).then (function(response) {
-               debugger;
-               // Before it goes in, figure out which plots/files exist in all tests
-               // HACK strip the job number from the filename.
-               // TODO remove this hack with proper logic!
-               var regex = /^\d+?\//;
-               var key;
-               var newResponse = {};
-               for(key in response) {
-                 var strippedKey = key.replace(regex, '');
-                 newResponse[strippedKey] = response[key];
-               }
-               $scope.data.treedirsStructure = $apiroot.sortFileContentsToJSON(newResponse);
-             });
-           };
-         };
-
-         $scope.hasChildren = function(val, ind) {
-           return val.children;
-         };
-
-         $scope.hasNoChildren = function(val, ind) {
-           /**
-            * Needed to get around jade/pug's fussiness around '!'s.
-            */
-           return !$scope.hasChildren(val, ind);
+         $scope.setNoJobData = function () {
+           debugger;
+           if($scope.data.resources.length < 1) {
+             $scope.noJobData = true;
+           } else {
+             $scope.noJobData = false;
+           }
          };
 
        }]);
