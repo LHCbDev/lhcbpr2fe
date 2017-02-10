@@ -47,8 +47,8 @@ var ModuleHelpers = new function() {
     var controller_name = that.nameOfDefaultController(name);
     App.controller(
       controller_name,
-      ['$scope', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews',
-       function($scope, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider) {
+      ['$scope', 'resourceParser', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews', '$q',
+       function($scope, resourceParser, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider, $q) {
 
          $scope.defaultPlots = angular.copy(defaultPlots);
          $scope.defaultPlotView = angular.copy(defaultPlotView);
@@ -78,24 +78,9 @@ var ModuleHelpers = new function() {
          $scope.selectedApp = restrict.selectedApp;
          $scope.selectedOptions = restrict.selectedOptions;
 
-         $scope.color = {
-           0: "white",
-           1: "black",
-           2: "red",
-           3: "green",
-           4: "blue",
-           5: "yellow",
-           6: "magenta",
-           7: "cyan",
-           8: "rgb(89,212,84)",
-           9: "rgb(89,84,217)"
-         };
-
-         $scope.jobsRootFiles = [];
          $scope.folders = ['/'];
          $scope.noJobData = true;
          $scope.isShowSearchForm = true;
-         $scope.cachedJobs = {};
 
          // TODO this is defined twice. Not sure why. Find out, and take appropriate action.
          $scope.data = {
@@ -111,110 +96,69 @@ var ModuleHelpers = new function() {
          $scope.panelJobs = {toggle: false};
          $scope.hidePanelDebug = true;
 
-         // $scope.sizeOf = function(obj) {
-         //   return Object.keys(obj).length;
-         // };
-
          $scope.showSearchForm = function() {
            $scope.isShowSearchForm = true;
          };
 
+         var createGraphsFromDefaultPlots = function(resources, defaultPlots) {
+           /**
+            * Expect defaultPlots in the form of:
+            *
+            * [
+            *   {
+            *     locationInFile: "/h1",
+            *     filePath: "abc.root"
+            *   }
+            * ]
+            *
+            * And returns them in the form needed for passing to the plotview
+            * functions
+            */
+
+           return _.map(defaultPlots, function(value) {
+             return {
+               locationInFile: value.locationInFile,
+               resource: resourceParser.findResourceWithCommonValue(resources, value.filePath)
+             };
+           });
+         };
+
          $scope.lookHistos = function(jids) {
-           $scope.jobsRootFiles = [];
            $scope.folders = ['/'];
            $scope.noJobData = true;
            $scope.isShowSearchForm = false;
 
-           $scope.data = {
-             repeatSelect: null,
-             plotSelect: null,
-             treedirs: {},
-             treeplots: {},
-             tree: {},
-             graphs: angular.copy(defaultPlots),
-             optvalue: angular.copy(defaultPlotView)
-           };
 
            var requestParams = {
              ids: jids.join(),
              type: "File"
            };
-           for (var i = 0, l = jids.length; i < l; ++i) {
-             $api.one('jobs', jids[i]).get().then(
-               function(job) {
-                 $scope.cachedJobs[job.id] = job;
-               }
-             );
-           }
 
            var result = {};
            if (jids && jids.length > 0) {
              $api.all('compare')
                .getList(requestParams)
                .then(function(attr) { // When we receive the response
-                 var res = [];
-                 for (i = 0; i < attr.length; i++) {
-                   let j;
-                   for (j = 0; j < attr[i].jobvalues.length; j++) {
-                     if ( attr[i].jobvalues[j].value.endsWith(".root") ) {
-                       var file = attr[i].jobvalues[j].job.id + '/' + attr[i].jobvalues[j].value;
-                       res.push(file);
-                     }
-                   }
-                 }
+
                  // TODO find the best place to initialise this
+                 $scope.data.resources = attr;
+                 $scope.data.graphs = createGraphsFromDefaultPlots($scope.data.resources, defaultPlots),
                  $scope.url = BUILD_PARAMS.url_root;
-                 $scope.jobsRootFiles = res;
                  $scope.jobIds = angular.copy(jids);
                  $scope.folders = ['/'];
-                 $scope.readFiles();
+
+
+                 $scope.setNoJobData();
                });
            }
          };
 
-         // this.differenceInDatasets = function(files, jids) {
-         //   var filesPerJob = {};
-         //   var i;
-         //   for(i in files) {
-         //     filesPerJob[files[i]] = {
-         //       fromJobRegExp: RegExp("^"+files[i]+"/"),
-         //       files: {}
-         //     };
-
-         //     _.forEach(files, function(val) {
-         //       filesPerJob[files[i]].fromJobRegExp.test();
-         //     };
-         //   };
-         // };
-
-         $scope.readFiles = function () {
-           $scope.noJobData = ($scope.jobsRootFiles.length < 1);
-           if ($scope.jobsRootFiles && $scope.jobsRootFiles.length > 0) {
-             $apiroot.lookupFileContents($scope.jobsRootFiles).then (function(response) {
-               // Before it goes in, figure out which plots/files exist in all tests
-               // HACK strip the job number from the filename.
-               // TODO remove this hack with proper logic!
-               var regex = /^\d+?\//;
-               var key;
-               var newResponse = {};
-               for(key in response) {
-                 var strippedKey = key.replace(regex, '');
-                 newResponse[strippedKey] = response[key];
-               }
-               $scope.data.treedirsStructure = $apiroot.sortFileContentsToJSON(newResponse);
-             });
-           };
-         };
-
-         $scope.hasChildren = function(val, ind) {
-           return val.children;
-         };
-
-         $scope.hasNoChildren = function(val, ind) {
-           /**
-            * Needed to get around jade/pug's fussiness around '!'s.
-            */
-           return !$scope.hasChildren(val, ind);
+         $scope.setNoJobData = function () {
+           if($scope.data.resources.length < 1) {
+             $scope.noJobData = true;
+           } else {
+             $scope.noJobData = false;
+           }
          };
 
        }]);

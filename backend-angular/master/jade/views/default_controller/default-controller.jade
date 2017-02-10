@@ -25,7 +25,8 @@ h3 Validation Analysis
   .panel-wrapper(collapse="panelJobs")
     .panel-body
       .alert.alert-info(ng-show="noJobData") No root file was found !
-      browse-root-files(folders="data.treedirsStructure" graphs-checklist-model="data.graphs" default-plots="defaultPlots")
+      // browse-root-files(resources='data.resources', folders="data.treedirsStructure" graphs-checklist-model="data.graphs" default-plots="defaultPlots")
+      browse-root-files(resources='data.resources', folders="data.treedirsStructure" graphs-checklist-model="data.graphs" default-plots="defaultPlots")
 
 
 #panelOptions.panel.panel-default
@@ -45,7 +46,7 @@ h3 Validation Analysis
 
 
 h3 Plots:
-plot-view-generator(plot-view="data.optvalue", graphs="data.graphs", files="jobsRootFiles", test='test', url='url')
+plot-view-generator(plot-view="data.optvalue" graphs="data.graphs" files="jobsRootFiles" test='test' url='url' resources='data.resources')
 
 #panelDebug.panel.panel-default
   .panel-heading

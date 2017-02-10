@@ -1,8 +1,11 @@
+// TODO there is a lot of repetition of code in this file. Find a way to make it
+// less so.
 function plotDirectiveFactory(directiveName, displayName) {
   lhcbprPlotModule.directive(directiveName, function() {
     return {
       restrict: 'E',
       scope: {
+        resources: '=',
         graphs: '=',
         files: '=',
         test: '=',
@@ -10,7 +13,18 @@ function plotDirectiveFactory(directiveName, displayName) {
       },
       // TODO make this a less magic folder path, possibly by adding a method to
       // the lhcbprPlotModule or something
-      templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/'+directiveName+'.html'
+      templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/'+directiveName+'.html',
+      controllerAs: "ctrl",
+      controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
+
+        this.getFilesFromResource = function(resource) {
+          var jobIds = resourceParser.getJobIds(resource);
+          var fileName = resourceParser.getCommonValue(resource);
+          return _.map(jobIds, function(jobId) {
+            return jobId + "/" + fileName;
+          });
+        };
+      }]
     };
   });
   lhcbprPlotModule.config(['plotViewsProvider', function(plotViewsProvider) {
@@ -23,18 +37,28 @@ function defaultPlotDirectiveFactory(directiveName, displayName, computeMethod) 
     return {
       restrict: 'E',
       scope: {
+        // resources: '=',
         graphs: '=',
-        files: '=',
-        test: '=',
+        // files: '=',
+        // test: '=',
         url: '='
       },
-      controller: ['$scope', function($scope) {
-        $scope.compute = computeMethod;
-      }],
       // TODO make this a less magic folder path, possibly by adding a method to
       // the lhcbprPlotModule or something
-      // templateUrl: 'app/modules/gauss/views/muonmonisim_plot.html'
-      templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/plot.html'
+      templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/plot.html',
+      controllerAs: "ctrl",
+      controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
+
+        $scope.compute = computeMethod;
+
+        this.getFilesFromResource = function(resource) {
+          var jobIds = resourceParser.getJobIds(resource);
+          var fileName = resourceParser.getCommonValue(resource);
+          return _.map(jobIds, function(jobId) {
+            return jobId + "/" + fileName;
+          });
+        };
+      }]
     };
   });
   lhcbprPlotModule.config(['plotViewsProvider', function(plotViewsProvider) {
@@ -48,7 +72,6 @@ defaultPlotDirectiveFactory('plotDifference', 'Difference', 'Difference');
 defaultPlotDirectiveFactory('plotRatio', 'Ratio', 'Ratio');
 defaultPlotDirectiveFactory('plotKolmogorov', 'Kolmogorov', 'Kolmogorov');
 
-
 lhcbprPlotModule.directive('plotViewGenerator', ['$compile', function($compile) {
 
   function link(scope, element, attrs) {
@@ -56,9 +79,12 @@ lhcbprPlotModule.directive('plotViewGenerator', ['$compile', function($compile) 
 
     function updateDOM() {
       var sanitisedFormat = format.replace(/([A-Z])/g, '-$1').toLowerCase() || "span";
-      var generatedTemplate = '<' + sanitisedFormat + ' graphs="' 
+      // TODO, manually writing out the attrs feels a little forced/brittle.
+      // Find a way to fill them automatically.
+      var generatedTemplate = '<' + sanitisedFormat + ' graphs="'
             + attrs.graphs + '", files="' + attrs.files
-            + '", test="' + attrs.test + '", url="' + attrs.url 
+            + '", test="' + attrs.test + '", url="' + attrs.url
+            + '", resources="' + attrs.resources
             + '"></' + sanitisedFormat + '>';
       element.html($compile(generatedTemplate)(scope));
     }

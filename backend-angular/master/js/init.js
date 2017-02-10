@@ -30,7 +30,8 @@ var App = angular.module('angle', ['ngRoute',
         'restangular',
         'checklist-model',
         'buildParams',
-        'lhcbprPlotViews'
+        'lhcbprPlotViews',
+        'lhcbprResourcesModule'
     ])
     .run(["$rootScope", "$state", "$stateParams", '$window', '$templateCache',
         function($rootScope, $state, $stateParams, $window, $templateCache) {
