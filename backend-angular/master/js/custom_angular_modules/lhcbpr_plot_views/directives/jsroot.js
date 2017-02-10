@@ -453,8 +453,6 @@ lhcbprPlotModule.directive('drawRootHistogramsRatio', function() {
   return {
     restrict: 'E',
     scope: {
-      // fileLocation: '=',
-      // objectLocation: '='
       objectsToPlot: '='
     },
     // TODO change if needed

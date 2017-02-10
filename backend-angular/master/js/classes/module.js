@@ -54,6 +54,10 @@ var ModuleHelpers = new function() {
          $scope.defaultPlotView = angular.copy(defaultPlotView);
          $scope.plotViews = [];
          $scope.plotViewsFromProvider = plotViewsFromProvider;
+
+         // Check if any plot views have been requested. If they have, get their
+         // information from the plotViewsFromProvider. If not, get all plot
+         // views from provider
          if(undefined !== plotViewsFromArgs) {
            let i;
            for(i in plotViewsFromProvider) {
@@ -69,31 +73,19 @@ var ModuleHelpers = new function() {
          }
          // TODO check for plotViews requested but not found
 
-         $scope.selectionLevels = {};
-         $scope.addSelectionLevel = function(currentLevel, newLevelData) {
-           // TODO remove lower levels
-           $scope.selectionLevels[currentLevel] = newLevelData;
-         };
 
          $scope.selectedApp = restrict.selectedApp;
          $scope.selectedOptions = restrict.selectedOptions;
 
-         $scope.folders = ['/'];
          $scope.noJobData = true;
          $scope.isShowSearchForm = true;
 
-         // TODO this is defined twice. Not sure why. Find out, and take appropriate action.
          $scope.data = {
-           repeatSelect: null,
-           plotSelect: null,
-           treedirs: {},
-           treeplots: {},
-           tree: {},
            graphs: angular.copy(defaultPlots),
            optvalue: angular.copy(defaultPlotView)
          };
 
-         $scope.panelJobs = {toggle: false};
+         $scope.panelJobs = {toggle: true};
          $scope.hidePanelDebug = true;
 
          $scope.showSearchForm = function() {
@@ -124,7 +116,6 @@ var ModuleHelpers = new function() {
          };
 
          $scope.lookHistos = function(jids) {
-           $scope.folders = ['/'];
            $scope.noJobData = true;
            $scope.isShowSearchForm = false;
 
@@ -145,7 +136,6 @@ var ModuleHelpers = new function() {
                  $scope.data.graphs = createGraphsFromDefaultPlots($scope.data.resources, defaultPlots),
                  $scope.url = BUILD_PARAMS.url_root;
                  $scope.jobIds = angular.copy(jids);
-                 $scope.folders = ['/'];
 
 
                  $scope.setNoJobData();
@@ -160,7 +150,6 @@ var ModuleHelpers = new function() {
              $scope.noJobData = false;
            }
          };
-
        }]);
   };
 };
