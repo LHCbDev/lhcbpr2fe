@@ -293,11 +293,19 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
     },
     template: '<rootjs data="data" kstest="kstest" width="{{width}}" height="{{height}}"></rootjs>',
     link: function(scope) {
-      scope.$watchGroup(['files', 'items', 'compute'], function(values) {
-        if(values[0] && values[1]) {
-          activate(values[0], values[1], values[2]);
-        }
-      });
+      // Watching here causes an infinite loop, not sure why but probably due to
+      // changing scope variables by accident.
+      //
+      // TODO figure out if this is a problem. If it is, fix it!
+      //
+      // scope.$watchGroup(['files', 'items', 'compute'], function(values) {
+      //   if(values[0] && values[1]) {
+      //     console.debug("The values have changed! "+values);
+      //     activate(values[0], values[1], values[2]);
+      //   }
+      // });
+
+      activate(scope.files, scope.items, scope.compute);
 
       ///
       function activate(files, items, option) {
@@ -381,6 +389,9 @@ lhcbprPlotModule.directive('drawRootObject', function() {
       $scope.BUILD_PARAMS = BUILD_PARAMS;
     }],
     link: function(scope, element) {
+      // TODO figure out why the loading thing doesn't work. Maybe it's because
+      // it's in the link and not in a controller?
+      scope.loading = true;
       var pad = element.children()[0];
       pad.innerHTML = "";
       JSROOT.OpenFile("/api/media/jobs/"+scope.fileLocation, function(file) {
@@ -389,6 +400,7 @@ lhcbprPlotModule.directive('drawRootObject', function() {
           console.debug(obj);
           obj = JSROOT.JSONR_unref(obj);
           JSROOT.draw(pad, obj);
+          scope.loading = false;
         });
       });
     }

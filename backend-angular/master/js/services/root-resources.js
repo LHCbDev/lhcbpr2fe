@@ -111,7 +111,6 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', 'resourceParser', '$q', f
       var objectsNotInAllFiles = _.reduce(_.values(response), function(a, b) {
         return _.xor(a, b);
       });
-      debugger;
       if(objectsNotInAllFiles.length > 0) {
         console.error("The following objects not found in all files:");
         console.error(JSON.stringify(objectsNotInAllFiles, null, 2));

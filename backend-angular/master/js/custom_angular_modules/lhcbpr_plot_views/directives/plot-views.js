@@ -18,36 +18,12 @@ function plotDirectiveFactory(directiveName, displayName) {
       controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
 
         this.getFilesFromResource = function(resource) {
-          debugger;
           var jobIds = resourceParser.getJobIds(resource);
           var fileName = resourceParser.getCommonValue(resource);
           return _.map(jobIds, function(jobId) {
             return jobId + "/" + fileName;
           });
         };
-
-        $scope.$watch('graphs', function() {
-          if(undefined === $scope.graphs) {
-            return;
-          }
-
-          // var res = [];
-          // let i;
-          // for (i = 0; i < $scope.resources.length; i++) {
-          //   let j;
-          //   let value = resourceParser.getCommonValue($scope.resources[i]);
-          //   let jobIds = resourceParser.getJobIds($scope.resources[i]);
-          //   for (j in jobIds) {
-          //     if ( value.endsWith(".root") ) {
-          //       var file = jobIds[j] + '/' + value;
-          //       res.push(file);
-          //     }
-          //   }
-          // }
-          // $scope.files = res;
-        });
-
-
       }]
     };
   });
@@ -61,43 +37,28 @@ function defaultPlotDirectiveFactory(directiveName, displayName, computeMethod) 
     return {
       restrict: 'E',
       scope: {
-        resources: '=',
+        // resources: '=',
         graphs: '=',
-        files: '=',
-        test: '=',
+        // files: '=',
+        // test: '=',
         url: '='
       },
       // TODO make this a less magic folder path, possibly by adding a method to
       // the lhcbprPlotModule or something
-      // templateUrl: 'app/modules/gauss/views/muonmonisim_plot.html'
       templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/plot.html',
-      controller: [$scope, 'resourceParser', function($scope, resourceParser) {
+      controllerAs: "ctrl",
+      controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
 
         $scope.compute = computeMethod;
 
-        $scope.$watch('resources', function() {
-          if(undefined === $scope.resources) {
-            return;
-          }
-          var res = [];
-          let i;
-          for (i = 0; i < $scope.resources.length; i++) {
-            let j;
-            let value = resourceParser.getCommonValue($scope.resources[i]);
-            let jobIds = resourceParser.getJobIds($scope.resources[i]);
-            for (j in jobIds) {
-              if ( value.endsWith(".root") ) {
-                var file = jobIds[j] + '/' + value;
-                res.push(file);
-              }
-            }
-          }
-          $scope.files = res;
-        });
-
-
+        this.getFilesFromResource = function(resource) {
+          var jobIds = resourceParser.getJobIds(resource);
+          var fileName = resourceParser.getCommonValue(resource);
+          return _.map(jobIds, function(jobId) {
+            return jobId + "/" + fileName;
+          });
+        };
       }]
-
     };
   });
   lhcbprPlotModule.config(['plotViewsProvider', function(plotViewsProvider) {

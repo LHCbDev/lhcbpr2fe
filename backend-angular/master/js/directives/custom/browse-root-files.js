@@ -75,7 +75,6 @@ App.directive('browseRootFiles', [function () {
                     for(fileName in files){
                         var paths = files[fileName];
                         var resource = findResourceWithName(resources, fileName);
-                        debugger;
                         // var partialParsedPath = [parsed.length];
                         parsed.push({
                             name: fileName,
@@ -162,7 +161,6 @@ App.directive('browseRootFiles', [function () {
                 var objectOfResources = _.indexBy($scope.resources, function(value) {
                     return resourceParser.getCommonValue(value);
                 });
-                debugger;
                 var objectOfPromises = _.mapValues(objectOfResources, function(value) {
                     return rootResources.lookupSingleFileResourceContents(value);
                 });
