@@ -85,6 +85,14 @@ var ModuleHelpers = new function() {
            optvalue: angular.copy(defaultPlotView)
          };
 
+         $scope.setOptvalue = function(optvalue) {
+           $scope.data.optvalue = optvalue;
+         };
+
+         $scope.graphsToShow = function() {
+           return $scope.data.graphs.length > 0;
+         };
+
 
 
          var createGraphsFromDefaultPlots = function(resources, defaultPlots) {

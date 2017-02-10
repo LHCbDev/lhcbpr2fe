@@ -6,12 +6,14 @@ script(type="text/ng-template" id="browseRootFilesTemplate")
       | &nbsp;
       | {{ folder.name }}
   div(ng-if="ctrl.hasNoChildren(folder)")
-    label
-      input(type="checkbox" checklist-model="graphsChecklistModel" checklist-value="folder.payload")
-      | &nbsp;
-      span.icon-graph
-      | &nbsp;
-      | {{ folder.name }}
+    .c-checkbox.checkbox.needsclick
+      label
+        input(type="checkbox" checklist-model="graphsChecklistModel" checklist-value="folder.payload")
+        span.fa.fa-check
+        // | &nbsp;
+        // span.icon-graph
+        // | &nbsp;
+        | {{ folder.name }}
   ul(ng-if="folder.children && folder.isExpanded")
     li(ng-repeat="folder in folder.children" ng-include="'browseRootFilesTemplate'") 
 

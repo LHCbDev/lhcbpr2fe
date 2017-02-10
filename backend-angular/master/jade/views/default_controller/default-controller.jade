@@ -22,26 +22,35 @@ h3 Validation Analysis
   .panel-wrapper(collapse="panelJobs")
     .panel-body
       .alert.alert-info(ng-show="noJobData") No root file was found !
-      browse-root-files(resources='data.resources', folders="data.treedirsStructure" graphs-checklist-model="data.graphs" default-plots="defaultPlots")
+      browse-root-files(resources='data.resources', folders="data.treedirsStructure" graphs-checklist-model="data.graphs" default-plots="defaultPlots" ng-hide="noJobData")
 
 
-#panelOptions.panel.panel-default
-  .panel-heading
-    paneltool(tool-collapse)
-    .panel-title PlotViews
-  .panel-wrapper(collapse="panelOptions")
-    .panel-body
-      form.form-inline(role='form')
-        fieldset
-            label.radio-inline(ng-repeat="plotView in plotViews")
-              input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue")
-              |  {{ plotView.displayName }}
+// #panelOptions.panel.panel-default
+//   .panel-heading
+//     paneltool(tool-collapse)
+//     .panel-title PlotViews
+//   .panel-wrapper(collapse="panelOptions")
+//     .panel-body
+//       // form.form-inline(role='form')
+//       //   fieldset
+//       //       label.radio-inline(ng-repeat="plotView in plotViews")
+//       //         input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue")
+//       //         |  {{ plotView.displayName }}
+
 
 
 h3 Plots:
-plot-view-generator(plot-view="data.optvalue" graphs="data.graphs" files="jobsRootFiles" test='test' url='url' resources='data.resources')
+div(ng-show="graphsToShow()")
+  center
+    .btn-group
+      button.btn-default.btn(type="button" 
+                              ng-class="{'active': data.optvalue === plotView.directiveName }" 
+                              ng-click="setOptvalue(plotView.directiveName)" 
+                              ng-repeat="plotView in plotViews")
+        | {{ plotView.displayName }}
+  plot-view-generator(plot-view="data.optvalue" graphs="data.graphs" files="jobsRootFiles" test='test' url='url' resources='data.resources')
+.alert.alert-info(ng-hide="graphsToShow()") No plots selected.
 
-pre panelDebug: {{panelDebug}}
 #panelDebug.panel.panel-default
   .panel-heading
     paneltool(tool-collapse)
