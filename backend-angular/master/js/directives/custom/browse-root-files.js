@@ -50,17 +50,17 @@ App.directive('browseRootFiles', [function () {
                     // return locationInFile;
                 };
 
-                var findResourceWithName = function(resources, name) {
-                    var i;
-                    for(i in resources) {
-                        if(resourceParser.getCommonValue(resources[i]) === name) {
-                            return angular.copy(resources[i]);
-                        }
-                    }
-                    console.error(name+" not found in resources:");
-                    console.error(JSON.stringify(resources, null, 2));
-                    return undefined;
-                };
+                // var findResourceWithName = function(resources, name) {
+                //     var i;
+                //     for(i in resources) {
+                //         if(resourceParser.getCommonValue(resources[i]) === name) {
+                //             return angular.copy(resources[i]);
+                //         }
+                //     }
+                //     console.error(name+" not found in resources:");
+                //     console.error(JSON.stringify(resources, null, 2));
+                //     return undefined;
+                // };
 
                 var parsePathArray = function(files) {
                     // var parsed = {
@@ -74,7 +74,7 @@ App.directive('browseRootFiles', [function () {
                     var fileName;
                     for(fileName in files){
                         var paths = files[fileName];
-                        var resource = findResourceWithName(resources, fileName);
+                        var resource = resourceParser.findResourceWithCommonValue(resources, fileName);
                         // var partialParsedPath = [parsed.length];
                         parsed.push({
                             name: fileName,

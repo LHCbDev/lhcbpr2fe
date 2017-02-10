@@ -100,20 +100,34 @@ var ModuleHelpers = new function() {
            $scope.isShowSearchForm = true;
          };
 
+         var createGraphsFromDefaultPlots = function(resources, defaultPlots) {
+           /**
+            * Expect defaultPlots in the form of:
+            *
+            * [
+            *   {
+            *     locationInFile: "/h1",
+            *     filePath: "abc.root"
+            *   }
+            * ]
+            *
+            * And returns them in the form needed for passing to the plotview
+            * functions
+            */
+
+           return _.map(defaultPlots, function(value) {
+             return {
+               locationInFile: value.locationInFile,
+               resource: resourceParser.findResourceWithCommonValue(resources, value.filePath)
+             };
+           });
+         };
+
          $scope.lookHistos = function(jids) {
            $scope.folders = ['/'];
            $scope.noJobData = true;
            $scope.isShowSearchForm = false;
 
-           $scope.data = {
-             repeatSelect: null,
-             plotSelect: null,
-             treedirs: {},
-             treeplots: {},
-             tree: {},
-             graphs: angular.copy(defaultPlots),
-             optvalue: angular.copy(defaultPlotView)
-           };
 
            var requestParams = {
              ids: jids.join(),
@@ -128,9 +142,12 @@ var ModuleHelpers = new function() {
 
                  // TODO find the best place to initialise this
                  $scope.data.resources = attr;
+                 $scope.data.graphs = createGraphsFromDefaultPlots($scope.data.resources, defaultPlots),
                  $scope.url = BUILD_PARAMS.url_root;
                  $scope.jobIds = angular.copy(jids);
                  $scope.folders = ['/'];
+
+
                  $scope.setNoJobData();
                });
            }

@@ -19,6 +19,20 @@ lhcbprResourcesModule.service('resourceParser', function() {
    * from the documentation, this is a bug (either in docs or in the code).
    */
 
+  var that = this;
+
+  this.findResourceWithCommonValue = function(resources, commonValue) {
+      var i;
+      for(i in resources) {
+        if(that.getCommonValue(resources[i]) === commonValue) {
+          return resources[i];
+        }
+      }
+      console.error(name+" not found in resources:");
+      console.error(JSON.stringify(resources, null, 2));
+      return undefined;
+  };
+
   this.getCommonValue = function(resource) {
     /**
      * Get single common value from resource. If more than one value (or no
