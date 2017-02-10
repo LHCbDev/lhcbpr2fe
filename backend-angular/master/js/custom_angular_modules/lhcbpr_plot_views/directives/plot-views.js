@@ -14,26 +14,37 @@ function plotDirectiveFactory(directiveName, displayName) {
       // TODO make this a less magic folder path, possibly by adding a method to
       // the lhcbprPlotModule or something
       templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/'+directiveName+'.html',
+      controllerAs: "ctrl",
       controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
 
-        $scope.$watch('resources', function() {
-          if(undefined === $scope.resources) {
+        this.getFilesFromResource = function(resource) {
+          debugger;
+          var jobIds = resourceParser.getJobIds(resource);
+          var fileName = resourceParser.getCommonValue(resource);
+          return _.map(jobIds, function(jobId) {
+            return jobId + "/" + fileName;
+          });
+        };
+
+        $scope.$watch('graphs', function() {
+          if(undefined === $scope.graphs) {
             return;
           }
-          var res = [];
-          let i;
-          for (i = 0; i < $scope.resources.length; i++) {
-            let j;
-            let value = resourceParser.getCommonValue($scope.resources[i]);
-            let jobIds = resourceParser.getJobIds($scope.resources[i]);
-            for (j in jobIds) {
-              if ( value.endsWith(".root") ) {
-                var file = jobIds[j] + '/' + value;
-                res.push(file);
-              }
-            }
-          }
-          $scope.files = res;
+
+          // var res = [];
+          // let i;
+          // for (i = 0; i < $scope.resources.length; i++) {
+          //   let j;
+          //   let value = resourceParser.getCommonValue($scope.resources[i]);
+          //   let jobIds = resourceParser.getJobIds($scope.resources[i]);
+          //   for (j in jobIds) {
+          //     if ( value.endsWith(".root") ) {
+          //       var file = jobIds[j] + '/' + value;
+          //       res.push(file);
+          //     }
+          //   }
+          // }
+          // $scope.files = res;
         });
 
 

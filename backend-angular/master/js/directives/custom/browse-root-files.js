@@ -12,10 +12,11 @@ App.directive('browseRootFiles', [function () {
             graphsChecklistModel: '=',
             defaultPlots: '='
         },
-        controller: ['$scope', '$q', 'rootResources', function($scope, $q, rootResources) {
+        controller: ['$scope', '$q', 'rootResources', 'resourceParser',
+                     function($scope, $q, rootResources, resourceParser) {
             var that = this;
 
-            this.sortFileContentsToJSON = function(filesJSON) {
+            this.sortFileContentsToJSON = function(resources, filesJSON) {
                 /**
                  * This is designed to take the output of this.lookupFileContents and output
                  * it into something more reasonable to navigate in javascript.
@@ -41,12 +42,24 @@ App.directive('browseRootFiles', [function () {
                     return "/"+_.slice(splitPath, 0, Number(level)+1).join('/');
                 };
 
-                var createLocation = function(locationInFile, fileInJob) {
-                    // return {
-                    //   locationInFile: locationInFile,
-                    //   fileInJob: fileInJob
-                    // };
-                    return locationInFile;
+                var createPayload = function(resource, locationInFile) {
+                    return angular.copy({
+                      locationInFile: locationInFile,
+                      resource: angular.copy(resource)
+                    });
+                    // return locationInFile;
+                };
+
+                var findResourceWithName = function(resources, name) {
+                    var i;
+                    for(i in resources) {
+                        if(resourceParser.getCommonValue(resources[i]) === name) {
+                            return angular.copy(resources[i]);
+                        }
+                    }
+                    console.error(name+" not found in resources:");
+                    console.error(JSON.stringify(resources, null, 2));
+                    return undefined;
                 };
 
                 var parsePathArray = function(files) {
@@ -61,6 +74,8 @@ App.directive('browseRootFiles', [function () {
                     var fileName;
                     for(fileName in files){
                         var paths = files[fileName];
+                        var resource = findResourceWithName(resources, fileName);
+                        debugger;
                         // var partialParsedPath = [parsed.length];
                         parsed.push({
                             name: fileName,
@@ -103,11 +118,12 @@ App.directive('browseRootFiles', [function () {
                                     // partialParsedPath.push(objName);
                                     _.set(parsed, partialParsedPath, {
                                         name: objName,
-                                        // If you pass this location to jsroot, it will fetch the object
-                                        // with objName
-                                        location: createLocation(
-                                            getPathUpToLevel(path, j),
-                                            fileName
+                                        // If you pass this payload to
+                                        // plot-view-generator, it will fetch
+                                        // the object
+                                        payload: createPayload(
+                                            resource,
+                                            getPathUpToLevel(path, j)
                                         ),
                                         isExpanded: false
                                     });
@@ -119,6 +135,7 @@ App.directive('browseRootFiles', [function () {
                                 }
                             };
                         }};
+                    console.debug("passing: "+JSON.stringify(parsed, null, 2));
                     return parsed;
                 };
 
@@ -138,13 +155,14 @@ App.directive('browseRootFiles', [function () {
 
             $scope.$watch('resources', function() {
                 // If resources is empty, don't bother processing it.
-                if($scope.resources && $scope.resources.length === 0) {
+                if($scope.resources === undefined || $scope.resources.length === 0) {
                     return;
                 }
 
                 var objectOfResources = _.indexBy($scope.resources, function(value) {
-                    return value.id;
+                    return resourceParser.getCommonValue(value);
                 });
+                debugger;
                 var objectOfPromises = _.mapValues(objectOfResources, function(value) {
                     return rootResources.lookupSingleFileResourceContents(value);
                 });
@@ -160,7 +178,7 @@ App.directive('browseRootFiles', [function () {
                         var strippedKey = key.replace(regex, '');
                         newResponse[strippedKey] = response[key];
                     }
-                    $scope.folders = that.sortFileContentsToJSON(newResponse);
+                    $scope.folders = that.sortFileContentsToJSON($scope.resources, newResponse);
                 });
             });
 
