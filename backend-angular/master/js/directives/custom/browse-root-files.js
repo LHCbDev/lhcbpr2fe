@@ -134,7 +134,6 @@ App.directive('browseRootFiles', [function () {
                                 }
                             };
                         }};
-                    console.debug("passing: "+JSON.stringify(parsed, null, 2));
                     return parsed;
                 };
 
