@@ -2,7 +2,4 @@ div(style="overflow:auto")
   table(style="width:100%")
     tr(ng-repeat="item in graphs", ng-hide="noJobData")
       td(ng-repeat="file in ctrl.getFilesFromResource(item.resource)")
-        div(ng-show="loading")
-          | Loading plot...
-        div(ng-hide="loading")
-          draw-root-object(file-location="file" object-location="item.locationInFile")
+        draw-root-object(file-location="file" object-location="item.locationInFile")
