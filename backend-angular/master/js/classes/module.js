@@ -85,12 +85,7 @@ var ModuleHelpers = new function() {
            optvalue: angular.copy(defaultPlotView)
          };
 
-         $scope.panelJobs = {toggle: true};
-         $scope.hidePanelDebug = true;
 
-         $scope.showSearchForm = function() {
-           $scope.isShowSearchForm = true;
-         };
 
          var createGraphsFromDefaultPlots = function(resources, defaultPlots) {
            /**
@@ -117,7 +112,9 @@ var ModuleHelpers = new function() {
 
          $scope.lookHistos = function(jids) {
            $scope.noJobData = true;
-           $scope.isShowSearchForm = false;
+
+           // Uncomment to collapse when 'Analyze' is pressed
+           // $scope.panelSearch = true;
 
 
            var requestParams = {
@@ -150,7 +147,8 @@ var ModuleHelpers = new function() {
              $scope.noJobData = false;
            }
          };
-       }]);
+       }]
+    );
   };
 };
 
