@@ -72,7 +72,7 @@ lhcbprPlotModule.directive("plotSame", function() {
     restrict: 'E',
     scope: {
       // resources: '=',
-      graphs: '=',
+      graphs: '&',
       // files: '=',
       // test: '=',
       url: '='
@@ -102,7 +102,6 @@ lhcbprPlotModule.directive("plotSame", function() {
           };
         });
       };
-
     }]
   };
 });

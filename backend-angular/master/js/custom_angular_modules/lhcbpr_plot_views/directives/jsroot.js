@@ -285,9 +285,9 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
     restrict: 'E',
     scope: {
       entrypoint: '=',
-      files: '=',
-      items: '=',
-      compute: '=',
+      files: '&',
+      items: '&',
+      compute: '&',
       width: '@',
       height: '@'
     },
@@ -305,7 +305,7 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
       //   }
       // });
 
-      activate(scope.files, scope.items, scope.compute);
+      activate(scope.files(), scope.items(), scope.compute());
 
       ///
       function activate(files, items, option) {
@@ -326,7 +326,6 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
       }
 
       function loaded(data) {
-        console.debug("Attempting to load:\n"+JSON.stringify(data, null, 2));
         var graph, mg, color, notGraph;
         var graphs = [];
         var notGraphs = [];
@@ -395,9 +394,7 @@ lhcbprPlotModule.directive('drawRootObject', function() {
       var pad = element.children()[0];
       pad.innerHTML = "";
       JSROOT.OpenFile("/api/media/jobs/"+scope.fileLocation, function(file) {
-        console.debug(file);
         file.ReadObject(scope.objectLocation, function(obj) {
-          console.debug(obj);
           obj = JSROOT.JSONR_unref(obj);
           JSROOT.draw(pad, obj);
           scope.loading = false;
@@ -415,7 +412,7 @@ lhcbprPlotModule.directive('drawRootObjectsSame', function() {
     scope: {
       // fileLocation: '=',
       // objectLocation: '='
-      objectsToPlot: '='
+      objectsToPlot: '&'
     },
     // TODO change if needed
     templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/drawRootObject.html',
@@ -428,18 +425,14 @@ lhcbprPlotModule.directive('drawRootObjectsSame', function() {
       pad.innerHTML = "";
       var i;
       var plotColor = false;
-      for(i in scope.objectsToPlot) {
-        JSROOT.OpenFile("/api/media/jobs/"+scope.objectsToPlot[i].fileLocation, function(file) {
-          console.debug(file);
-          file.ReadObject(scope.objectsToPlot[i].objectLocation, function(obj) {
-            obj.fName = obj.fName + "__" + scope.objectsToPlot[i].fileLocation.replace(/\//g, "__");
+      for(i in scope.objectsToPlot()) {
+        JSROOT.OpenFile("/api/media/jobs/"+scope.objectsToPlot()[i].fileLocation, function(file) {
+          file.ReadObject(scope.objectsToPlot()[i].objectLocation, function(obj) {
+            obj.fName = obj.fName + "__" + scope.objectsToPlot()[i].fileLocation.replace(/\//g, "__");
             // TODO make a service/function to cycle through colors
             obj.fLinecolor = obj.fLineColor + 20;
-            debugger;
-            console.debug(obj);
             obj = JSROOT.JSONR_unref(obj);
             JSROOT.draw(pad, obj, "SAME,HIST");
-            ;
           });
         });
       }
@@ -453,7 +446,7 @@ lhcbprPlotModule.directive('drawRootHistogramsRatio', function() {
   return {
     restrict: 'E',
     scope: {
-      objectsToPlot: '='
+      objectsToPlot: '&'
     },
     // TODO change if needed
     templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/drawRootObject.html',
@@ -463,7 +456,7 @@ lhcbprPlotModule.directive('drawRootHistogramsRatio', function() {
     }],
     link: function(scope, element) {
       // Check that it can be done:
-      if (scope.objectsToPlot.length !== 2) {
+      if (scope.objectsToPlot().length !== 2) {
         console.error("Too many or too few plots passed to drawRootHistogramsRatio directive.");
         return;
       }
@@ -471,10 +464,10 @@ lhcbprPlotModule.directive('drawRootHistogramsRatio', function() {
       pad.innerHTML = "";
       var i;
       var plotColor = false;
-      JSROOT.OpenFile("/api/media/jobs/"+scope.objectsToPlot[0].fileLocation, function(file0) {
-        JSROOT.OpenFile("/api/media/jobs/"+scope.objectsToPlot[1].fileLocation, function(file1) {
-          file0.ReadObject(scope.objectsToPlot[0].objectLocation, function(obj0) {
-            file1.ReadObject(scope.objectsToPlot[1].objectLocation, function(obj1) {
+      JSROOT.OpenFile("/api/media/jobs/"+scope.objectsToPlot()[0].fileLocation, function(file0) {
+        JSROOT.OpenFile("/api/media/jobs/"+scope.objectsToPlot()[1].fileLocation, function(file1) {
+          file0.ReadObject(scope.objectsToPlot()[0].objectLocation, function(obj0) {
+            file1.ReadObject(scope.objectsToPlot()[1].objectLocation, function(obj1) {
               var newObj = angular.copy(obj0);
               _.map(newObj.fArray, function(value, ind) {
                 newObj.fArray[ind] = obj0.fArray[ind] / obj1.fArray[ind];
