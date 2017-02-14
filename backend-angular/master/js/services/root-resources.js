@@ -119,6 +119,8 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', 'resourceParser', '$q', f
           console.error(JSON.stringify(objectsNotInAllFiles, null, 2));
           console.error("Ignoring them and returning objects in common...");
         }
+      } else {
+        var arraysOfObjectsInFiles = _.values(response)[0];
       }
 
       var objectsInAllFiles = _.intersection(arraysOfObjectsInFiles);
