@@ -105,17 +105,24 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', 'resourceParser', '$q', f
     });
 
     return $q.all(filesRootObjects).then(function(response) {
-      var arraysOfObjectsInFiles = _.reduce(_.values(response), function(a, b) {
-        return _.union(a, b);
-      });
-      var objectsNotInAllFiles = _.reduce(_.values(response), function(a, b) {
-        return _.xor(a, b);
-      });
-      if(objectsNotInAllFiles.length > 0) {
-        console.error("The following objects not found in all files:");
-        console.error(JSON.stringify(objectsNotInAllFiles, null, 2));
-        console.error("Ignoring them and returning objects in common...");
+      // If there's more than one job, check if the insides of the ROOT files
+      // are the same.
+      if(jobIds.length > 1){
+        var arraysOfObjectsInFiles = _.reduce(_.values(response), function(a, b) {
+          return _.union(a, b);
+        });
+        var objectsNotInAllFiles = _.reduce(_.values(response), function(a, b) {
+          return _.xor(a, b);
+        });
+        if(objectsNotInAllFiles.length > 0) {
+          console.error("The following objects not found in all files:");
+          console.error(JSON.stringify(objectsNotInAllFiles, null, 2));
+          console.error("Ignoring them and returning objects in common...");
+        }
+      } else {
+        var arraysOfObjectsInFiles = _.values(response)[0];
       }
+
       var objectsInAllFiles = _.intersection(arraysOfObjectsInFiles);
       return objectsInAllFiles;
     });

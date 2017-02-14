@@ -15,9 +15,6 @@ h3 Validation Analysis
 
 
 // Shows secondary panel selecting which plot to display from all ROOT files found in the selected jobs.
-// TODO there is a lot of logic here, this should be farmed out to the controller
-// TODO Currently _feels_ overcomplicated. Review to see if there is a more succint/meaningful way to do this
-// TODO make a directive for this. It should be obvious what each part does from each directive.
 #panelJobs.panel.panel-default
   .panel-heading
     paneltool(tool-collapse)
@@ -25,34 +22,40 @@ h3 Validation Analysis
   .panel-wrapper(collapse="panelJobs")
     .panel-body
       .alert.alert-info(ng-show="noJobData") No root file was found !
-      // browse-root-files(resources='data.resources', folders="data.treedirsStructure" graphs-checklist-model="data.graphs" default-plots="defaultPlots")
-      browse-root-files(resources='data.resources', folders="data.treedirsStructure" graphs-checklist-model="data.graphs" default-plots="defaultPlots")
+      browse-root-files(resources='data.resources', folders="data.treedirsStructure" graphs-checklist-model="data.graphs" default-plots="defaultPlots" ng-hide="noJobData")
 
 
-#panelOptions.panel.panel-default
-  .panel-heading
-    paneltool(tool-collapse)
-    .panel-title PlotViews
-  .panel-wrapper(collapse="panelOptions")
-    .panel-body
-      p
-        i Please select a view after selecting a plot (above).
-      form.form-inline(role='form')
-        fieldset
-          .form-group.col-sm-6
-              label.radio-inline(ng-repeat="plotView in plotViews")
-                input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue")
-                |  {{ plotView.displayName }}
+// #panelOptions.panel.panel-default
+//   .panel-heading
+//     paneltool(tool-collapse)
+//     .panel-title PlotViews
+//   .panel-wrapper(collapse="panelOptions")
+//     .panel-body
+//       // form.form-inline(role='form')
+//       //   fieldset
+//       //       label.radio-inline(ng-repeat="plotView in plotViews")
+//       //         input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue")
+//       //         |  {{ plotView.displayName }}
+
 
 
 h3 Plots:
-plot-view-generator(plot-view="data.optvalue" graphs="data.graphs" files="jobsRootFiles" test='test' url='url' resources='data.resources')
+div(ng-show="graphsToShow()")
+  center
+    .btn-group
+      button.btn-default.btn(type="button" 
+                              ng-class="{'active': data.optvalue === plotView.directiveName }" 
+                              ng-click="setOptvalue(plotView.directiveName)" 
+                              ng-repeat="plotView in plotViews")
+        | {{ plotView.displayName }}
+  plot-view-generator(plot-view="data.optvalue" graphs="data.graphs" files="jobsRootFiles" test='test' url='url' resources='data.resources')
+.alert.alert-info(ng-hide="graphsToShow()") No plots selected.
 
 #panelDebug.panel.panel-default
   .panel-heading
     paneltool(tool-collapse)
     .panel-title Debug info
-  .panel-wrapper(collapse="panelOptions")
+  .panel-wrapper(collapse="panelDebug")
     .panel-body
       p.
         The details here are for debug purposes. They can be safely ignored unless
