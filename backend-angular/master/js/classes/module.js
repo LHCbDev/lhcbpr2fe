@@ -50,6 +50,7 @@ var ModuleHelpers = new function() {
       ['$scope', 'resourceParser', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews', '$q',
        function($scope, resourceParser, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider, $q) {
 
+         $scope.analysisModuleTitle = angular.copy(title);
          $scope.defaultPlots = angular.copy(defaultPlots);
          $scope.defaultPlotView = angular.copy(defaultPlotView);
          $scope.plotViews = [];
@@ -60,14 +61,14 @@ var ModuleHelpers = new function() {
          // views from provider
          if(undefined !== plotViewsFromArgs) {
            let i;
-           for(i in plotViewsFromProvider) {
-             let index = _.findIndex(
-               plotViewsFromArgs,
-               function(o) {return o === plotViewsFromProvider[i].directiveName;});
-             if(index > -1) {
-               $scope.plotViews.push(plotViewsFromProvider[i]);
-             }
-           }
+           // We're looping over the wrong thing here.
+           _.forEach(plotViewsFromArgs, function(value) {
+             $scope.plotViews.push(_.find(
+               plotViewsFromProvider,
+               function(v) {
+                 return v.directiveName === value;
+               }));
+           });
          } else {
            $scope.plotViews = plotViewsFromProvider;
          }
@@ -102,7 +103,7 @@ var ModuleHelpers = new function() {
             * [
             *   {
             *     locationInFile: "/h1",
-            *     filePath: "abc.root"
+            *     filePathRegex: /abc.root/
             *   }
             * ]
             *
@@ -111,9 +112,11 @@ var ModuleHelpers = new function() {
             */
 
            return _.map(defaultPlots, function(value) {
+             console.warn("File regex is not yet fully supported. Please design "
+                          + "your matches to match only one file.");
              return {
                locationInFile: value.locationInFile,
-               resource: resourceParser.findResourceWithCommonValue(resources, value.filePath)
+               resources: resourceParser.findResourcesWithRegexValue(resources, value.filePathRegex)
              };
            });
          };

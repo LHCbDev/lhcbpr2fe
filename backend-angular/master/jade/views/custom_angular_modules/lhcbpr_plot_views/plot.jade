@@ -1,3 +1,3 @@
 div(ng-repeat="item in graphs track by $index", ng-hide="noJobData")
   h3(style="color:red") {{ item.fTitle }}
-    rootjsserver(entrypoint="url" files="ctrl.getFilesFromResource(item.resource)" items="item.locationInFile" compute="compute" width="800" height="600")
+    rootjsserver(entrypoint="url" files="ctrl.getFilesFromResources(item.resources)" items="item.locationInFile" compute="compute" width="800" height="600")

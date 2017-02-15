@@ -21,6 +21,22 @@ lhcbprResourcesModule.service('resourceParser', function() {
 
   var that = this;
 
+  this.getFilesFromResource = function(resource) {
+    var jobIds = that.getJobIds(resource);
+    var fileName = that.getCommonValue(resource);
+    return _.map(jobIds, function(jobId) {
+      return jobId + "/" + fileName;
+    });
+  };
+
+  this.getFilesFromResources = function(resources) {
+    var fileNames = _.map(resources, function(v) {
+      return that.getFilesFromResource(v);
+    });
+    fileNames = _.flatten(fileNames);
+    return fileNames;
+  };
+
   this.findResourceWithCommonValue = function(resources, commonValue) {
       var i;
       for(i in resources) {
@@ -31,6 +47,17 @@ lhcbprResourcesModule.service('resourceParser', function() {
       console.error(name+" not found in resources:");
       console.error(JSON.stringify(resources, null, 2));
       return undefined;
+  };
+
+  this.findResourcesWithRegexValue = function(resources, regex) {
+    /**
+     * Finds all resources with the regex given
+     *
+     * If not found, returns empty array or undefined.
+     */
+    return _.filter(resources, function(v) {
+      return that.getCommonValue(v).match(regex);
+    });
   };
 
   this.getCommonValue = function(resource) {
