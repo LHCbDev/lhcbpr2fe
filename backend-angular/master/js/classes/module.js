@@ -56,6 +56,12 @@ var ModuleHelpers = new function() {
          $scope.plotViews = [];
          $scope.plotViewsFromProvider = plotViewsFromProvider;
 
+         // Tabs
+         $scope.activeTab = 1;
+         $scope.setActiveTab = function(tab) {
+           $scope.activeTab = tab;
+         };
+
          // Check if any plot views have been requested. If they have, get their
          // information from the plotViewsFromProvider. If not, get all plot
          // views from provider

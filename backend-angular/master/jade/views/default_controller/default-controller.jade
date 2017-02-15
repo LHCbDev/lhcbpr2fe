@@ -3,7 +3,6 @@
 h3 {{ analysisModuleTitle }}
   small.text-muted LHCbPR
 
-h3 Plots:
 div(ng-show="graphsToShow() && !noJobData")
   plot-view-generator(plot-view="data.optvalue" graphs="data.graphs" files="jobsRootFiles" test='test' url='url' resources='data.resources')
   center
@@ -13,25 +12,28 @@ div(ng-show="graphsToShow() && !noJobData")
                               ng-click="setOptvalue(plotView.directiveName)" 
                               ng-repeat="plotView in plotViews")
         | {{ plotView.displayName }}
-.alert.alert-info(ng-hide="graphsToShow() && !noJobData") No plots selected. Please select jobs and graphs below.
+.alert.alert-warning(ng-show="noJobData") No jobs selected!
+.alert.alert-warning(ng-hide="graphsToShow()") No plots selected!
 
+ul.nav.nav-tabs
+  li(ng-class="{'active': activeTab === 1}")
+    a(href ng-click="setActiveTab(1)")
+      | Select jobs
+  li(ng-class="{'active': activeTab === 2}")
+    a(href ng-click="setActiveTab(2)")
+      | Select plots
 
-#panelSearch.panel.panel-default
-  .panel-heading
-    .panel-title Select one or more jobs
-  .panel-wrapper
+// .panel.tab-content(style="background: white; border: 50px")
+.panel.tab-content
+  div(ng-show="activeTab === 1")
+    .panel-head
     .panel-body
-      // select-jobs(selected-app="DUMMYAPP" selected-options="100Evts-GAUSS-2015" on-jobs-selected="lookHistos(jobIds)")
       select-jobs(ng-attr-selected-app="{{selectedApp}}", ng-attr-selected-options="{{selectedOptions}}", on-jobs-selected="lookHistos(jobIds)")
-
-
-#panelJobs.panel.panel-default
-  .panel-heading
-    .panel-title Select item to plot
-  .panel-wrapper
+  div(ng-show="activeTab === 2")
+    .panel-head
     .panel-body
       .alert.alert-info(ng-show="noJobData") No root file was found !
-      browse-root-files(resources='data.resources', folders="data.treedirsStructure" graphs-checklist-model="data.graphs" default-plots="defaultPlots" ng-hide="noJobData")
+      browse-root-files(ng-hide="noJobData" resources='data.resources', folders="data.treedirsStructure" graphs-checklist-model="data.graphs" default-plots="defaultPlots")
 
 
 #panelDebug.panel.panel-default
@@ -49,6 +51,7 @@ div(ng-show="graphsToShow() && !noJobData")
       pre jobId: {{ jobId }}
       pre data.graphs: {{ data.graphs }}
       pre data.treedirsStructure: {{ data.treedirsStructure }}
+      pre activeTab: {{ activeTab }}
 
       pre apiroot: {{ apiroot }}
 
