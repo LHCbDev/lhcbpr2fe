@@ -1,0 +1,1 @@
+plotDirectiveFactory('plotSplit', 'Split');
