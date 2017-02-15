@@ -402,7 +402,7 @@ lhcbprPlotModule.directive('drawRootObjectsSame', function() {
             // TODO make a service/function to cycle through colors
             obj.fLinecolor = obj.fLineColor + 20;
             obj = JSROOT.JSONR_unref(obj);
-            JSROOT.draw(pad, obj, "SAME,HIST");
+            JSROOT.draw(pad, obj, "SAME");
           });
         });
       }
