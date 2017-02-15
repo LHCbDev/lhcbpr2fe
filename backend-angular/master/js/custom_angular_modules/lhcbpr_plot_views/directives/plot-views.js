@@ -17,13 +17,7 @@ function plotDirectiveFactory(directiveName, displayName) {
       controllerAs: "ctrl",
       controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
 
-        this.getFilesFromResource = function(resource) {
-          var jobIds = resourceParser.getJobIds(resource);
-          var fileName = resourceParser.getCommonValue(resource);
-          return _.map(jobIds, function(jobId) {
-            return jobId + "/" + fileName;
-          });
-        };
+        this.getFilesFromResources = resourceParser.getFilesFromResources;
       }]
     };
   });
@@ -51,13 +45,7 @@ function defaultPlotDirectiveFactory(directiveName, displayName, computeMethod) 
 
         $scope.compute = computeMethod;
 
-        this.getFilesFromResource = function(resource) {
-          var jobIds = resourceParser.getJobIds(resource);
-          var fileName = resourceParser.getCommonValue(resource);
-          return _.map(jobIds, function(jobId) {
-            return jobId + "/" + fileName;
-          });
-        };
+        this.getFilesFromResources = resourceParser.getFilesFromResources;
       }]
     };
   });
@@ -82,18 +70,10 @@ lhcbprPlotModule.directive("plotSame", function() {
     templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/plotSame.html',
     controllerAs: "ctrl",
     controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
-      var that = this;
-
-      this.getFilesFromResource = function(resource) {
-        var jobIds = resourceParser.getJobIds(resource);
-        var fileName = resourceParser.getCommonValue(resource);
-        return _.map(jobIds, function(jobId) {
-          return jobId + "/" + fileName;
-        });
-      };
 
       this.getObjectsToPlot = function(payload) {
-        var fileNames = that.getFilesFromResource(payload.resource);
+        // var fileNames = that.getFilesFromResource(payload.resource);
+        var fileNames = resourceParser.getFilesFromResources(payload.resources);
         var locationInFile = payload.locationInFile;
         return _.map(fileNames, function(value) {
           return {

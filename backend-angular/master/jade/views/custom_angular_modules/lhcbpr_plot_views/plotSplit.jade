@@ -1,5 +1,5 @@
 div(style="overflow:auto")
   table(style="width:100%")
     tr(ng-repeat="item in graphs", ng-hide="noJobData")
-      td(ng-repeat="file in ctrl.getFilesFromResource(item.resource)")
+      td(ng-repeat="file in ctrl.getFilesFromResources(item.resources)")
         draw-root-object(file-location="file" object-location="item.locationInFile")
