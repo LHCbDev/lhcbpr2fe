@@ -102,7 +102,7 @@ var ModuleHelpers = new function() {
             * [
             *   {
             *     locationInFile: "/h1",
-            *     filePath: "abc.root"
+            *     filePathRegex: /abc.root/
             *   }
             * ]
             *
@@ -111,9 +111,11 @@ var ModuleHelpers = new function() {
             */
 
            return _.map(defaultPlots, function(value) {
+             console.warn("File regex is not yet fully supported. Please design "
+                          + "your matches to match only one file.");
              return {
                locationInFile: value.locationInFile,
-               resource: resourceParser.findResourceWithCommonValue(resources, value.filePath)
+               resources: resourceParser.findResourcesWithRegexValue(resources, value.filePathRegex)
              };
            });
          };

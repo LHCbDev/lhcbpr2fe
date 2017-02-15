@@ -4,15 +4,15 @@ Module.create('geantstandalone', 'GEANT', 2)
 		sref: "app.geantstandalone",
 		icon: "icon-grid"
 	})
-	// .addMenuItem({
-	// 	text: 'TestEm3',
-	// 	sref: 'app.geanttestem3',
-	// 	icon: "icon-grid"
-	// })
+// .addMenuItem({
+// 	text: 'TestEm3',
+// 	sref: 'app.geanttestem3',
+// 	icon: "icon-grid"
+// })
 	.addMenuItem({
-	text: 'TestEm5',
-	sref: 'app.geanttestem5',
-	icon: "icon-grid"
+	  text: 'TestEm5',
+	  sref: 'app.geanttestem5',
+	  icon: "icon-grid"
   })
 	.addState({
 		name: 'app.geantstandalone',
@@ -21,13 +21,13 @@ Module.create('geantstandalone', 'GEANT', 2)
 		templateUrl: 'geantstandalone.html',
 		resolve: ['geantstandalone', 'jsroot','ngTable', 'ngDialog']
 	})
-	// .addState({
-	// 	name: 'app.geanttestem3',
-	// 	controller: 'Geanttestem3Controller',
-	// 	url: '/geanttestem3',
-	// 	templateUrl: 'geanttestem3.html',
-	// 	resolve: ['geantstandalone','jsroot','ngTable', 'ngDialog', 'chartjs']
-	// })
+// .addState({
+// 	name: 'app.geanttestem3',
+// 	controller: 'Geanttestem3Controller',
+// 	url: '/geanttestem3',
+// 	templateUrl: 'geanttestem3.html',
+// 	resolve: ['geantstandalone','jsroot','ngTable', 'ngDialog', 'chartjs']
+// })
 	.addState({
 		name: 'app.geanttestem5',
 		controller: 'Geanttestem5Controller',
@@ -39,6 +39,20 @@ Module.create('geantstandalone', 'GEANT', 2)
     title: "Calorimeter Test (TestEm3)",
     defaultPlotView: "plotSplit",
     plotViews: ["plotSplit", "plotSame"],
+    defaultPlots: [
+      {
+        locationInFile: '/CResolution2',
+        filePathRegex: /Selectedresults.root/
+      },
+      {
+        locationInFile: '/CSampling',
+        filePathRegex: /Selectedresults.root/
+      },
+      {
+        locationInFile: '/CStraightRes',
+        filePathRegex: /Selectedresults.root/
+      }
+    ],
     restrict: {
       selectedApp: "GEANT4",
       selectedOptions: "GEANT_TESTEM3"
