@@ -131,7 +131,13 @@ App.directive('browseRootFiles', [function () {
             return;
           }
 
-          var objectOfResources = _.indexBy($scope.resources, function(value) {
+          // This directive can only present files. Therefore, if it gets passed
+          // not-files, it should filter them out.
+          var rootFileResources = _.filter($scope.resources, function(v) {
+            return resourceParser.getType(v) === "File";
+          });
+
+          var objectOfResources = _.indexBy(rootFileResources, function(value) {
             return resourceParser.getCommonValue(value);
           });
           var objectOfPromises = _.mapValues(objectOfResources, function(value) {
