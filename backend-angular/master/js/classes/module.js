@@ -60,14 +60,14 @@ var ModuleHelpers = new function() {
          // views from provider
          if(undefined !== plotViewsFromArgs) {
            let i;
-           for(i in plotViewsFromProvider) {
-             let index = _.findIndex(
-               plotViewsFromArgs,
-               function(o) {return o === plotViewsFromProvider[i].directiveName;});
-             if(index > -1) {
-               $scope.plotViews.push(plotViewsFromProvider[i]);
-             }
-           }
+           // We're looping over the wrong thing here.
+           _.forEach(plotViewsFromArgs, function(value) {
+             $scope.plotViews.push(_.find(
+               plotViewsFromProvider,
+               function(v) {
+                 return v.directiveName === value;
+               }));
+           });
          } else {
            $scope.plotViews = plotViewsFromProvider;
          }
