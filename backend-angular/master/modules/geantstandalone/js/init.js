@@ -9,11 +9,11 @@ Module.create('geantstandalone', 'GEANT', 2)
 // 	sref: 'app.geanttestem3',
 // 	icon: "icon-grid"
 // })
-	.addMenuItem({
-	  text: 'TestEm5',
-	  sref: 'app.geanttestem5',
-	  icon: "icon-grid"
-  })
+	// .addMenuItem({
+	//   text: 'TestEm5',
+	//   sref: 'app.geanttestem5',
+	//   icon: "icon-grid"
+  // })
 	.addState({
 		name: 'app.geantstandalone',
     controller:'GeantstandaloneController',
@@ -28,13 +28,13 @@ Module.create('geantstandalone', 'GEANT', 2)
 // 	templateUrl: 'geanttestem3.html',
 // 	resolve: ['geantstandalone','jsroot','ngTable', 'ngDialog', 'chartjs']
 // })
-	.addState({
-		name: 'app.geanttestem5',
-		controller: 'Geanttestem5Controller',
-		url: '/geanttestem5',
-		templateUrl: 'geanttestem5.html',
-		resolve: ['geantstandalone','jsroot','ngTable', 'ngDialog']
-	})
+	// .addState({
+	// 	name: 'app.geanttestem5',
+	// 	controller: 'Geanttestem5Controller',
+	// 	url: '/geanttestem5',
+	// 	templateUrl: 'geanttestem5.html',
+	// 	resolve: ['geantstandalone','jsroot','ngTable', 'ngDialog']
+	// })
   .registerTestView({
     title: "Calorimeter Test (TestEm3)",
     defaultPlotView: "plotSplit",
@@ -56,6 +56,15 @@ Module.create('geantstandalone', 'GEANT', 2)
     restrict: {
       selectedApp: "GEANT4",
       selectedOptions: "GEANT_TESTEM3"
+    }
+  })
+  .registerTestView({
+    title: "Multiple Scattering Test (TestEm5)",
+    defaultPlotView: "plotSplit",
+    plotViews: ["plotSplit", "plotSame"],
+    restrict: {
+      selectedApp: "GEANT4",
+      selectedOptions: "GEANT_TESTEM5"
     }
   })
 	.start();
