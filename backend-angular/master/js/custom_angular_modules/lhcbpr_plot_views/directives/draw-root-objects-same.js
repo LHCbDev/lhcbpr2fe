@@ -18,15 +18,18 @@ lhcbprPlotModule.directive('drawRootObjectsSame', function() {
       var pad = element.children()[0];
       pad.innerHTML = "";
       var i;
+      var obj_index = 1;
       var plotColor = false;
       for(i in scope.objectsToPlot()) {
         JSROOT.OpenFile("/api/media/jobs/"+scope.objectsToPlot()[i].fileLocation, function(file) {
           file.ReadObject(scope.objectsToPlot()[i].objectLocation, function(obj) {
             obj.fName = obj.fName + "__" + scope.objectsToPlot()[i].fileLocation.replace(/\//g, "__");
             // TODO make a service/function to cycle through colors
-            obj.fLinecolor = obj.fLineColor + 20;
+            obj.fLineColor = obj_index + 1;
+            obj.fSetMarkerColor = obj_index + 1;
             obj = JSROOT.JSONR_unref(obj);
-            JSROOT.draw(pad, obj, "SAME");
+            JSROOT.draw(pad, obj, "same");
+            obj_index++;
           });
         });
       }
