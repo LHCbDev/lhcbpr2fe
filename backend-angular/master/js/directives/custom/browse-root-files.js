@@ -174,6 +174,20 @@ App.directive('browseRootFiles', [function () {
           return !that.hasChildren(val, ind);
         };
 
+        this.getChildrenWithoutChildren = function(val) {
+          return _.filter(val.children, function(v) { return that.hasNoChildren(v); });
+        };
+
+        this.hasChildrenWithChildren = function(val) {
+          return _.filter(val.children, function(v) { return that.hasChildren(v); }).length > 0;
+        };
+
+        $scope.items = [];
+        this.fillItems = function(items) {
+          $scope.items = items || [];
+          debugger;
+        };
+
         this.toggleExpanded = function(val) {
           if(val.isExpanded) {
             val.isExpanded = false;
