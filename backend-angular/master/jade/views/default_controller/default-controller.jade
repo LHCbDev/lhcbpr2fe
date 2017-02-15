@@ -19,7 +19,7 @@ ul.nav.nav-tabs
   li(ng-class="{'active': activeTab === 1}")
     a(href ng-click="setActiveTab(1)")
       | Select jobs
-  li(ng-class="{'active': activeTab === 2}")
+  li(ng-class="{'active': activeTab === 2, 'disabled': noJobData}")
     a(href ng-click="setActiveTab(2)")
       | Select plots
 
