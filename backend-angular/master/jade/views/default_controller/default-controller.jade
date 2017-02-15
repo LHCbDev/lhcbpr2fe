@@ -1,6 +1,6 @@
 // Small title indicating what kind of analysis this is
 // TODO Make this inhert from the controller  
-h3 Validation Analysis
+h3 {{ analysisModuleTitle }}
   small.text-muted LHCbPR
 
 // The default search panel. This should probably not be changed
@@ -40,7 +40,7 @@ h3 Validation Analysis
 
 
 h3 Plots:
-div(ng-show="graphsToShow()")
+div(ng-show="graphsToShow() && !noJobData")
   center
     .btn-group
       button.btn-default.btn(type="button" 
@@ -49,7 +49,7 @@ div(ng-show="graphsToShow()")
                               ng-repeat="plotView in plotViews")
         | {{ plotView.displayName }}
   plot-view-generator(plot-view="data.optvalue" graphs="data.graphs" files="jobsRootFiles" test='test' url='url' resources='data.resources')
-.alert.alert-info(ng-hide="graphsToShow()") No plots selected.
+.alert.alert-info(ng-hide="graphsToShow() && !noJobData") No plots selected.
 
 #panelDebug.panel.panel-default
   .panel-heading

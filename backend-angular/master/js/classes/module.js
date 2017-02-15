@@ -50,6 +50,7 @@ var ModuleHelpers = new function() {
       ['$scope', 'resourceParser', 'lhcbprResources', 'rootResources', 'BUILD_PARAMS', 'plotViews', '$q',
        function($scope, resourceParser, $api, $apiroot, BUILD_PARAMS, plotViewsFromProvider, $q) {
 
+         $scope.analysisModuleTitle = angular.copy(title);
          $scope.defaultPlots = angular.copy(defaultPlots);
          $scope.defaultPlotView = angular.copy(defaultPlotView);
          $scope.plotViews = [];
