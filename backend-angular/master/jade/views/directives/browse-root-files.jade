@@ -19,8 +19,10 @@ script(type="text/ng-template" id="browseRootFilesTemplate")
 
 
 .btn-group
-  button.btn-primary.btn(type="button" ng-click="ctrl.selectDefaults()") Select Defaults
+  button.btn-primary.btn(type="button" ng-click="ctrl.pushPlotButton()" ng-class="{'disabled': ctrl.numberOfPlotsSelected() < 1}")
+    | Plot Selected ({{ctrl.numberOfPlotsSelected()}})
+  button.btn(type="button" ng-click="ctrl.selectDefaults()") Select Defaults
   button.btn-danger.btn(type="button" ng-click="ctrl.clearAll()") Clear All
-pre Currently selected plots: {{ graphsChecklistModel }}
+// pre Currently selected plots: {{ graphsChecklistModel }}
 ul
   li(ng-repeat="folder in folders" ng-include="'browseRootFilesTemplate'")

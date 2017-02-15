@@ -9,7 +9,7 @@ App.directive('browseRootFiles', [function () {
     scope: {
       resources: '=',
       // TODO change this name
-      graphsChecklistModel: '=',
+      graphs: '=',
       defaultPlots: '='
     },
     controller: [
@@ -190,6 +190,26 @@ App.directive('browseRootFiles', [function () {
           } else {
             return "icon-folder";
           }
+        };
+
+
+        // Pushing plots out of the directive
+        //
+        // TODO consider making a separate controller for this section
+        $scope.graphsChecklistModel = angular.copy($scope.graphs);
+
+        this.pushPlotButton = function() {
+          _.forEach($scope.graphs, function() {$scope.graphs.pop();});
+          _.forEach($scope.graphsChecklistModel, function(val) {$scope.graphs.push(val);});
+        };
+
+        if($scope.graphsChecklistModel.length > 0) {
+          // if $scope.graphs already has stuff inside, plot it now
+          this.pushPlotButton();
+        }
+
+        this.numberOfPlotsSelected = function() {
+          return $scope.graphsChecklistModel.length;
         };
 
         this.clearAll = function() {
