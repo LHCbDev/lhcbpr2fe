@@ -1,8 +1,9 @@
 // TODO close folder icons that are not being displayed anymore
+// TODO not be such a dirty hacker in the ng-click below
 
 // Recursive template
 script(type="text/ng-template" id="browseRootFilesTemplate")
-  .btn.btn-secondary(ng-if="ctrl.hasChildren(folder)"  ng-click="ctrl.toggleExpanded(folder); ctrl.fillItems(); ctrl.fillItems(ctrl.getChildrenWithoutChildren(folder))")
+  .btn.btn-secondary(ng-if="ctrl.hasChildren(folder)"  ng-click="ctrl.toggleExpanded(folder); ctrl.fillItems(); folder.isExpanded && ctrl.fillItems(ctrl.getChildrenWithoutChildren(folder))")
     label
       span(ng-class="ctrl.chooseFolderIcon(folder)")
       | &nbsp;
@@ -28,6 +29,6 @@ script(type="text/ng-template" id="browseRootFilesTemplate")
       li(ng-repeat="item in items")
         .c-checkbox.checkbox.needsclick
           label
-            input(type="checkbox" checklist-model="graphsChecklistModel" checklist-value="folder.payload")
+            input(type="checkbox" checklist-model="graphsChecklistModel" checklist-value="item.payload")
             span.fa.fa-check
             | {{ item.name }}

@@ -59,6 +59,14 @@ App.directive('browseRootFiles', [function () {
           return retObj;
         };
 
+        this.setCurrentFolder = function(v) {
+          $scope.currentFolder = v;
+        };
+
+        this.getCurrentFolder = function() {
+          return $scope.currentFolder;
+        };
+
 
         this.sortFileContentsToJSON = function(resources, filesObj, regexes) {
           /**
@@ -185,7 +193,6 @@ App.directive('browseRootFiles', [function () {
         $scope.items = [];
         this.fillItems = function(items) {
           $scope.items = items || [];
-          debugger;
         };
 
         this.toggleExpanded = function(val) {
