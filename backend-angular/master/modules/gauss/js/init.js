@@ -1,7 +1,7 @@
-Module.create('validations', 'Gauss', 2)
+Module.create('gauss', 'Gauss', 2)
     .addMenuItem({
         text: "Validation analysis",
-        sref: "app.validations",
+        sref: "app.gauss",
         icon: "icon-grid"
     })
     .addMenuItem({
@@ -10,17 +10,17 @@ Module.create('validations', 'Gauss', 2)
         icon: "icon-grid"
     })
     .addState({
-        name: 'app.validations',
+        name: 'app.gauss',
         controller:"ValidationsController",
-        url: '/validations',
+        url: '/gauss',
         templateUrl: 'validations.html',
-        resolve: ['validations', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
+        resolve: ['gauss', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
     })
     .addState({
         name: 'app.detime',
         controller:"DetimeController",
         url: '/detime',
         templateUrl: 'detime.html',
-        resolve: ['validations', 'jsroot', 'ngTable', 'ngDialog']
+        resolve: ['gauss', 'jsroot', 'ngTable', 'ngDialog']
     })
     .start();
