@@ -56,6 +56,8 @@ var ModuleHelpers = new function() {
          $scope.plotViews = [];
          $scope.plotViewsFromProvider = plotViewsFromProvider;
 
+         $scope.showDebug = false;
+
          // Tabs
          $scope.activeTab = 1;
          $scope.setActiveTab = function(tab) {

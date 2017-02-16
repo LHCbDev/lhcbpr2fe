@@ -37,10 +37,15 @@ ul.nav.nav-tabs
       browse-root-files(ng-hide="noJobData" resources='data.resources', folders="data.treedirsStructure" graphs="data.graphs" default-plots="defaultPlots")
 
 
-#panelDebug.panel.panel-default
+button.btn.btn-default(type="button" ng-click="showDebug = !showDebug" ng-class="{'active': showDebug}")
+  div(ng-show="showDebug") Hide debug info
+  div(ng-hide="showDebug") Show debug info
+
+#panelDebug.panel(ng-show="showDebug")
   .panel-heading
-    paneltool(tool-collapse)
+    // paneltool(tool-collapse)
     .panel-title Debug info
+  // .panel-wrapper(collapse="panelDebug")
   .panel-wrapper(collapse="panelDebug")
     .panel-body
       p.
