@@ -3,44 +3,8 @@
 h3 {{ analysisModuleTitle }}
   small.text-muted LHCbPR
 
-// The default search panel. This should probably not be changed
-#panelSearch.panel.panel-default
-  .panel-heading
-    paneltool(tool-collapse)
-    .panel-title Select one or more jobs
-  .panel-wrapper(collapse="panelSearch")
-    .panel-body
-      // select-jobs(selected-app="DUMMYAPP" selected-options="100Evts-GAUSS-2015" on-jobs-selected="lookHistos(jobIds)")
-      select-jobs(ng-attr-selected-app="{{selectedApp}}", ng-attr-selected-options="{{selectedOptions}}", on-jobs-selected="lookHistos(jobIds)")
-
-
-// Shows secondary panel selecting which plot to display from all ROOT files found in the selected jobs.
-#panelJobs.panel.panel-default
-  .panel-heading
-    paneltool(tool-collapse)
-    .panel-title Select item to plot
-  .panel-wrapper(collapse="panelJobs")
-    .panel-body
-      .alert.alert-info(ng-show="noJobData") No root file was found !
-      browse-root-files(resources='data.resources', folders="data.treedirsStructure" graphs-checklist-model="data.graphs" default-plots="defaultPlots" ng-hide="noJobData")
-
-
-// #panelOptions.panel.panel-default
-//   .panel-heading
-//     paneltool(tool-collapse)
-//     .panel-title PlotViews
-//   .panel-wrapper(collapse="panelOptions")
-//     .panel-body
-//       // form.form-inline(role='form')
-//       //   fieldset
-//       //       label.radio-inline(ng-repeat="plotView in plotViews")
-//       //         input(type="radio", value="{{ plotView.directiveName }}", name="optvalue", ng-model="data.optvalue")
-//       //         |  {{ plotView.displayName }}
-
-
-
-h3 Plots:
 div(ng-show="graphsToShow() && !noJobData")
+  plot-view-generator(plot-view="data.optvalue" graphs="data.graphs" files="jobsRootFiles" test='test' url='url' resources='data.resources')
   center
     .btn-group
       button.btn-default.btn(type="button" 
@@ -48,13 +12,40 @@ div(ng-show="graphsToShow() && !noJobData")
                               ng-click="setOptvalue(plotView.directiveName)" 
                               ng-repeat="plotView in plotViews")
         | {{ plotView.displayName }}
-  plot-view-generator(plot-view="data.optvalue" graphs="data.graphs" files="jobsRootFiles" test='test' url='url' resources='data.resources')
-.alert.alert-info(ng-hide="graphsToShow() && !noJobData") No plots selected.
+.alert.alert-warning(ng-show="noJobData") No jobs selected!
+.alert.alert-warning(ng-hide="graphsToShow()") No plots selected!
+.alert.alert-info(ng-show="!noJobData && !graphsToShow()") Use the 'Select plots' tab to chose plots to view
 
-#panelDebug.panel.panel-default
+ul.nav.nav-tabs
+  li(ng-class="{'active': activeTab === 1}")
+    a(href ng-click="setActiveTab(1)")
+      | Select jobs
+  li(ng-class="{'active': activeTab === 2, 'disabled': noJobData}")
+    a(href ng-click="setActiveTab(2)")
+      | Select plots
+
+// .panel.tab-content(style="background: white; border: 50px")
+.panel.tab-content
+  div(ng-show="activeTab === 1")
+    .panel-head
+    .panel-body
+      select-jobs(ng-attr-selected-app="{{selectedApp}}", ng-attr-selected-options="{{selectedOptions}}", on-jobs-selected="lookHistos(jobIds)")
+  div(ng-show="activeTab === 2")
+    .panel-head
+    .panel-body
+      .alert.alert-info(ng-show="noJobData") No root file was found !
+      browse-root-files(ng-hide="noJobData" resources='data.resources', folders="data.treedirsStructure" graphs="data.graphs" default-plots="defaultPlots")
+
+
+button.btn.btn-default(type="button" ng-click="showDebug = !showDebug" ng-class="{'active': showDebug}")
+  div(ng-show="showDebug") Hide debug info
+  div(ng-hide="showDebug") Show debug info
+
+#panelDebug.panel(ng-show="showDebug")
   .panel-heading
-    paneltool(tool-collapse)
+    // paneltool(tool-collapse)
     .panel-title Debug info
+  // .panel-wrapper(collapse="panelDebug")
   .panel-wrapper(collapse="panelDebug")
     .panel-body
       p.
@@ -66,6 +57,7 @@ div(ng-show="graphsToShow() && !noJobData")
       pre jobId: {{ jobId }}
       pre data.graphs: {{ data.graphs }}
       pre data.treedirsStructure: {{ data.treedirsStructure }}
+      pre activeTab: {{ activeTab }}
 
       pre apiroot: {{ apiroot }}
 

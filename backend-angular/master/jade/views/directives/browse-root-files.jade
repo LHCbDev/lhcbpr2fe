@@ -1,26 +1,34 @@
+// TODO close folder icons that are not being displayed anymore
+// TODO not be such a dirty hacker in the ng-click below
+
 // Recursive template
 script(type="text/ng-template" id="browseRootFilesTemplate")
-  .btn.btn-secondary(ng-if="ctrl.hasChildren(folder)"  ng-click="ctrl.toggleExpanded(folder)")
+  .btn.btn-secondary(ng-if="ctrl.hasChildren(folder)"  ng-click="ctrl.toggleExpanded(folder); ctrl.fillItems(); folder.isExpanded && ctrl.fillItems(ctrl.getChildrenWithoutChildren(folder))")
     label
       span(ng-class="ctrl.chooseFolderIcon(folder)")
       | &nbsp;
       | {{ folder.name }}
-  div(ng-if="ctrl.hasNoChildren(folder)")
-    .c-checkbox.checkbox.needsclick
-      label
-        input(type="checkbox" checklist-model="graphsChecklistModel" checklist-value="folder.payload")
-        span.fa.fa-check
-        // | &nbsp;
-        // span.icon-graph
-        // | &nbsp;
-        | {{ folder.name }}
-  ul(ng-if="folder.children && folder.isExpanded")
+  ul(ng-if="folder.children && folder.isExpanded && ctrl.hasChildrenWithChildren(folder)")
     li(ng-repeat="folder in folder.children" ng-include="'browseRootFilesTemplate'") 
 
 
 .btn-group
-  button.btn-primary.btn(type="button" ng-click="ctrl.selectDefaults()") Select Defaults
+  button.btn-primary.btn(type="button" ng-click="ctrl.pushPlotButton()" ng-class="{'disabled': ctrl.numberOfPlotsSelected() < 1}")
+    | Plot Selected ({{ctrl.numberOfPlotsSelected()}})
+  button.btn(type="button" ng-click="ctrl.selectDefaults()") Select Defaults
   button.btn-danger.btn(type="button" ng-click="ctrl.clearAll()") Clear All
-pre Currently selected plots: {{ graphsChecklistModel }}
-ul
-  li(ng-repeat="folder in folders" ng-include="'browseRootFilesTemplate'")
+// pre Currently selected plots: {{ graphsChecklistModel }}
+
+// TODO replace this with finder.js
+.row
+  .col-md-6
+    ul
+      li(ng-repeat="folder in folders" ng-include="'browseRootFilesTemplate'")
+  .col-md-6
+    ul
+      li(ng-repeat="item in items")
+        .c-checkbox.checkbox.needsclick
+          label
+            input(type="checkbox" checklist-model="graphsChecklistModel" checklist-value="item.payload")
+            span.fa.fa-check
+            | {{ item.name }}

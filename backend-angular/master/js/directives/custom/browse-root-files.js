@@ -9,7 +9,7 @@ App.directive('browseRootFiles', [function () {
     scope: {
       resources: '=',
       // TODO change this name
-      graphsChecklistModel: '=',
+      graphs: '=',
       defaultPlots: '='
     },
     controller: [
@@ -57,6 +57,14 @@ App.directive('browseRootFiles', [function () {
             retObj.payload = payload;
           }
           return retObj;
+        };
+
+        this.setCurrentFolder = function(v) {
+          $scope.currentFolder = v;
+        };
+
+        this.getCurrentFolder = function() {
+          return $scope.currentFolder;
         };
 
 
@@ -174,6 +182,19 @@ App.directive('browseRootFiles', [function () {
           return !that.hasChildren(val, ind);
         };
 
+        this.getChildrenWithoutChildren = function(val) {
+          return _.filter(val.children, function(v) { return that.hasNoChildren(v); });
+        };
+
+        this.hasChildrenWithChildren = function(val) {
+          return _.filter(val.children, function(v) { return that.hasChildren(v); }).length > 0;
+        };
+
+        $scope.items = [];
+        this.fillItems = function(items) {
+          $scope.items = items || [];
+        };
+
         this.toggleExpanded = function(val) {
           if(val.isExpanded) {
             val.isExpanded = false;
@@ -190,6 +211,26 @@ App.directive('browseRootFiles', [function () {
           } else {
             return "icon-folder";
           }
+        };
+
+
+        // Pushing plots out of the directive
+        //
+        // TODO consider making a separate controller for this section
+        $scope.graphsChecklistModel = angular.copy($scope.graphs);
+
+        this.pushPlotButton = function() {
+          _.forEach($scope.graphs, function() {$scope.graphs.pop();});
+          _.forEach($scope.graphsChecklistModel, function(val) {$scope.graphs.push(val);});
+        };
+
+        if($scope.graphsChecklistModel.length > 0) {
+          // if $scope.graphs already has stuff inside, plot it now
+          this.pushPlotButton();
+        }
+
+        this.numberOfPlotsSelected = function() {
+          return $scope.graphsChecklistModel.length;
         };
 
         this.clearAll = function() {
