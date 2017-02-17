@@ -1,42 +1,72 @@
-h3 Tab Validation Analysis
+h3 Numerical Analysis
   small.text-muted LHCbPR
 
-div(select-jobs on-jobs-selected="lookTables(jobIds)", ng-show="isShowSearchForm")  
-.row.traditional(ng-class="csspinner", ng-show="!isShowSearchForm")
-  .col-lg-4
-    button.btn.btn-primary(type="button" ng-disabled="isShowSearchForm", ng-click="showSearchForm()")
-      | Show search form
+#panelSearch.panel.panel-default
+  .panel-heading
+    paneltool(tool-collapse)
+    .panel-title Select one or more jobs
+  .panel-wrapper(collapse="panelSearch")
+    .panel-body
+      select-jobs(selected-app="GAUSS" selected-options='["100Evts-GAUSS-2015",\
+      "PRTEST-2016-GEN-P8-30000000-10Kevts",\
+      "PRTEST-2011-GEN-P8-30000000-10Kevts",\
+      "PRTEST-2016-GEN-GenXicc-16275062-10Kevts",\
+      "PRTEST-2011-SIM-P8-30000000-1Kevts",\
+      "PRTEST-2012-SIM-P8-30000000-1Kevts",\
+      "PRTEST-2015-SIM-P8-30000000-1Kevts",\
+      "PRTEST-2016-SIM-P8-30000000-1Kevts"]', on-jobs-selected="lookTables(jobIds)")
 
-.row.traditional(ng-class="csspinner")  
-  .alert.alert-info(ng-show="noJobData") No data was found ! 
-  
-.row(style="margin-top: 10px")
-.row(style="margin-top: 10px", ng-show="!noJobData")
+#panelOptions.panel.panel-default
+  .panel-heading
+    paneltool(tool-collapse)
+    .panel-title Tables
+  .panel-wrapper(collapse="panelOptions")
+    .panel-body
+       form.form-inline(role='form')
+        fieldset
+          .form-group.col-sm-8
+              label.radio-inline(ng-repeat="group in gval.groupID")
+                input(type="radio", value="{{ group.id }}", name="optvalue", ng-model="gval.optvalue", ng-change="reloadTables(gval.optvalue)")
+                |  {{ group.value }}
+
+
+h2 {{ groupName(gval.optvalue) }} 
+
+.row.traditional(ng-class="csspinner" style="margin-top: 10px", ng-show="groupName(gval.optvalue) != 'Muon detectors'")
   .col-lg-12
-    table.table.table-striped.table-bordered.table-hover.be-responsive(ng-table="attrsTableParams", data-with-titles="true")
+    table.table.table-striped.table-bordered.table-hover(data-with-titles="true")
       thead
-        th ID
-        th Name
+        th(style="width:300px") Name
+        th(ng-repeat="job in gval.jobIDs")
+          | JobID: {{ job }}
         th Description
-        th Type
-        th Values
-        th Actions
-      tr(ng-repeat="attr in $data")
-        td {{attr.id}}
+      tr(ng-repeat="attr in gval.tableData")
         td {{attr.name}}
-        td {{attr.description}}
-        td {{attr.dtype}}
-        td
-          table.table-condensed
-            tr(ng-repeat="jv in attr.jobvalues")
-              td
-                  a(ng-if="attr.dtype=='File'" href="{{media_url}}/{{jv.job.id}}/{{jv.value}}" target="_blank")
-                    | {{jv.value}}
-                  strong(ng-if="attr.dtype!='File'")
-                    | {{jv.value}}
-              td
-                | {{getJobName(jv.job.id)}}
-        td
-          button.btn.btn-info(ng-if="showCompareButton(attr.dtype, attr.jobvalues)" ng-click="showCompareDialog(attr)")
-            | Compare
+        td(ng-repeat="jv in attr.jobvalues track by $index")
+          strong {{ jv }}
+        td 
+          i {{attr.description}}
+  
+.row.traditional(ng-class="csspinner" style="margin-top: 10px", ng-show="groupName(gval.optvalue) == 'Muon detectors'")
+  .col-lg-12
+    div(ng-repeat="job in gval.tableData")
+      h3 JobID: {{ job.jobid }}
+      table.table.table-striped.table-bordered.table-hover(data-with-titles="true" style="width:30%")
+        thead
+          th
+          th M1
+          th M2
+          th M3
+          th M4 
+          th M5  
+        tr(ng-repeat="(key, val) in job" ng-if='key!="jobid"')
+          td {{ key }}
+          td(ng-repeat="num in val track by $index") 
+            strong {{ num }}
+          
+
+
+
+
+
 

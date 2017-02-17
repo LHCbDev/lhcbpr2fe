@@ -5,6 +5,11 @@ Module.create('gauss', 'Gauss', 2)
         icon: "icon-grid"
     })
     .addMenuItem({
+        text: "Numerical analysis",
+        sref: "app.tabgauss",
+        icon: "icon-grid"
+    })
+    .addMenuItem({
         text: "Detailed timing",
         sref: "app.detime",
         icon: "icon-grid"
@@ -15,6 +20,13 @@ Module.create('gauss', 'Gauss', 2)
         url: '/gauss',
         templateUrl: 'validations.html',
         resolve: ['gauss', 'chartjs', 'ngTable', 'ngDialog', 'jsroot']
+    })
+    .addState({
+        name: 'app.tabgauss',
+        controller:"TabvalidationController",
+        url: '/tabgauss',
+        templateUrl: 'tabvalidation.html',
+        resolve: ['gauss', 'ngTable', 'ngDialog']
     })
     .addState({
         name: 'app.detime',

@@ -1,119 +1,166 @@
-App.controller('TabvalidationController', ['$scope', 'ngTableParams', 'lhcbprResources', 'rootResources', 'ngDialog', 'BUILD_PARAMS', 
-    function($scope, $tableParams, $api, $apiroot, $dialog, BUILD_PARAMS) {
-   
-  $scope.jobIds = [];
-  $scope.tabgroups = [];
-  $scope.noJobData = true;
-  $scope.isShowSearchForm = true;
-  $scope.cachedJobs = {};
-  $scope.groupID = {}
+App.controller('TabvalidationController', ['$scope', 'lhcbprResources', 
+    function($scope, $api) {
 
-  $scope.data = {
-    repeatSelect: null,
-    plotSelect: null,
-    treedirs: {},
-    treeplots: {},
-    tree: {},  
-    graphs: {}
+  $scope.gval = {
+    tableData: [],   // data for table 
+    optvalue: "",    // select table (group id)
+    jobIDs: [],     // list of selected jobs id
+    groupID: [],     // available groups/tables
   };
+  
   
   getGroupIDs = function() {
-    $api.all('groups').getList({
-    }).then(function(attrs) {
-      console.log("ALE GDB group result ", attrs);
-      for (i = 0; i < attrs.length; i++) {
-        if ( attrs[i].name.startsWith("Validation") )
-          $scope.groupID[attrs[i].id] = attrs[i].name.slice(11);
-      }
-    })
-    console.log("ALE g id: " , $scope.groupID)
+    if ( $scope.gval.groupID.length === 0) {
+      $api.all('groups').getList({
+      }).then(function(attrs) { 
+        for (i = 0; i < attrs.length; i++) {
+          if ( attrs[i].name.startsWith("Validation") ) {
+            $scope.gval.groupID.push({id: attrs[i].id, value: attrs[i].name.slice(11)});
+            if ( attrs[i].name === "Validation_Version" )
+              // save default table
+              $scope.gval.optvalue = attrs[i].id;
+          }  
+        } // sort groups/tables by name
+        $scope.gval.groupID.sort(function(first, second) {
+          var nameA = first.value.toUpperCase(); // ignore upper and lowercase
+          var nameB = second.value.toUpperCase(); // ignore upper and lowercase
+          if (nameA < nameB)
+            return -1;
+          if (nameA > nameB)
+            return 1;
+          // names must be equal
+            return 0;
+        });
+        // build default table
+        $scope.reloadTables($scope.gval.optvalue);
+      })
+    } else {
+      $scope.gval.tableData = [];
+      $scope.reloadTables($scope.gval.optvalue);
+    }
   } 
-  
-  
-  $scope.sizeOf = function(obj) {
-    return Object.keys(obj).length;
+
+  // returns the label of the group with id: "id"
+  $scope.groupName = function(id) {
+    if ( $scope.gval.groupID.length == 0 )
+      return "";
+    for ( val in $scope.gval.groupID ) 
+      if ( $scope.gval.groupID[val].id == id )
+        return $scope.gval.groupID[val].value.replace(/_/g, ' ');
+    return ""
+  };
+          
+  $scope.lookTables = function(ids) {
+    
+    // save the jobIDs list
+    $scope.gval.jobIDs = [];
+    for ( var i = 0; i < ids.length; i++ ) 
+      $scope.gval.jobIDs[i] = ids[i];
+    // $scope.gval.jobIDs = ids; // this creates a reference to jobIds object of job-select controller and so a strange behaviour
+    // query dbase for the list of groups and then load data for default table
+    getGroupIDs()
   };
 
-  $scope.showSearchForm = function() {
-    $scope.isShowSearchForm = true;
-  };
-
-  $scope.getJobName = function(id) {
-			var job = $scope.cachedJobs[id];
-			if (job) {
-				var av = job.job_description.application_version;
-				var opt = job.job_description.option;
-				return 'Job ID ' + job.id + ': ' + av.application.name + ' ' + av.version + ' - ' + job.platform.content + ' - ' + opt.content + ' ' +  opt.description;
-			} else {
-				return 'undefined';
-			}
-		};
-
-    $scope.lookTables = function(ids) {
-      var requestIds = [];
-      $scope.isShowSearchForm = false;
-      $scope.jobsIds = ids;
-
-      for (var i = 0, l = ids.length; i < l; ++i) {
-        $api.one('jobs', ids[i]).get().then(
-          function(job) {
-			      $scope.cachedJobs[job.id] = job;
-			    }
-			  )	
-      }
-
-      // Set the current page of the table to the first page
-      $scope.attrsTableParams.page(1);
-      // reloading data
-      $scope.attrsTableParams.reload();
-
-    };
-
-	
-   $scope.attrsTableParams = new $tableParams({
-      page: 1, // show first page
-      count: 10 // count per page
-    }, {
-      total: 0, // length of data
-      getData: function($defer, params) {
-        getGroupIDs();
-        // use build-in angular filter
-        if ($scope.jobsIds && $scope.jobsIds.length > 0) {
-          $api.all('compare').getList({
-            ids: $scope.jobsIds.join(),
-            groups:  Object.keys($scope.groupID).join(),
-            page: params.page(),
-            page_size: params.count()
-          }).then(function(attrs) {
-            if (attrs._resultmeta) {
-              params.total(attrs._resultmeta.count);
+	MuonTable = function() {
+    if ( $scope.gval.jobIDs.length > 0 ) {
+      $api.all('compare').getList({
+        ids:    $scope.gval.jobIDs.join(),
+        groups: $scope.gval.optvalue,
+        lightJob: 1,  
+        page_size: 20
+      }).then(function(attrs) {
+        var results = [];
+        for (var i = 0; i < $scope.gval.jobIDs.length; ++i) {
+          var sum = [0,0,0,0,0];
+          var result = [];
+          for (var attrid = 0; attrid < attrs.length; attrid++) {
+            var attr = attrs[attrid];
+            // attributes name are of type R1_M1 ... R4_M5
+            var index = 5 * Number(attr.name.slice(1,2)-1) + Number(attr.name.slice(4,5))-1;
+            var j = 0;
+            var found = 0;
+            // look for the right value associated to the jobid
+            while ( !found && j < attr.jobvalues.length ) {
+              if ( attr.jobvalues[j].job.id === $scope.gval.jobIDs[i] ) {
+                result[index] = attr.jobvalues[j].value;
+                found = 1;
+              }
+              j++;
             }
-            $defer.resolve(attrs);
-            console.log("ALE GDB attrs: ", attrs);
-            $scope.noJobData = false;
-          });
+            if ( !found )
+              // we haven't found a value associated with the job, set it to 0
+              result[index] = 0.0;
+            sum[Number(attr.name.slice(4,5))-1] += Number(result[index]);
+          } 
+          // save results: one dictionary for job,
+          //               each entry of the dictionary is a row in the table. 
+          results.push({jobid: $scope.gval.jobIDs[i], 
+                        R1:    result.slice(0,5), 
+                        R2:    result.slice(5,10),
+                        R3:    result.slice(10,15),
+                        R4:    result.slice(15,20),
+                        SumR:  sum});
+        }   
+        $scope.gval.tableData = results;
+      })
+    }
+  };
+
+  GenericTable = function() {	  
+	  // getGroupIDs();
+    if ( $scope.gval.jobIDs.length > 0 ) {
+      $api.all('compare').getList({
+        ids:     $scope.gval.jobIDs.join(),
+        groups:  $scope.gval.optvalue,
+        lightJob: 1,
+        page_size: 50
+      }).then(function(attrs) {        
+        var results=[];
+        for (var attrid = 0; attrid < attrs.length; attrid++) {
+          var attr = attrs[attrid];
+          var result = {};
+          result.id = attr.id;
+          result.name = attr.name;
+          result.description = attr.description;
+          result.jobvalues = [];
+          for (var i = 0; i < $scope.gval.jobIDs.length; ++i) {
+            var j = 0;
+            var found = 0;
+            // save the values in the right order (given by the jobIDs list)
+            while ( !found && j < attr.jobvalues.length ) {
+              if ( attr.jobvalues[j].job.id === $scope.gval.jobIDs[i] ) {
+                if ( attrid+1 < attrs.length && attrs[attrid+1].name === result.name.concat("Err") )
+                  // pretty print: attrValue +/- attrValueErr  
+                  result.jobvalues.push(attr.jobvalues[j].value + " +/- " + attrs[attrid+1].jobvalues[j].value)
+                else
+                  result.jobvalues.push(attr.jobvalues[j].value)
+                found = 1;
+              }
+              j++;
+            }
+            if ( !found ) 
+              // we haven't found a value associated with the job, set it to "N/A"
+              result.jobvalues.push("N/A")
+          }
+          // save results: one dictionary for attribute {id:, name:, description:, jobvalues: []}
+          results.push(result);
+          if ( attrid+1 < attrs.length && attrs[attrid+1].name === result.name.concat("Err") )
+            // next attribute is the "error", jump it
+            attrid++;
         }
-      }
-    });
+        $scope.gval.tableData = results;
+      })
+    }
+  };
 
-    // Fix bug in ng-table
-    $scope.attrsTableParams.settings().$scope = $scope;
-
-    $scope.showResults = function(job) {
-      // console.log(job.resource_uri);
-    };
-
-    var reloadAttrsTable = function() {
-      $scope.attrsTableParams.page(1);
-      $scope.attrsTableParams.reload();
-
-      console.log($scope.cachedJobs);
-    };
-
-
-	
-	
-	
-	
+  // retrieves data for the table
+  $scope.reloadTables = function(table) {
+    $scope.gval.tableData = [];
+    if ( $scope.groupName(table) === "Muon detectors" ) {
+      MuonTable();
+    } else {
+      GenericTable();
+    }
+  };
 	
 }]);
