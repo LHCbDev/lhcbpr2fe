@@ -7,14 +7,7 @@ h3 Validation Analysis
     .panel-title Select one or more jobs
   .panel-wrapper(collapse="panelSearch")
     .panel-body
-      select-jobs(selected-app="GAUSS" selected-options='["100Evts-GAUSS-2015",\
-      "PRTEST-2016-GEN-P8-30000000-10Kevts",\
-      "PRTEST-2011-GEN-P8-30000000-10Kevts",\
-      "PRTEST-2016-GEN-GenXicc-16275062-10Kevts",\
-      "PRTEST-2011-SIM-P8-30000000-1Kevts",\
-      "PRTEST-2012-SIM-P8-30000000-1Kevts",\
-      "PRTEST-2015-SIM-P8-30000000-1Kevts",\
-      "PRTEST-2016-SIM-P8-30000000-1Kevts"]', on-jobs-selected="lookHistos(jobIds)")
+      select-jobs(selected-app="GAUSS" on-jobs-selected="lookHistos(jobIds)")
 
 #panelJobs.panel.panel-default
   .panel-heading
