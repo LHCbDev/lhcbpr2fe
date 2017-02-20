@@ -45,7 +45,7 @@ h3 Validation Analysis
           </div>
       </div>
 
-<div ng-if="jobId.split('__').length == 3">
+<div ng-if="jobId.split('__').length == 2 || jobId.split('__').length == 3">
 #panelOptions.panel.panel-default
   .panel-heading
     paneltool(tool-collapse)
@@ -56,37 +56,24 @@ h3 Validation Analysis
         fieldset
           .form-group.col-sm-6
               label.radio-inline(ng-repeat="option in commonoptions")
-                input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
+                input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue")
                 |  {{ option.text }}
-</div>
-<div ng-if="jobId.split('__').length == 2">
-#panelOptions.panel.panel-default
-  .panel-heading
-    paneltool(tool-collapse)
-    .panel-title Options
-  .panel-wrapper(collapse="panelOptions")
-    .panel-body
-       form.form-inline(role='form')
-        fieldset
-          .form-group.col-sm-6
-              label.radio-inline(ng-repeat="option in commonoptions")
-                input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
-                |  {{ option.text }}
-              label.radio-inline(ng-repeat="option in options")
-                input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue" )
-                |  {{ option.text }}
+              div(ng-if="jobId.split('__').length == 2")
+               label.radio-inline(ng-repeat="option in options")
+                input(type="radio", value="{{ option.value }}", name="optvalue", ng-model="data.optvalue")
+                |  {{ option.text }}             
 
-</div>
+
 
 .row.traditional(ng-class="csspinner")
   .col-lg-12
       <div ng-if="data.optvalue=='Split'">
       <table style="width:100%">
       <tr ng-repeat="(item, title) in data.graphs", ng-hide="noJobData">
-      <td ng-repeat="(file, name) in files_and_titles" ng-init="test[file] = name">
-      h4(style="color:red") {{ title }} - {{ name }}
+      <td ng-repeat="file in files" ng-init="name = file.split('/')[0]">
+      h4(style="color:red") {{ title }} - JOb ID: {{ name }}
       rootjsserver(entrypoint="url"
-          files="test"
+          files="file"
           items="item"
           compute=""
           width="500" height="375")
@@ -98,7 +85,7 @@ h3 Validation Analysis
       <div ng-repeat="(item, title) in data.graphs", ng-hide="noJobData">
       h3(style="color:red") {{ title }}
       rootjsserver(entrypoint="url"
-          files="files_and_titles"
+          files="files"
           items="item"
           compute="data.optvalue"
           width="800" height="600")

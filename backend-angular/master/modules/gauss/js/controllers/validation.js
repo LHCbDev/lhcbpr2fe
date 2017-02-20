@@ -22,7 +22,7 @@ App.controller('ValidationsController', ['$scope', 'lhcbprResources', 'rootResou
   
   $scope.commonoptions = [
   	{value: '', text: 'Superimposed'},  
-  	{value: 'Split', text: 'Separated'}
+  	{value: 'Split', text: 'Split'}
   ];  
   
   $scope.jobId = [];
@@ -154,21 +154,18 @@ App.controller('ValidationsController', ['$scope', 'lhcbprResources', 'rootResou
   }
   
 	$scope.showChart = function(file, title) {
-	  files={}
 	  var listfn = file.split(',');
-	  for ( key in listfn ) {
-	    files[listfn[key]] = 'Job ID: ' + listfn[key].split('/')[0];
-	  }
 	  titles={}
 	  titles[title] = $scope.data.treeplots[file][title];
 	  $scope.url = BUILD_PARAMS.url_root;
-    $scope.files_and_titles = files;
+    $scope.files = listfn;
     if ( title == "ALL" ) 
       $scope.data.graphs = $scope.data.treeplots[file];
     else 
       $scope.data.graphs = titles;  
-
+    
 	}
+
 
 
 }]);
