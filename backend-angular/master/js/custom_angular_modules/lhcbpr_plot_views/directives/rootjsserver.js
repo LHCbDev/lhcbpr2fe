@@ -3,9 +3,9 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
     restrict: 'E',
     scope: {
       entrypoint: '=',
-      files: '&',
-      items: '&',
-      compute: '&',
+      files: '=',
+      items: '=',
+      compute: '=',
       width: '@',
       height: '@'
     },
@@ -16,14 +16,22 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
       //
       // TODO figure out if this is a problem. If it is, fix it!
       //
-      // scope.$watchGroup(['files', 'items', 'compute'], function(values) {
-      //   if(values[0] && values[1]) {
-      //     console.debug("The values have changed! "+values);
-      //     activate(values[0], values[1], values[2]);
-      //   }
-      // });
+      scope.$watchGroup(['files', 'items', 'compute'], function(values) {
+        if(values[0] && values[1]) {
+          console.debug("The values going into rootjsserver have changed: "+values);
+            if(typeof values[0] === "object") {
+              // Use old style call
+              //
+              // TODO phase this style of call out.
+              activate(_.keys(values[0]), values[1], values[2]);
+            } else {
+              // Use new style called
+              activate(values[0], values[1], values[2]);
+            }
+        }
+      });
 
-      activate(scope.files(), scope.items(), scope.compute());
+      // activate(scope.files(), scope.items(), scope.compute());
 
       ///
       function activate(files, items, option) {
@@ -64,9 +72,7 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
             } else {
               notGraph = JSROOT.JSONR_unref(value);
               notGraph.fLineColor = color++;
-              // if ( scope.files[file.root] != "" ) {
-              //   notGraph.fName = scope.files[file.root];  // used in ToolTips
-              // }
+              notGraph.fName = "JobID: " + file.root.split("/")[0]; // used in ToolTips
               notGraphs.push(notGraph);
             }
           });

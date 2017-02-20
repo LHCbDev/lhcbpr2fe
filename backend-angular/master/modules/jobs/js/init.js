@@ -76,7 +76,13 @@
 
   // ROOT file viewer stuff
   module.registerTestView({
-    title: "ROOT file viewer"
+    title: "ROOT file viewer",
+    // Restrict plot choices due to bug that appears when using registerTestView
+    // and rootjsserver directive.
+    //
+    // TODO fix this bug so we can use rootjsserver in default analysis module.
+    defaultPlotView: "plotSplit",
+    plotViews: ["plotSplit", "plotSame"]
     // defaultPlots: [{locationInFile: "/GenMonitorAlg/4", filePath: "MuonMoniSim_histos.root"}]
     // defaultPlotView: "plotSame",
     // restrict: {
