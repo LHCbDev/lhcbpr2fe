@@ -45,8 +45,7 @@ h3 Validation Analysis
           </div>
       </div>
 
-<div ng-if="jobId.split('__').length == 2 || jobId.split('__').length == 3">
-#panelOptions.panel.panel-default
+#panelOptions.panel.panel-default(ng-if="jobId.split('__').length == 2 || jobId.split('__').length == 3")
   .panel-heading
     paneltool(tool-collapse)
     .panel-title Options
