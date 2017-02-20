@@ -76,7 +76,6 @@ App.directive('browseRootFiles', [function () {
            * If it does not, this is a bug!
            */
 
-
             var parsed = [];
             var i;
             var j;
@@ -88,6 +87,7 @@ App.directive('browseRootFiles', [function () {
               parsed.push(createMenuNode(fileName, fileName, true));
 
               for(i in paths) {
+
                 var partialParsedPath = [parsed.length-1, "children"];
                 var path = paths[i];
                 var splitPath = path.split('/');
@@ -125,6 +125,9 @@ App.directive('browseRootFiles', [function () {
                         getPathUpToLevel(path, j)
                       )
                     ));
+                    if(isDirectory) {
+                      partialParsedPath.push("children");
+                    }
                   }
                 };
               }};
