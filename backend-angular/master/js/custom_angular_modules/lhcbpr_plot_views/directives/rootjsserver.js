@@ -19,15 +19,8 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
       scope.$watchGroup(['files', 'items', 'compute'], function(values) {
         if(values[0] && values[1]) {
           console.debug("The values going into rootjsserver have changed: "+values);
-            if(typeof values[0] === "object") {
-              // Use old style call
-              //
-              // TODO phase this style of call out.
-              activate(_.keys(values[0]), values[1], values[2]);
-            } else {
-              // Use new style called
-              activate(values[0], values[1], values[2]);
-            }
+          // Use new style called
+          activate(values[0], values[1], values[2]);
         }
       });
 
