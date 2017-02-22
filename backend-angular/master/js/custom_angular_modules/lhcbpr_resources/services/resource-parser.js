@@ -21,6 +21,11 @@ lhcbprResourcesModule.service('resourceParser', function() {
 
   var that = this;
 
+  this.getName = function(resource) {
+    // Gets name of resource.
+    return resource.name;
+  };
+
   this.getFilesFromResource = function(resource) {
     var jobIds = that.getJobIds(resource);
     var fileName = that.getCommonValue(resource);
@@ -57,6 +62,17 @@ lhcbprResourcesModule.service('resourceParser', function() {
      */
     return _.filter(resources, function(v) {
       return that.getCommonValue(v).match(regex);
+    });
+  };
+
+  this.findResourcesWithName = function(resources, name) {
+    /**
+     * Finds all resources with a given name.
+     *
+     * If not found, returns empty array or undefined.
+     */
+    return _.filter(resources, function(v) {
+      return that.getName(v) == name;
     });
   };
 

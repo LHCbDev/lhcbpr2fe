@@ -111,7 +111,7 @@ var ModuleHelpers = new function() {
             * [
             *   {
             *     locationInFile: "/h1",
-            *     filePathRegex: /abc.root/
+            *     resourceName: "abc.root"
             *   }
             * ]
             *
@@ -124,7 +124,7 @@ var ModuleHelpers = new function() {
                           + "your matches to match only one file.");
              return {
                locationInFile: value.locationInFile,
-               resources: resourceParser.findResourcesWithRegexValue(resources, value.filePathRegex)
+               resources: resourceParser.findResourcesWithName(resources, value.resourceName)
              };
            });
          };
