@@ -42,15 +42,15 @@ Module.create('geantstandalone', 'GEANT', 2)
     defaultPlots: [
       {
         locationInFile: '/CResolution2',
-        filePathRegex: /Selectedresults.root/
+        resourceName: "Selectedresults.root"
       },
       {
-        locationInFile: '/CSampling',
-        filePathRegex: /Selectedresults.root/
+        locationInFile: '"CSampling',
+        resourceName: "Selectedresults.root"
       },
       {
-        locationInFile: '/CStraightRes',
-        filePathRegex: /Selectedresults.root/
+        locationInFile: '"CStraightRes',
+        resourceName: "Selectedresults.root"
       }
     ],
     restrict: {
