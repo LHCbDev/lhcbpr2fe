@@ -137,6 +137,10 @@ App.directive('browseRootFiles', [function () {
 
 
         $scope.$watch('resources', function() {
+          // Reset the browse-root-files directive
+          that.fillItems();
+          that.selectDefaults();
+
           // If resources is empty, don't bother processing it.
           if($scope.resources === undefined || $scope.resources.length === 0) {
             return;
