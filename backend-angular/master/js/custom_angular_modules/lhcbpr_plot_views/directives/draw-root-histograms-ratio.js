@@ -29,7 +29,11 @@ lhcbprPlotModule.directive('drawRootHistogramsRatio', function() {
               /// We can't copy the object, so we mutate the existing one.
               obj0 = JSROOT.JSONR_unref(obj0);
               _.map(obj0.fArray, function(value, ind) {
-                obj0.fArray[ind] = obj0.fArray[ind] / obj1.fArray[ind];
+                if(obj1.fArray[ind] === 0) {
+                  obj0.fArray[ind] = 0;
+                } else {
+                  obj0.fArray[ind] = obj0.fArray[ind] / obj1.fArray[ind];
+                }
               });
 
               obj0.fTitle = obj0.fTitle + " (Ratio)";
