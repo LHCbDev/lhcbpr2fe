@@ -82,7 +82,7 @@
     //
     // TODO fix this bug so we can use rootjsserver in default analysis module.
     defaultPlotView: "plotSplit",
-    plotViews: ["plotSplit", "plotSame"]
+    plotViews: ["plotSplit", "plotSame", "plotRatioJsroot"]
     // defaultPlots: [{locationInFile: "/GenMonitorAlg/4", filePath: "MuonMoniSim_histos.root"}]
     // defaultPlotView: "plotSame",
     // restrict: {
