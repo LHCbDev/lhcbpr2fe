@@ -1,1 +1,4 @@
-div(style="width:550px; height:400px")
+div(ng-hide="problemWithPlotting")
+  div(style="width:550px; height:400px")
+.alert.alert-danger(ng-if="problemWithPlotting")
+  | {{ problemWithPlotting }}

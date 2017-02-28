@@ -9,31 +9,43 @@ lhcbprPlotModule.directive('drawRootHistogramsRatio', function() {
     // TODO change if needed
     templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/drawRootObject.html',
     controllerAs: "ctrl",
-    controller: ['BUILD_PARAMS', '$scope', 'rootObjManipulator',
-                 function(BUILD_PARAMS, $scope, rootObjManipulator) {
-      $scope.BUILD_PARAMS = BUILD_PARAMS;
+    controller: [
+      'BUILD_PARAMS', '$scope', 'rootObjManipulator',
+      function(BUILD_PARAMS, $scope, rootObjManipulator) {
+        $scope.BUILD_PARAMS = BUILD_PARAMS;
 
-      $scope.draw = function(pad, objectsToPlot) {
-        var i;
-        var plotColor = false;
-        JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[0].fileLocation, function(file0) {
-          JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[1].fileLocation, function(file1) {
-            file0.ReadObject($scope.objectsToPlot()[0].objectLocation, function(obj0) {
-              file1.ReadObject($scope.objectsToPlot()[1].objectLocation, function(obj1) {
-                var histogram = rootObjManipulator.ratioOfHists(obj0, obj1);
-                // Errors are now invalid, do not plot them.
-                JSROOT.draw(pad, histogram, "HIST");
+        $scope.problemWithPlotting = "";
+
+        $scope.draw = function(pad, objectsToPlot) {
+          var i;
+          var plotColor = false;
+          JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[0].fileLocation, function(file0) {
+            JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[1].fileLocation, function(file1) {
+              file0.ReadObject($scope.objectsToPlot()[0].objectLocation, function(obj0) {
+                file1.ReadObject($scope.objectsToPlot()[1].objectLocation, function(obj1) {
+                  var histogram = rootObjManipulator.ratioOfHists(obj0, obj1);
+                  // Errors are now invalid, do not plot them.
+                  JSROOT.draw(pad, histogram, "HIST");
+                });
               });
             });
           });
-        });
-      };
-    }],
+        };
+      }],
     link: function(scope, element) {
       // Check that it can be done:
-      if (scope.objectsToPlot().length !== 2) {
-        console.error("Too many or too few plots passed to drawRootHistogramsRatio directive.");
+      if (scope.objectsToPlot().length < 2) {
+        var message = "Too few plots to do a ratio! (" + scope.objectsToPlot().length + " plot(s) provided.)";
+        console.error(message);
+        scope.problemWithPlotting = message;
         return;
+      } else if (scope.objectsToPlot() > 2){
+        var message = "Too many plots to do a ratio! (" + scope.objectsToPlot().length + " plot(s) provided.)";
+        console.error(message);
+        scope.problemWithPlotting = message;
+        return;
+      } else{
+        scope.problemWithPlotting = "";
       }
       var pad = element.children()[0];
       pad.innerHTML = "";
