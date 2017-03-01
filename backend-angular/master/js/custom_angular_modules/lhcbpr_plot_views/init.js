@@ -1,5 +1,7 @@
 // Custom module for lhcbpr plotting in the browser
-var lhcbprPlotModule = angular.module('lhcbprPlotViews', []);
+var lhcbprPlotModule = angular.module('lhcbprPlotViews', [
+  'angularRandomString',
+]);
 
 function plotDirectiveFactory(directiveName, displayName) {
   lhcbprPlotModule.directive(directiveName, function() {
