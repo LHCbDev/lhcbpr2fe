@@ -20,6 +20,7 @@
     "**/.*"
   ],
   "dependencies": {
+    "angular-random-string": "v0.1.0",
     "Flot": "flot/flot#0.8.3",
     "angular-loading-bar": "0.6.0",
     "angular-translate": "2.4.2",

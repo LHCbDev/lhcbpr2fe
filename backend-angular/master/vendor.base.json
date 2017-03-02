@@ -19,5 +19,6 @@
   "bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
   "bower_components/angular-loading-bar/build/loading-bar.js",
   "bower_components/restangular/dist/restangular.js",
-  "bower_components/checklist-model/checklist-model.js"
+  "bower_components/checklist-model/checklist-model.js",
+  "bower_components/angular-random-string/src/angular-random-string.js"
 ]
