@@ -25,7 +25,7 @@ h3 Validation Analysis
       </div>
       <ul>
       <li style="font-size:150%; {{ 'color: ' + color[$index+1] }};", ng-repeat="file in key.split(',')">{{ getJobName(file.split('/')[0]) }}</li>
-      </ul>
+      </ul>    
       .col-lg-6
           <form name="myForm">
           <select name="{{ 'repeatSelect' + key }}" id="{{ 'repeatSelect' + key }}" ng-model="data.repeatSelect[key]" ng-change="showPlots(key, data.repeatSelect[key])">
@@ -44,7 +44,20 @@ h3 Validation Analysis
           </form>
           </div>
       </div>
-
+      
+#panelDefaults.panel.panel-default(ng-hide="noJobData")   
+  .panel-heading
+    paneltool(tool-collapse)
+    .panel-title Default plots
+  .panel-wrapper(collapse="panelOptions")
+    .panel-body
+       form.form-inline(role='form')
+        fieldset
+          .form-group.col-sm-6
+              label.radio-inline(ng-repeat="option in defaultPlots")
+                input(type="radio", value="{{ option.value }}", name="defaultplots", ng-model="data.defaultplots" ng-change="plotDefaults(data.defaultplots)")
+                |  {{ option.text }}
+                
 #panelOptions.panel.panel-default(ng-if="jobId.split('__').length == 2 || jobId.split('__').length == 3")
   .panel-heading
     paneltool(tool-collapse)
@@ -65,12 +78,13 @@ h3 Validation Analysis
 
 
 .row.traditional(ng-class="csspinner")
+  h2(style="color:blue" ng-if="data.defaultplots!=''") {{ defplotname(data.defaultplots) }} Plots
   .col-lg-12
       <div ng-if="data.optvalue=='Split'">
       <table style="width:100%">
       <tr ng-repeat="(item, title) in data.graphs", ng-hide="noJobData">
       <td ng-repeat="file in files" ng-init="name = file.split('/')[0]">
-      h4(style="color:red") {{ title }} - JOb ID: {{ name }}
+      h4(style="color:red") {{ title }} - Job ID: {{ name }}
       rootjsserver(entrypoint="url"
           files="file"
           items="item"
