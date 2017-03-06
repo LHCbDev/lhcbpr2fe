@@ -10,19 +10,38 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
     templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/drawRootObject.html',
     controllerAs: "ctrl",
     controller: [
-      'BUILD_PARAMS', '$scope', 'rootObjManipulator',
-      function(BUILD_PARAMS, $scope, rootObjManipulator) {
+      'BUILD_PARAMS', '$scope', 'rootObjManipulator', 'rootObjGetterService',
+      function(BUILD_PARAMS, $scope, rootObjManipulator, rGetter) {
         $scope.BUILD_PARAMS = BUILD_PARAMS;
 
         $scope.problemWithPlotting = "";
 
-        var getArrayFromHist = function(hist) {
-          return hist.fArray;
-        };
+        // var getArrayFromHist = function(hist) {
+        //   return Array.prototype.slice.call(hist.fArray);
+        // };
 
-        var getNumOfVisibleBinsFromHist = function(hist) {
-          // Get all the bins, minus over/underflow bins.
-          return hist.fArray.length - 2;
+        // var getVisibleBinValues = function(hist) {
+        //   var x = angular.copy(getArrayFromHist(hist.fArray));
+        //   x.shift();
+        //   x.pop();
+        //   // Remove the type from an array so it becomes an ordinary Array.
+        //   return Array.prototype.slice.call(x);
+        // };
+
+        // var getNumOfVisibleBinsFromHist = function(hist) {
+        //   // Get all the bins, minus over/underflow bins.
+        //   return rGetter.getVisibleBinValuesFromHist(hist).length;
+        // };
+
+        var getVisibleBinEdgesFromHist = function(hist) {
+          var low = hist.fXaxis.fXmin;
+          var high = hist.fXaxis.fXmax;
+          var visibleBinValues = rGetter.getVisibleBinValuesFromHist(hist);
+          var step = (high - low)/rGetter.getNumOfVisibleBinsFromHist(hist);
+
+          return _.map(visibleBinValues, function(v, ind) {
+            return [ind*step + low, (ind+1)*step + low];
+          });
         };
 
         $scope.draw = function(pad, objectsToPlot) {
@@ -48,9 +67,8 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                   var height = +svg.attr("height") - margin.top - margin.bottom;
                   var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-                  var x = d3.scaleLinear()
-                        .rangeRound([0, width]);
-
+                  // var x = d3.scaleLinear()
+                  //       .rangeRound([0, width]);
                   // Bins is just an array of arrays. Except these arrays have special keys
                   // of x0 and x1 for bin edges.
                   //
@@ -65,36 +83,47 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                   //
                   //
                   // OK. So. This is what I need to recreate.
-                  var bins = d3.histogram()
-                        .domain(x.domain())
-                        .thresholds(x.ticks(getNumOfVisibleBinsFromHist(histogram)))
-                  (data);
+                  // var bins = d3.histogram()
+                  //       .domain(x.domain())
+                  //       .thresholds(x.ticks(getNumOfVisibleBinsFromHist(histogram)))
+                  // (data);
 
-                  // I got a histogram. I have map. What do you I get? HISTOGRAM-MAP
+                  var visibleBinValues = rGetter.getVisibleBinValuesFromHist(histogram);
+                  var visibleBinEdges = getVisibleBinEdgesFromHist(histogram);
+                  var bins = [];
+                  _.map(visibleBinValues, function(val, ind) {
+                    bins.push({});
+                    bins[ind].x0 = visibleBinEdges[ind][0];
+                    bins[ind].x1 = visibleBinEdges[ind][1];
+                    bins[ind].value = val;
+                  });
 
-                  debugger;
+                  // TODO figure out how to get the x axis to change with the input histogram.
+                  var x = d3.scaleLinear()
+                        .rangeRound([0, width]);
+
 
                   var y = d3.scaleLinear()
-                        .domain([0, d3.max(bins, function(d) { return d.length; })])
+                        .domain([0, d3.max(bins, function(d) { return d.value; })])
                         .range([height, 0]);
 
                   var bar = g.selectAll(".bar")
                         .data(bins)
                         .enter().append("g")
                         .attr("class", "bar")
-                        .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
+                        .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.value) + ")"; });
 
                   bar.append("rect")
                     .attr("x", 1)
                     .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
-                    .attr("height", function(d) { return height - y(d.length); });
+                    .attr("height", function(d) { return height - y(d.value); });
 
                   bar.append("text")
                     .attr("dy", ".75em")
                     .attr("y", 6)
                     .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
                     .attr("text-anchor", "middle")
-                    .text(function(d) { return formatCount(d.length); });
+                    .text(function(d) { return formatCount(d.value); });
 
                   g.append("g")
                     .attr("class", "axis axis--x")
