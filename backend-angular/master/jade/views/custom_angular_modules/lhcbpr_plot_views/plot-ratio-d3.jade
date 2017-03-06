@@ -1,2 +1,14 @@
 div(ng-repeat="item in graphs()", ng-hide="noJobData")
-    draw-root-histograms-ratio(objects-to-plot="ctrl.getObjectsToPlot(item)")
+    // draw-root-histograms-ratio(objects-to-plot="ctrl.getObjectsToPlot(item)")
+style.
+  .bar rect {
+    fill: steelblue;
+
+  }
+
+  .bar text {
+    fill: #fff;
+      font: 10px sans-serif;
+
+  }
+svg(width="400" height="300")

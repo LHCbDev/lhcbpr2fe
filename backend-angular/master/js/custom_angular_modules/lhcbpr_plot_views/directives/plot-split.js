@@ -15,7 +15,6 @@ lhcbprPlotModule.directive("plotSplit", function() {
     controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
 
       $scope.setColClass = function(numGraphs) {
-        debugger;
         return "col-md-"+Math.floor(12/numGraphs);
       };
 
