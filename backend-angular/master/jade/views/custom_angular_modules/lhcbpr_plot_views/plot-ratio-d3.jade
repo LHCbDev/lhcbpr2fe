@@ -1,5 +1,5 @@
 div(ng-repeat="item in graphs()", ng-hide="noJobData")
-    // draw-root-histograms-ratio(objects-to-plot="ctrl.getObjectsToPlot(item)")
+    draw-d3-histograms-ratio(objects-to-plot="ctrl.getObjectsToPlot(item)")
 style.
   .bar rect {
     fill: steelblue;
