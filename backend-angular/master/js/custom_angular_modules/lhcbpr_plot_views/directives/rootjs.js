@@ -12,15 +12,18 @@ lhcbprPlotModule.directive('rootjs', function($timeout) {
     link: function(scope, element) {
       scope.$watchGroup(['data', 'kstest'], function(values) {
         console.log('rootjs watch', values);
-        if(!values[0]) return;
+        if (!values[0]) return;
         try {
 
           scope.json = [];
 
-          if (angular.isObject(values[0]) && ("_typename" in values[0]))
-          {
+          if (angular.isObject(values[0]) && ("_typename" in values[0])) {
             scope.json.push(values[0]);
-          }else{
+          } else if (angular.isString(values[0])) {
+            var text = JSROOT.Create("TPaveText")
+            text.AddText(values[0]);
+            $timeout(function() {JSROOT.draw(element.children()[0], text)},2);
+          } else {
             for ( key in values[0] ) {
               if (angular.isObject(values[0][key])) {
                 scope.json.push(values[0][key]);

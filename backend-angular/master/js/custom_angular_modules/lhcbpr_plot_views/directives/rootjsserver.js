@@ -79,8 +79,10 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
 
         if (notGraphs.length > 0) {
           scope.data = notGraphs;
-        } else {
+        } else if (graphs.length > 0) {
           scope.data = JSROOT.CreateTMultiGraph.apply(this, graphs);
+        } else {
+          scope.data = "Plot not available!";
         }
       }
 
