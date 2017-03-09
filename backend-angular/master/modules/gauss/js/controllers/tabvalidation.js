@@ -4,14 +4,14 @@ App.controller('TabvalidationController', ['$scope', 'lhcbprResources',
   $scope.gval = {
     tableData: [],   // data for table 
     optvalue: "",    // select table (group id)
-    jobIDs: [],     // list of selected jobs id
+    jobIDs: [],      // list of selected jobs id
     groupID: [],     // available groups/tables
   };
   
-  
-  getGroupIDs = function() {
-    if ( $scope.gval.groupID.length === 0) {
+  getGroupIDs = function(numpage) {
+    if ( $scope.gval.groupID.length === 0 || numpage > 1) {
       $api.all('groups').getList({
+            page: numpage   
       }).then(function(attrs) { 
         for (i = 0; i < attrs.length; i++) {
           if ( attrs[i].name.startsWith("Validation") ) {
@@ -20,7 +20,10 @@ App.controller('TabvalidationController', ['$scope', 'lhcbprResources',
               // save default table
               $scope.gval.optvalue = attrs[i].id;
           }  
-        } // sort groups/tables by name
+        } 
+        // "recursive" call if there are more data
+        if ( attrs._resultmeta.next != null ) return getGroupIDs(numpage+1);
+        // sort groups/tables by name
         $scope.gval.groupID.sort(function(first, second) {
           var nameA = first.value.toUpperCase(); // ignore upper and lowercase
           var nameB = second.value.toUpperCase(); // ignore upper and lowercase
@@ -34,6 +37,7 @@ App.controller('TabvalidationController', ['$scope', 'lhcbprResources',
         // build default table
         $scope.reloadTables($scope.gval.optvalue);
       })
+
     } else {
       $scope.gval.tableData = [];
       $scope.reloadTables($scope.gval.optvalue);
@@ -56,9 +60,8 @@ App.controller('TabvalidationController', ['$scope', 'lhcbprResources',
     $scope.gval.jobIDs = [];
     for ( var i = 0; i < ids.length; i++ ) 
       $scope.gval.jobIDs[i] = ids[i];
-    // $scope.gval.jobIDs = ids; // this creates a reference to jobIds object of job-select controller and so a strange behaviour
     // query dbase for the list of groups and then load data for default table
-    getGroupIDs()
+    getGroupIDs(1)
   };
 
 	MuonTable = function() {
@@ -106,15 +109,22 @@ App.controller('TabvalidationController', ['$scope', 'lhcbprResources',
     }
   };
 
-  GenericTable = function() {	  
-	  // getGroupIDs();
+  // temporary global variable for recursive calls
+  var attrs = [];
+  GenericTable = function(pagenum) {	 
+    if ( pagenum == 1 ) attrs = [];
     if ( $scope.gval.jobIDs.length > 0 ) {
       $api.all('compare').getList({
         ids:     $scope.gval.jobIDs.join(),
         groups:  $scope.gval.optvalue,
         lightJob: 1,
-        page_size: 50
-      }).then(function(attrs) {        
+        page: pagenum,
+        page_size: 10
+      }).then(function(values) { 
+        for (var attrid = 0; attrid < values.length; attrid++)
+          attrs.push(values[attrid]);
+        // "recursive" call if there are more data
+        if ( values._resultmeta.next != null ) return GenericTable(pagenum+1);     
         var results=[];
         for (var attrid = 0; attrid < attrs.length; attrid++) {
           var attr = attrs[attrid];
@@ -149,6 +159,7 @@ App.controller('TabvalidationController', ['$scope', 'lhcbprResources',
             attrid++;
         }
         $scope.gval.tableData = results;
+        
       })
     }
   };
@@ -159,7 +170,7 @@ App.controller('TabvalidationController', ['$scope', 'lhcbprResources',
     if ( $scope.groupName(table) === "Muon detectors" ) {
       MuonTable();
     } else {
-      GenericTable();
+      GenericTable(1);
     }
   };
 	
