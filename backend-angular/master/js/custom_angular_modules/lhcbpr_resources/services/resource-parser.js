@@ -27,10 +27,8 @@ lhcbprResourcesModule.service('resourceParser', function() {
   };
 
   this.getFilesFromResource = function(resource) {
-    var jobIds = that.getJobIds(resource);
-    var fileName = that.getCommonValue(resource);
-    return _.map(jobIds, function(jobId) {
-      return jobId + "/" + fileName;
+    return _.map(resource.jobvalues, function(v) {
+      return v.job.id + "/" + v.value;
     });
   };
 
