@@ -24,6 +24,7 @@ App.controller('TrendController', [
     $scope.appId = undefined;
     $scope.options = undefined;
     $scope.versions = undefined;
+    $scope.platforms = undefined;
     $scope.attrFilter = '';
     $scope.loading = false;
     $scope.noData = true;
@@ -38,14 +39,15 @@ App.controller('TrendController', [
                  // function that fetchs data to fill the table
           getData: function($defer, params) {
             // We check if an application and options were selected
-            if ($scope.appId && $scope.options.length > 0) {
+            console.log("SASHA", $scope.options,$scope.attrFilter );
+            if ($scope.appId && $scope.options.length > 0 && $scope.attrFilter.length) {
               $scope.loading = true;
-              console.log('Sending Trends request !');
               // We construct the data to send with the request to the API
               var requestParams = {
                 app: $scope.appId,
                 options: $scope.options.join(','),
                 versions: $scope.versions.join(','),
+                platforms: $scope.platforms.join(','),
                 page: params.page(),
                 page_size: params.count()
               };
@@ -53,11 +55,9 @@ App.controller('TrendController', [
               if ($scope.attrFilter != '')
                 requestParams.attr_filter = $scope.attrFilter;
               $api.all('trends').getList(requestParams).then(function(trends) {
-                console.log('Trends Reponse received');
                 if (trends._resultmeta) {
                   params.total(trends._resultmeta.count);
                 }
-                console.log(trends);
                 $scope.noData = (trends.length < 1);
                 $defer.resolve(trends);
                 $scope.loading = false;
@@ -70,16 +70,23 @@ App.controller('TrendController', [
                   if (a !== undefined) $scope.showChart(a);
                 }
               });
-            }
+            } else { // Clear table
+              $scope.noData  = true;
+          }
           }
         });
 
     $scope.attrsTableParams.settings().$scope = $scope;
 
     $scope.requestStatistics = function(params) {
+
       $scope.appId = params.apps[0];
       $scope.options = params.options;
       $scope.versions = params.versions;
+      $scope.platforms = params.platforms;
+
+      $scope.attrFilter = '';
+
       $scope.update();
     };
 
@@ -89,11 +96,10 @@ App.controller('TrendController', [
           $scope.attrsTableParams.page(1);
           // reloading data
           $scope.attrsTableParams.reload();
-        }
+     };
 
         $scope.showChart =
             function(a) {
-              console.log("A", a);
               var minValue = a.values[0].average - a.values[0].deviation,
                   maxValue = a.values[0].average + a.values[0].deviation,
                   value = 0, versions = [], averages = [], deviations = [];
@@ -117,7 +123,7 @@ App.controller('TrendController', [
                 $scope.lineOptions.scaleSteps /= 2;
                 $scope.lineOptions.scaleStepWidth *= 2;
               }
-              console.log(averages, deviations);
+              // console.log(averages, deviations);
               $scope.lineData = {
                 labels: versions,
                 datasets: [{
