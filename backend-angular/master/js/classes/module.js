@@ -223,7 +223,7 @@ Module.prototype.addState = function(state){
   words = words.split('_');          // Split on '_'
   if(undefined === state.url){
     state.url = '/' + words.join('-');
-    console.debug("Url for "+state.name+" automatically set to be "+state.url);
+    // console.debug("Url for "+state.name+" automatically set to be "+state.url);
   }
 
   if (undefined === state.controller) {
@@ -233,10 +233,10 @@ Module.prototype.addState = function(state){
   // TODO properly document what templateUrl and template do.
   if(undefined === state.templateUrl && undefined === state.template){
     state.templateUrl = 'app/modules/' + this.folder + '/views/' + words.join('-') + '.html';
-    console.debug("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
+    // console.debug("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
   } else if(undefined !== state.templateUrl){
     state.templateUrl = 'app/modules/' + this.folder + '/views/' + state.templateUrl;
-    console.debug("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
+    // console.debug("TemplateUrl for "+state.name+" automatically set to be "+state.templateUrl);
   }
   // NOTE: this overrides any templateUrl which has been given.
   //
@@ -252,11 +252,11 @@ Module.prototype.addState = function(state){
   Deps.commonModules.forEach(function(cm){
     state.resolve.push(cm);
   });
-  console.debug("Resolve for "+state.name+" automatically set to be "+JSON.stringify(state.resolve));
+  // console.debug("Resolve for "+state.name+" automatically set to be "+JSON.stringify(state.resolve));
   state.resolve = this.makePromises(state.resolve);
 
-  console.debug("Final state for "+state.name+" is:");
-  console.debug(JSON.stringify(state, null, 2));
+  // console.debug("Final state for "+state.name+" is:");
+  // console.debug(JSON.stringify(state, null, 2));
   this.states.push(state);
 
   return this;
@@ -283,8 +283,8 @@ Module.prototype.makePromises = function(deps) {
 };
 
 Module.prototype.registerTestView = function(options) {
-  console.debug(
-    "Options submitted to registerTestView:\n"+JSON.stringify(options, null, 2));
+  // console.debug(
+  //   "Options submitted to registerTestView:\n"+JSON.stringify(options, null, 2));
   var title = options.title || logger.error("No title defined! Expect breakages!");
   var name = options.name || (_.camelCase(title)).toLowerCase();
   var appName = options.appName || "app."+name;

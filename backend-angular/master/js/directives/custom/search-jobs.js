@@ -178,7 +178,7 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 			};
 
 			scope.searchJobs = function() {
-				console.log('Search Jobs Called !');
+				// console.log('Search Jobs Called !');
 				if(scope.optionsFiltered && scope.versionsFiltered && scope.platformsFiltered){
 
 					var selectedVersions = scope.versionsIds;
@@ -188,7 +188,6 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 							selectedVersions = selectedVersions.concat(getAllIds(v.values));
 						});
 					}
-
 					scope.onFound({'searchParams': {
 						apps: scope.applicationIds,
 						options: scope.optionsIds,
@@ -209,7 +208,6 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 
 			lhcbprResources.all("active/applications").getList().then(
 				function(apps){
-					console.log(scope.selectedApp);
 					if (scope.selectedApp) {
 						apps.forEach(function(a){
 							if(a.name.toLowerCase() === scope.selectedApp.toLowerCase()){

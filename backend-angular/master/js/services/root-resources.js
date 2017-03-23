@@ -8,7 +8,7 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', 'resourceParser', '$q', f
           '/?files=' + encodeURIComponent(params['files']) +
           '&folders=' + encodeURIComponent(params['folders']) +
           '&callback=JSON_CALLBACK';
-    console.debug("Making request: "+url);
+    // console.debug("Making request: "+url);
     return $http.jsonp(url)
       .then(function (response) {
         var trees = {};
@@ -35,11 +35,11 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', 'resourceParser', '$q', f
     if(typeof files === "object") {
       files = files.join('__');
     }
-    var url = urlBase + 
+    var url = urlBase +
           '/?files=' + encodeURIComponent(files) +
           '&folders=' + encodeURIComponent(["/"]) +
           '&callback=JSON_CALLBACK';
-    console.debug("Making request: "+url);
+    // console.debug("Making request: "+url);
     return $http.jsonp(url)
       .then(function(response) {
         var files = {};
@@ -66,7 +66,7 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', 'resourceParser', '$q', f
           '/?files=' + encodeURIComponent(file) +
           '&folders=' + encodeURIComponent(["/"]) +
           '&callback=JSON_CALLBACK';
-    console.debug("Making request: "+url);
+    // console.debug("Making request: "+url);
     return $http.jsonp(url)
       .then(function(response) {
         var objectsInFile = [];
@@ -145,7 +145,7 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', 'resourceParser', '$q', f
   //      *
   //      * e.g.
   //      * getLocationFromLevel("/foo/bar/baz", 1); => "/foo/bar"
-  //      * 
+  //      *
   //      */
   //     var splitPath = path.split('/');
   //     // Remove falsy values like "" from splitPath

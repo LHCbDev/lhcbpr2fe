@@ -18,7 +18,7 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
       //
       scope.$watchGroup(['files', 'items', 'compute'], function(values) {
         if(values[0] && values[1]) {
-          console.debug("The values going into rootjsserver have changed: "+values);
+          // console.debug("The values going into rootjsserver have changed: "+values);
           // Use new style called
           activate(values[0], values[1], values[2]);
         }
@@ -39,7 +39,7 @@ lhcbprPlotModule.directive('rootjsserver', function($http) {
               '&items=' + encodeURIComponent(items) +
               (option ? '&compute=' +  encodeURIComponent(option) : "") +
               '&callback=JSON_CALLBACK';
-        console.debug("Making request: "+url);
+        // console.debug("Making request: "+url);
         $http.jsonp(url).then(loaded, error);
 
       }
