@@ -57,36 +57,12 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
 
                   // Start of d3 histogram example
 
-                  var data = d3.range(1000).map(d3.randomBates(10));
-
-                  var formatCount = d3.format(",.0f");
-
                   var svg = d3.select("svg");
                   var margin = {top: 10, right: 30, bottom: 30, left: 30};
                   var width = +svg.attr("width") - margin.left - margin.right;
                   var height = +svg.attr("height") - margin.top - margin.bottom;
                   var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-                  // var x = d3.scaleLinear()
-                  //       .rangeRound([0, width]);
-                  // Bins is just an array of arrays. Except these arrays have special keys
-                  // of x0 and x1 for bin edges.
-                  //
-                  // TODO investigate if we could add a third special key for value, so that
-                  // later when the length is probed, instead we can probe our custom value
-                  // calculated from the ratio of given histograms.
-                  //
-                  // In fact, it's unlikely that d3 cares. From what I can tell, it iterates
-                  // over an Array to make each bar of the chart, so I can use whatever
-                  // object I like, as long as there's an array of them and I do the
-                  // bar.attr("transform", function) bit correctly
-                  //
-                  //
-                  // OK. So. This is what I need to recreate.
-                  // var bins = d3.histogram()
-                  //       .domain(x.domain())
-                  //       .thresholds(x.ticks(getNumOfVisibleBinsFromHist(histogram)))
-                  // (data);
 
                   var visibleBinValues = rGetter.getVisibleBinValuesFromHist(histogram);
                   var visibleBinEdges = getVisibleBinEdgesFromHist(histogram);
@@ -98,36 +74,37 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                     bins[ind].value = val;
                   });
 
-                  // TODO figure out how to get the x axis to change with the input histogram.
                   var x = d3.scaleLinear()
-                        .rangeRound([0, width]);
-
+                        .domain([bins[0].x0, bins[bins.length-1].x1])
+                        .range([0, width]);
 
                   var y = d3.scaleLinear()
                         .domain([0, d3.max(bins, function(d) { return d.value; })])
                         .range([height, 0]);
 
-                  var bar = g.selectAll(".bar")
+                  var bars = g.selectAll(".bar")
                         .data(bins)
                         .enter().append("g")
                         .attr("class", "bar")
-                        .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.value) + ")"; });
+                        .attr("transform", function(d) {
+                          return "translate(" + x(d.x0) + "," + y(d.value) + ")"; });
 
-                  bar.append("rect")
+                  bars.append("rect")
                     .attr("x", 1)
-                    .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
+                    .attr("width", x(bins[0].x1) - x(bins[0].x0))
                     .attr("height", function(d) { return height - y(d.value); });
 
-                  bar.append("text")
-                    .attr("dy", ".75em")
-                    .attr("y", 6)
-                    .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
-                    .attr("text-anchor", "middle")
-                    .text(function(d) { return formatCount(d.value); });
+                  // bars.append("text")
+                  //   .attr("dy", ".75em")
+                  //   .attr("y", 6)
+                  //   .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
+                  //   .attr("text-anchor", "middle")
+                  //   .text(function(d) { return d.value; });
 
                   g.append("g")
                     .attr("class", "axis axis--x")
-                    .attr("transform", "translate(0," + height + ")")
+                    // .attr("transform", "translate(0," + height + ")")
+                    .attr("transform", "translate(0," + y(0) + ")")
                     .call(d3.axisBottom(x));
 
 
