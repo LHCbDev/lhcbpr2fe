@@ -1,5 +1,8 @@
 div(ng-repeat="item in graphs()", ng-hide="noJobData")
-    draw-d3-histograms-ratio(objects-to-plot="ctrl.getObjectsToPlot(item)")
+  // This currently does not iterate properly. If multiple plots were selected
+  // it would plot all the same plots then all the ratio plots
+  draw-root-objects-same(objects-to-plot="ctrl.getObjectsToPlot(item)")
+  draw-d3-histograms-ratio(objects-to-plot="ctrl.getObjectsToPlot(item)")
 style.
   .bar rect {
     fill: steelblue;
@@ -11,4 +14,4 @@ style.
       font: 10px sans-serif;
 
   }
-svg(width="400" height="300")
+svg.foo(width="400" height="100")

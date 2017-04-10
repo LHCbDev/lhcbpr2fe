@@ -57,7 +57,7 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
 
                   // Start of d3 histogram example
 
-                  var svg = d3.select("svg");
+                  var svg = d3.select("svg.foo");
                   var margin = {top: 10, right: 30, bottom: 30, left: 30};
                   var width = +svg.attr("width") - margin.left - margin.right;
                   var height = +svg.attr("height") - margin.top - margin.bottom;
@@ -78,8 +78,9 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                         .domain([bins[0].x0, bins[bins.length-1].x1])
                         .range([0, width]);
 
+                  var yDomain = d3.extent(bins, function(d) { return d.value; });
                   var y = d3.scaleLinear()
-                        .domain([0, d3.max(bins, function(d) { return d.value; })])
+                        .domain(yDomain)
                         .range([height, 0]);
 
                   var bars = g.selectAll(".bar")
@@ -90,22 +91,45 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                           return "translate(" + x(d.x0) + "," + y(d.value) + ")"; });
 
                   bars.append("rect")
-                    .attr("x", 1)
+                    .attr("x", 1) // TODO find out what this line does
                     .attr("width", x(bins[0].x1) - x(bins[0].x0))
                     .attr("height", function(d) { return height - y(d.value); });
 
-                  // bars.append("text")
-                  //   .attr("dy", ".75em")
-                  //   .attr("y", 6)
-                  //   .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
-                  //   .attr("text-anchor", "middle")
-                  //   .text(function(d) { return d.value; });
+                  var barsTooltips = bars.append("text")
+                        .style('fill', 'black')
+                        .style("display", "none")
+                        .text(function(d) {return d.value;});
+
+                  bars.on("mouseenter", function() {
+                    var bar = d3.select(this);
+                    bar.select('rect')
+                      .style('fill', 'red');
+                    bar.select("text")
+                      .style("display", "block");
+                  });
+                  bars.on("mouseleave", function() {
+                    var bar = d3.select(this);
+                    bar.select('rect')
+                      .style('fill', null);
+                    bar.select("text")
+                      .style("display", "none");
+                  });
+
 
                   g.append("g")
                     .attr("class", "axis axis--x")
                     // .attr("transform", "translate(0," + height + ")")
                     .attr("transform", "translate(0," + y(0) + ")")
                     .call(d3.axisBottom(x));
+
+                  var yAxis = d3.axisLeft(y)
+                        .ticks(3);
+
+                  g.append("g")
+                    .attr("class", "axis axis--y")
+                  // .attr("transform", "translate(0," + height + ")")
+                    .attr("transform", "translate(0," + y(y.domain()[1]) + ")")
+                    .call(yAxis);
 
 
                   // End of d3 histogram example
