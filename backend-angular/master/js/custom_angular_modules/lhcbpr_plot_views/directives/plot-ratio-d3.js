@@ -10,9 +10,11 @@ lhcbprPlotModule.directive("plotRatioD3", function() {
     templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/plot-ratio-d3.html',
     controllerAs: "ctrl",
     controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
+      $scope.binEdges = [1, 2, 3, 4];
+      $scope.binValues = [1, 2, 3];
 
       this.getObjectsToPlot = function(payload) {
-        // var fileNames = that.getFilesFromResource(payload.resource);
+        // Returns a map of {fileLocation: xxx, objectLocation: xxx} for items
         var fileNames = resourceParser.getFilesFromResources(payload.resources);
         var locationInFile = payload.locationInFile;
         return _.map(fileNames, function(value) {

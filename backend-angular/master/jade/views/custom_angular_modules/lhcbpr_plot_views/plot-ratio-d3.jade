@@ -1,8 +1,3 @@
-div(ng-repeat="item in graphs()", ng-hide="noJobData")
-  // This currently does not iterate properly. If multiple plots were selected
-  // it would plot all the same plots then all the ratio plots
-  draw-root-objects-same(objects-to-plot="ctrl.getObjectsToPlot(item)")
-  draw-d3-histograms-ratio(objects-to-plot="ctrl.getObjectsToPlot(item)")
 style.
   .bar rect {
     fill: steelblue;
@@ -10,8 +5,15 @@ style.
   }
 
   .bar text {
-    fill: #fff;
-      font: 10px sans-serif;
-
+    fill: #000;
+    font: 10px sans-serif;
   }
-svg.foo(width="400" height="100")
+
+div(ng-repeat="item in graphs()", ng-hide="noJobData")
+  // This currently does not iterate properly. If multiple plots were selected
+  // it would plot all the same plots then all the ratio plots
+  draw-root-objects-same(objects-to-plot="ctrl.getObjectsToPlot(item)")
+//   draw-d3-histograms-ratio(objects-to-plot="ctrl.getObjectsToPlot(item)")
+  // TODO extract the bin edges
+draw-d3-histogram(bin-edges="binEdges" bin-values="binValues" height=300, width=300)
+// svg.foo(width="400" height="100")
