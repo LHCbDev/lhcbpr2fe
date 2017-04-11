@@ -4,9 +4,9 @@ lhcbprPlotModule.directive('drawRootObjectsSame', function() {
   return {
     restrict: 'E',
     scope: {
-      // fileLocation: '=',
-      // objectLocation: '='
-      objectsToPlot: '&'
+      objectsToPlot: '&',
+      width: '@',
+      height: '@'
     },
     // TODO change if needed
     templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/drawRootObject.html',
@@ -17,6 +17,7 @@ lhcbprPlotModule.directive('drawRootObjectsSame', function() {
     link: function(scope, element) {
       var pad = element.children()[0];
       pad.innerHTML = "";
+      pad.setAttribute('style', 'width: '+scope.width+'; height: '+scope.height+';');
       var i;
       var obj_index = 1;
       var plotColor = false;
