@@ -1,3 +1,4 @@
+// TODO replace this with the service.
 lhcbprPlotModule.directive('drawD3Histogram', function() {
   return {
     restrict: 'E',
