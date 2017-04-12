@@ -44,16 +44,26 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
             JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[1].fileLocation, function(file1) {
               file0.ReadObject($scope.objectsToPlot()[0].objectLocation, function(obj0) {
                 file1.ReadObject($scope.objectsToPlot()[1].objectLocation, function(obj1) {
+                  var drawsamepad = pad.children[0];
+                  obj1.fLineColor = obj1.fLineColor+10;
+                  JSROOT.draw(drawsamepad, obj0);
+                  JSROOT.draw(drawsamepad, obj1, "SAME");
                   var histogram = rootObjManipulator.ratioOfHists(obj0, obj1);
                   // Errors are now invalid, do not plot them.
-                  JSROOT.draw(pad.children[0], histogram, "HIST");
+                  // JSROOT.draw(pad.children[0], histogram, "HIST");
+
+                  debugger;
 
                   drawD3HistogramService.draw(
                     pad.children[1],
                     rGetter.getVisibleBinValuesFromHist(histogram),
                     getVisibleBinEdgesFromHist(histogram),
-                    $scope.width,
-                    100
+                    {
+                      width: $scope.width,
+                      height: 125,
+                      // TODO figure out how to get the margin values directly from the plot
+                      margin: {top: 25, right: 80, bottom: 30, left: 80}
+                    }
                   );
                 });
               });
