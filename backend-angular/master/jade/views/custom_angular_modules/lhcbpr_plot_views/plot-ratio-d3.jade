@@ -1,12 +1,16 @@
 style.
   .bar rect {
-    fill: steelblue;
-
+    fill: white;
   }
 
   .bar text {
     fill: #000;
     font: 10px sans-serif;
+  }
+
+  .histogramline line {
+    stroke-width: 2;
+    stroke: red;
   }
 
 div(ng-repeat="item in graphs()", ng-hide="noJobData")

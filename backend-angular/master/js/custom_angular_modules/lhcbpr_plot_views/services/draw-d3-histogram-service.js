@@ -91,6 +91,35 @@ lhcbprPlotModule.service('drawD3HistogramService', function () {
       .attr("width", function(d) { return xScale(d.highEdge) - xScale(d.lowEdge); })
       .attr("height", function(d) { return innerHeight - yScale(d.value); });
 
+    // TODO css for the lines
+    // left hand line
+    bars.append("line")
+      .attr('class', 'histogramline')
+      .attr('x1', 0)
+      .attr('x2', 0)
+      .attr('y1', function(d, i) {
+        if(bins[i-1]) {
+          return - yScale(d.value) + yScale(bins[i-1].value);
+        }
+        else 
+        { 
+          return - yScale(d.value);
+        }
+      })
+      .attr('y2', 0)
+      .style('stroke-width', 2)
+      .style('stroke', 'red');
+
+    // top line
+    bars.append("line")
+      .attr('class', 'histogramline')
+      .attr('x1', 0)
+      .attr('x2', function(d) { return xScale(d.highEdge) - xScale(d.lowEdge); })
+      .attr('y1', 0)
+      .attr('y2', 0)
+      .style('stroke-width', 2)
+      .style('stroke', 'red');
+
 
     // Create x axis
     g.append("g")
@@ -106,34 +135,6 @@ lhcbprPlotModule.service('drawD3HistogramService', function () {
       .attr("class", "axis axis--y")
       .attr("transform", "translate(0," + yScale(yScale.domain()[1]) + ")")
       .call(yAxis);
-
-    g.selectAll('line.markers')
-      .data([1.0, 2.0])
-      .enter()
-      .append('line')
-      // TODO add class
-      .style('stroke-width', 1)
-      .style('stroke', 'black')
-      .attr('x1', xScale(xScale.domain()[0]))
-      .attr('x2', xScale(xScale.domain()[1]))
-      .attr('y1', function(d) { return yScale(d); })
-      .attr('y2', function(d) { return yScale(d); })
-      .attr('stroke-dasharray', 5+","+5);
-
-    g.selectAll('text.markers')
-      .data([1, 2])
-      .enter()
-      .append('text')
-      // TODO add class
-      .text(function (d) { return d+".0"; })
-      .attr('x', xScale(xScale.domain()[1])+5)
-      .attr('y', function (d) { return yScale(d); })
-      .attr('dominant-baseline', 'central');
-
-    g.append('text')
-      .text("Ratio")
-      .attr('x', xScale((xScale.domain()[1] - xScale.domain()[0])/2.0))
-      .attr('y', yScale(-0.5));
 
     // Interactivity
     var barsTooltips = bars.append("text")
@@ -154,6 +155,11 @@ lhcbprPlotModule.service('drawD3HistogramService', function () {
       bar.select("text")
         .style("display", "none");
     });
-    // }
-  }
+
+    return {
+      svg: svg,
+      xScale: xScale,
+      yScale: yScale
+    };
+  };
 });
