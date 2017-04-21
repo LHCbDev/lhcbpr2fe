@@ -200,6 +200,8 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                       theLine.style("display", "none");
                       yAxisRight.tickValues(yAxisRightValues);
                       yAxisRightG.call(yAxisRight);
+                      yAxisLeft.tickValues(yAxisLeftValues);
+                      yAxisLeftG.call(yAxisLeft);
                     });
 
                   // svg.on("mouseover", function(d, i) {
