@@ -76,8 +76,9 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                     .data([0.5, 0.8, 1, 1.2, 1.5, 2.0])
                     .enter()
                     .append('line')
+                    .style("shape-rendering", "crispEdges")
                   // TODO add class
-                    .style('stroke-width', 1)
+                    // .style('stroke-width', 1)
                     .style('stroke', 'black')
                     .attr('x1', xScale(xScale.domain()[0]))
                     .attr('x2', xScale(xScale.domain()[1]))
@@ -126,14 +127,86 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                     return format(value-1);
                   };
 
+                  var yAxisRightValues = [0, 0.5, 0.80, 1, 1.20, 1.5, 2.0];
                   var yAxisRight = d3.axisRight(yScale)
-                        .tickValues([0, 0.5, 0.80, 1, 1.20, 1.5, 2.0])
+                        .tickValues(yAxisRightValues)
                         .tickFormat(yAxisRightFormat);
 
-                  g.append("g")
+                  var yAxisRightG = g.append("g")
                     .attr("class", "axis axis--y")
                     .attr("transform", "translate("+xScale.range()[1]+"," + yScale(yScale.domain()[1]) + ")")
                     .call(yAxisRight);
+
+                  // Interactivity
+
+                  // Create a line which will be THE line. You'll see
+                  var theLine = g.append("line")
+                        .style('stroke', 'black')
+                        .style("shape-rendering", "crispEdges")
+                        .attr('x1', xScale(xScale.domain()[0]))
+                        .attr('x2', xScale(xScale.domain()[1]))
+                        .attr('y1', yScale(0))
+                        .attr('y2', yScale(0));
+
+                  // Get the left axis
+                  var yAxisLeftValues = [0.0, 0.5, 1.0, 1.5, 2.0];
+                  // This should overwrite anything that's been given by the d3
+                  // histogram directive.
+                  var yAxisLeft = d3.axisLeft(yScale).tickValues(yAxisLeftValues);;
+                  var yAxisLeftG = svg.select('.axis--y').call(yAxisLeft);
+                  //       .append('line')
+                  // // TODO add class
+                  //       .style('stroke-width', 1)
+                  //       .style('stroke', 'black')
+                  //       .attr('x1', xScale(xScale.domain()[0]))
+                  //       .attr('x2', xScale(xScale.domain()[1]))
+                  //       .attr('y1', function(d) { return yScale(d); })
+                  //       .attr('y2', function(d) { return yScale(d); })
+
+                  // Invisible rectangle as https://stackoverflow.com/questions/16918194/d3-js-mouseover-event-not-working-properly-on-svg-group
+
+                  g.append('rect')
+                    .attr('class', 'click-capture')
+                    .style('visibility', 'hidden')
+                    .attr('x', xScale.range()[0])
+                    .attr('y', yScale.range()[1])
+                    .attr('width', xScale.range()[1] - xScale.range()[0])
+                    .on("mousemove", function () {
+                      var cx = d3.mouse(this)[0];
+                      var cy = d3.mouse(this)[1];
+                      theLine.attr('y1', cy)
+                        .attr('y2', cy);
+
+                      var newYAxisRightValues = _.filter(yAxisRightValues, function(d) {
+                        return Math.abs(d - yScale.invert(cy)) > 0.07;
+                      });
+                      newYAxisRightValues.push(yScale.invert(cy));
+                      yAxisRight.tickValues(newYAxisRightValues);
+                      yAxisRightG.call(yAxisRight);
+
+                      var newYAxisLeftValues = _.filter(yAxisLeftValues, function(d) {
+                        return Math.abs(d - yScale.invert(cy)) > 0.07;
+                      });
+                      newYAxisLeftValues.push(yScale.invert(cy));
+                      yAxisLeft.tickValues(newYAxisLeftValues);
+                      yAxisLeftG.call(yAxisLeft);
+
+                      debugger;
+                    }) .attr('height', yScale.range()[0] - yScale.range()[1])
+                    .on("mouseover", function () {
+                      theLine.style("display", "block");
+                    })
+                    .on("mouseout", function () {
+                      theLine.style("display", "none");
+                      yAxisRight.tickValues(yAxisRightValues);
+                      yAxisRightG.call(yAxisRight);
+                    });
+
+                  // svg.on("mouseover", function(d, i) {
+                  //   // d3.select(this).attr({
+                  //   //   fill: "orange"
+                  //   // });
+                  // });
 
 
                 });
@@ -159,7 +232,7 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
       }
 
       // TODO move this logic to the draw function
-      var pad = element.children()[0];
+      var pad = element.children()[1];
       // pad.innerHTML = "";
       pad.children[0].setAttribute(
         'style',
