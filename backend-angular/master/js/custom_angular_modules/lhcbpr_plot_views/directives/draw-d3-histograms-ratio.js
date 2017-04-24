@@ -165,13 +165,8 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
 
                   // Invisible rectangle as https://stackoverflow.com/questions/16918194/d3-js-mouseover-event-not-working-properly-on-svg-group
 
-                  g.append('rect')
-                    .attr('class', 'click-capture')
-                    .style('visibility', 'hidden')
-                    .attr('x', xScale.range()[0])
-                    .attr('y', yScale.range()[1])
-                    .attr('width', xScale.range()[1] - xScale.range()[0])
-                    .on("mousemove", function () {
+                  // TODO at the moment the invisible rectangle blocks the events getting to the bars. Not sure how to solve this yet... Unless the bars are inside the rectangle? that's kind of cray though. maybe.
+                  g.on("mousemove", function () {
                       var cx = d3.mouse(this)[0];
                       var cy = d3.mouse(this)[1];
                       theLine.attr('y1', cy)
@@ -190,9 +185,7 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                       newYAxisLeftValues.push(yScale.invert(cy));
                       yAxisLeft.tickValues(newYAxisLeftValues);
                       yAxisLeftG.call(yAxisLeft);
-
-                      debugger;
-                    }) .attr('height', yScale.range()[0] - yScale.range()[1])
+                    })
                     .on("mouseover", function () {
                       theLine.style("display", "block");
                     })
@@ -202,15 +195,14 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                       yAxisRightG.call(yAxisRight);
                       yAxisLeft.tickValues(yAxisLeftValues);
                       yAxisLeftG.call(yAxisLeft);
-                    });
-
-                  // svg.on("mouseover", function(d, i) {
-                  //   // d3.select(this).attr({
-                  //   //   fill: "orange"
-                  //   // });
-                  // });
-
-
+                    })
+                    .append('rect')
+                    .attr('class', 'click-capture')
+                    .style('visibility', 'hidden')
+                    .attr('x', xScale.range()[0])
+                    .attr('y', yScale.range()[1])
+                    .attr('width', xScale.range()[1] - xScale.range()[0])
+                    .attr('height', yScale.range()[0] - yScale.range()[1]);
                 });
               });
             });
