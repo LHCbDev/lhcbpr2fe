@@ -28,5 +28,5 @@ lhcbprPlotModule.directive("plotRatioD3", function() {
   };
 });
 lhcbprPlotModule.config(['plotViewsProvider', function(plotViewsProvider) {
-  plotViewsProvider.registerPlotView("plotRatioD3", "Ratio (with d3) [BETA]");
+  plotViewsProvider.registerPlotView("plotRatioD3", "Ratio (with d3)");
 }]);
