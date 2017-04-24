@@ -1,0 +1,23 @@
+style.
+  .bar rect {
+    fill: white;
+  }
+
+  .bar text {
+    fill: #000;
+    font: 10px sans-serif;
+  }
+
+  .histogramline line {
+    stroke-width: 2;
+    stroke: red;
+  }
+
+div(ng-repeat="item in graphs()", ng-hide="noJobData")
+  // This currently does not iterate properly. If multiple plots were selected
+  // it would plot all the same plots then all the ratio plots
+  // draw-root-objects-same(objects-to-plot="ctrl.getObjectsToPlot(item)")
+  draw-d3-histograms-ratio(objects-to-plot="ctrl.getObjectsToPlot(item)" width="800" height="500")
+  // TODO extract the bin edges
+// draw-d3-histogram(bin-edges="binEdges" bin-values="binValues" height=300, width=300)
+// svg.foo(width="400" height="100")

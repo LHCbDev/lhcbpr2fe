@@ -1,2 +1,3 @@
 div(ng-repeat="item in graphs()", ng-hide="noJobData")
-    draw-root-objects-same(objects-to-plot="ctrl.getObjectsToPlot(item)")
+  center
+    draw-root-objects-same(objects-to-plot="ctrl.getObjectsToPlot(item)", width="800px", height="400px")
