@@ -134,8 +134,38 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
 
                   var yAxisRightG = g.append("g")
                     .attr("class", "axis axis--y")
-                    .attr("transform", "translate("+xScale.range()[1]+"," + yScale(yScale.domain()[1]) + ")")
+                    .attr("transform", "translate("+xScale.range()[1]+"," + yScale.range()[1] + ")")
                     .call(yAxisRight);
+
+                  var rotateTheObject = function(obj) {
+                    var bbox = obj.node().getBBox();
+                    var rotateAround = {
+                      x: +bbox.x+bbox.width/2,
+                      y: +bbox.y+bbox.height/2
+                    };
+                    return obj.attr('transform', 'rotate(-90 '+rotateAround.x+' '+rotateAround.y+')');
+                  };
+
+                  var yAxisLeftLabel = g.append("text")
+                        .attr('x', xScale.range()[0])
+                        .attr('y', yScale(1.0))
+                        .attr('text-anchor', 'middle')
+                        .text("Ratio");
+
+                  rotateTheObject(yAxisLeftLabel);
+                  yAxisLeftLabel.attr('dy', '-3.5em');
+                  yAxisLeftLabel.attr('dx', '-0.5em');
+
+
+                  var yAxisRightLabel = g.append("text")
+                        .attr('x', xScale.range()[1])
+                        .attr('y', yScale(1.0))
+                        .attr('text-anchor', 'middle')
+                        .text("% difference");
+
+                  rotateTheObject(yAxisRightLabel);
+                  yAxisRightLabel.attr('dy', '4.0em');
+                  yAxisRightLabel.attr('dx', '-0.5em');
 
                   // Interactivity
 
