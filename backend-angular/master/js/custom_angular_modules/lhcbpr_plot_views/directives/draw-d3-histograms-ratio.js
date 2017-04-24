@@ -52,7 +52,10 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                   // Errors are now invalid, do not plot them.
                   // JSROOT.draw(pad.children[0], histogram, "HIST");
 
-                  d3.selectAll('.stat_layer').remove();
+                  // Remove stats box
+                  // TODO this is a little fragile and may break if JSROOT
+                  // changes things. Make more robust somehow.
+                  d3.select('.stat_layer').select('g').remove();
 
 
                   var histogramInfo = drawD3HistogramService.draw(
