@@ -67,16 +67,11 @@ lhcbprPlotModule.directive('drawD3HistogramsDifference', function() {
                       height: 300,
                       // TODO figure out how to get the margin values directly from the plot
                       margin: {top: 25, right: 80, bottom: 30, left: 80}
-                    },
-                    {
-                      yTicks: 10
                     }
+                    // {
+                    //   yTicks: 10
+                    // }
                   );
-
-                  //////////////////////////////////////////////////////////////////
-                  // // TODO this will all be reimplemented when we have a handle //
-                  // // on the axes.                                              //
-                  //////////////////////////////////////////////////////////////////
 
                   // Add some lines to the plot
                   var svg = histogramInfo.svg;
@@ -91,7 +86,7 @@ lhcbprPlotModule.directive('drawD3HistogramsDifference', function() {
                     .append('line')
                     .style("shape-rendering", "crispEdges")
                   // TODO add class
-                    // .style('stroke-width', 1)
+                  // .style('stroke-width', 1)
                     .style('stroke', 'black')
                     .attr('x1', xScale(xScale.domain()[0]))
                     .attr('x2', xScale(xScale.domain()[1]))
@@ -132,14 +127,14 @@ lhcbprPlotModule.directive('drawD3HistogramsDifference', function() {
                   };
 
                   var yAxisRight = d3.axisRight(yScale)
-                        .ticks(10)
+                        // .ticks(10)
                         .tickFormat(yAxisRightFormat);
-                  var yAxisRightValues = yAxisRight.tickValues();
+                  var yAxisRightValues = yScale.ticks();
 
                   var yAxisRightG = g.append("g")
-                    .attr("class", "axis axis--y")
-                    .attr("transform", "translate("+xScale.range()[1]+"," + yScale.range()[1] + ")")
-                    .call(yAxisRight);
+                        .attr("class", "axis axis--y")
+                        .attr("transform", "translate("+xScale.range()[1]+"," + yScale.range()[1] + ")")
+                        .call(yAxisRight);
 
                   var rotateTheObject = function(obj) {
                     var bbox = obj.node().getBBox();
@@ -174,7 +169,6 @@ lhcbprPlotModule.directive('drawD3HistogramsDifference', function() {
                   // Interactivity
 
                   // Check if I can get the axis values if they're automatically generated
-                  // debugger;
 
                   // Create a line which will be THE line. You'll see
                   var theLine = g.append("line")
@@ -187,10 +181,10 @@ lhcbprPlotModule.directive('drawD3HistogramsDifference', function() {
 
                   // Get the left axis
                   // var yAxisLeftValues = [0.0, 0.5, 1.0, 1.5, 2.0];
-                  var yAxisLeftValues = yAxis.tickValues();
+                  var yAxisLeftValues = yScale.ticks();
                   // This should overwrite anything that's been given by the d3
                   // histogram directive.
-                  var yAxisLeft = d3.axisLeft(yScale).tickValues(yAxisLeftValues);;
+                  var yAxisLeft = d3.axisLeft(yScale).tickValues(yAxisLeftValues);
                   var yAxisLeftG = svg.select('.axis--y').call(yAxisLeft);
                   //       .append('line')
                   // // TODO add class
@@ -205,25 +199,35 @@ lhcbprPlotModule.directive('drawD3HistogramsDifference', function() {
 
                   // TODO at the moment the invisible rectangle blocks the events getting to the bars. Not sure how to solve this yet... Unless the bars are inside the rectangle? that's kind of cray though. maybe.
                   g.on("mousemove", function () {
-                      var cx = d3.mouse(this)[0];
-                      var cy = d3.mouse(this)[1];
-                      theLine.attr('y1', cy)
-                        .attr('y2', cy);
+                    var cx = d3.mouse(this)[0];
+                    var cy = d3.mouse(this)[1];
+                    theLine.attr('y1', cy)
+                      .attr('y2', cy);
 
-                      var newYAxisRightValues = _.filter(yAxisRightValues, function(d) {
-                        return Math.abs(d - yScale.invert(cy)) > 0.07;
-                      });
-                      newYAxisRightValues.push(yScale.invert(cy));
-                      yAxisRight.tickValues(newYAxisRightValues);
-                      yAxisRightG.call(yAxisRight);
+                    var yAxisRightValuesDifferences = _.map(yAxisRightValues, function(v) {
+                      return Math.abs(v - yScale.invert(cy));
+                    });
+                    var minIndex = _.indexOf(yAxisRightValuesDifferences, _.min(yAxisRightValuesDifferences));
+                    var newYAxisRightValues = angular.copy(yAxisRightValues);
+                    newYAxisRightValues[minIndex] = yScale.invert(cy);
+                    yAxisRight.tickValues(newYAxisRightValues);
+                    yAxisRightG.call(yAxisRight);
 
-                      var newYAxisLeftValues = _.filter(yAxisLeftValues, function(d) {
-                        return Math.abs(d - yScale.invert(cy)) > 0.07;
-                      });
-                      newYAxisLeftValues.push(yScale.invert(cy));
-                      yAxisLeft.tickValues(newYAxisLeftValues);
-                      yAxisLeftG.call(yAxisLeft);
-                    })
+                    var yAxisLeftValuesDifferences = _.map(yAxisLeftValues, function(v) {
+                      return Math.abs(v - yScale.invert(cy));
+                    });
+                    var minIndex = _.indexOf(yAxisLeftValuesDifferences, _.min(yAxisLeftValuesDifferences));
+                    var newYAxisLeftValues = angular.copy(yAxisLeftValues);
+                    newYAxisLeftValues[minIndex] = yScale.invert(cy);
+                    yAxisLeft.tickValues(newYAxisLeftValues);
+                    yAxisLeftG.call(yAxisLeft);
+                    // var newYAxisLeftValues = _.filter(yAxisLeftValues, function(d) {
+                    //   return Math.abs(d - yScale.invert(cy)) > 0.07;
+                    // });
+                    // newYAxisLeftValues.push(yScale.invert(cy));
+                    // yAxisLeft.tickValues(newYAxisLeftValues);
+                    // yAxisLeftG.call(yAxisLeft);
+                  })
                     .on("mouseover", function () {
                       theLine.style("display", "block");
                     })
