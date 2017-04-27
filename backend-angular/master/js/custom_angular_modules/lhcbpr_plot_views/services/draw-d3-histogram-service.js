@@ -1,11 +1,17 @@
 lhcbprPlotModule.service('drawD3HistogramService', function () {
   // Service that makes a d3 histogram
-  this.draw = function(element, binValues, binEdges, layout) {
+  this.draw = function(element, binValues, binEdges, layout, optionals) {
     // Draws a histogram using d3 inside the given element.
 
     var width = layout.width || console.error("No width given for element: "+element);
     var height = layout.height || console.error("No height given for element: "+element);
     var margin = layout.margin || console.error("No margins given for element: "+element);
+
+    if (optionals === undefined) {
+      optionals = {};
+    }
+    var yDomain = optionals.yDomain; // or undefined.
+    var yTicks = optionals.yTicks;   // or undefined.
 
     var svg = d3.select(element)
           .append('svg')
@@ -38,10 +44,13 @@ lhcbprPlotModule.service('drawD3HistogramService', function () {
           .domain(d3.extent(binEdges))
           .range([0, innerWidth]);
 
-    // var yDomain = d3.extent(bins, function(d) { return d.value; });
+    // if yDomain was not passed in the layout, calculate it.
+    if(yDomain === undefined) {
+      yDomain = d3.extent(bins, function(d) { return d.value; });
+    }
     var yScale = d3.scaleLinear()
-          // .domain(yDomain)
-          .domain([0, 2])
+          .domain(yDomain)
+          // .domain([0, 2])
           // .range([innerHeight, 0]);
           .range([innerHeight, 0]);
 
@@ -128,8 +137,10 @@ lhcbprPlotModule.service('drawD3HistogramService', function () {
       .call(d3.axisBottom(xScale));
 
     // Create y axis
-    var yAxis = d3.axisLeft(yScale)
-          .ticks(3);
+    var yAxis = d3.axisLeft(yScale);
+    if(yTicks !== undefined) {
+      yAxis.ticks(yTicks);
+    }
 
     g.append("g")
       .attr("class", "axis axis--y")
@@ -159,7 +170,9 @@ lhcbprPlotModule.service('drawD3HistogramService', function () {
     return {
       svg: svg,
       xScale: xScale,
-      yScale: yScale
+      yScale: yScale,
+      // xAxis: xAxis,
+      yAxis: yAxis
     };
   };
 });
