@@ -67,6 +67,10 @@ lhcbprPlotModule.directive('drawD3HistogramsRatio', function() {
                       height: 300,
                       // TODO figure out how to get the margin values directly from the plot
                       margin: {top: 25, right: 80, bottom: 30, left: 80}
+                    },
+                    {
+                      yDomain: [0, 2],
+                      yTicks: 3
                     }
                   );
 
