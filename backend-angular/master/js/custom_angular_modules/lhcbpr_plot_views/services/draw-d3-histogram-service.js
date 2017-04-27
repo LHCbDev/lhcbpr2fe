@@ -97,7 +97,17 @@ lhcbprPlotModule.service('drawD3HistogramService', function () {
 
     // Create the rectangles for the bars
     bars.append("rect")
-      .attr("width", function(d) { return xScale(d.highEdge) - xScale(d.lowEdge); })
+      .attr("width", function(d) {
+        // If the high and low edge are defined, draw a line of that length. If
+        // not, just draw a line of 0 length (this is a bit hacky, but a neater
+        // solution involves a lot more code) TODO consider if it's worth it to
+        // do this 'properly'.
+        if(d.highEdge !== undefined && d.lowEdge !== undefined) {
+          return xScale(d.highEdge) - xScale(d.lowEdge);
+        } else {
+          return 0;
+        }
+      })
       .attr("height", function(d) { return innerHeight - yScale(d.value); });
 
     // TODO css for the lines
@@ -123,7 +133,17 @@ lhcbprPlotModule.service('drawD3HistogramService', function () {
     bars.append("line")
       .attr('class', 'histogramline')
       .attr('x1', 0)
-      .attr('x2', function(d) { return xScale(d.highEdge) - xScale(d.lowEdge); })
+      .attr('x2', function(d) { 
+        // If the high and low edge are defined, draw a line of that length. If
+        // not, just draw a line of 0 length (this is a bit hacky, but a neater
+        // solution involves a lot more code) TODO consider if it's worth it to
+        // do this 'properly'.
+        if(d.highEdge !== undefined && d.lowEdge !== undefined) {
+          return xScale(d.highEdge) - xScale(d.lowEdge);
+        } else {
+          return 0;
+        }
+      })
       .attr('y1', 0)
       .attr('y2', 0)
       .style('stroke-width', 2)
