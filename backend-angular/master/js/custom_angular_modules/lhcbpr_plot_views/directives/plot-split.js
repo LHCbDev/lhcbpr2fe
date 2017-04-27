@@ -10,7 +10,7 @@ lhcbprPlotModule.directive("plotSplit", function() {
     },
     // TODO make this a less magic folder path, possibly by adding a method to
     // the lhcbprPlotModule or something
-    templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/plotSplit.html',
+    templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/plot-split.html',
     controllerAs: "ctrl",
     controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
 

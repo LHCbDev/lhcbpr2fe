@@ -1,4 +1,3 @@
-
 lhcbprPlotModule.directive("plotSame", function() {
   return {
     restrict: 'E',
@@ -11,7 +10,7 @@ lhcbprPlotModule.directive("plotSame", function() {
     },
     // TODO make this a less magic folder path, possibly by adding a method to
     // the lhcbprPlotModule or something
-    templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/plotSame.html',
+    templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/plot-same.html',
     controllerAs: "ctrl",
     controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
 
