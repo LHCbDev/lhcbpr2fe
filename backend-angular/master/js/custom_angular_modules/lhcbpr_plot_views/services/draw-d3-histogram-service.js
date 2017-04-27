@@ -170,7 +170,9 @@ lhcbprPlotModule.service('drawD3HistogramService', function () {
     return {
       svg: svg,
       xScale: xScale,
-      yScale: yScale
+      yScale: yScale,
+      // xAxis: xAxis,
+      yAxis: yAxis
     };
   };
 });
