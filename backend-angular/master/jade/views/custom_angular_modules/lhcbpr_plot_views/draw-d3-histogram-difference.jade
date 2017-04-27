@@ -1,0 +1,14 @@
+style.
+  g {
+    pointer-events: all;
+  }
+  line {
+    shape-rendering: crispEdges;
+  }
+center(ng-hide="problemWithPlotting")
+  // div.drawsamerootcanvas(ng-style="{'width': 200+'px', 'height': 100+'px'}") 
+  div.drawsamerootcanvas
+  div.ratiocanvas
+  // draw-d3-histogram(bin-edges="binEdges", bin-values="binValues" width="{{ width }}" height="100" ng-if="readyToPlot()")
+.alert.alert-danger(ng-if="problemWithPlotting")
+  | {{ problemWithPlotting }}
