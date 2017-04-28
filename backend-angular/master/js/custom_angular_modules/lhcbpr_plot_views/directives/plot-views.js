@@ -1,6 +1,3 @@
-// TODO there is a lot of repetition of code in this file. Find a way to make it
-// less so.
-
 defaultPlotDirectiveFactory('plotDifference', 'Difference', 'Difference');
 defaultPlotDirectiveFactory('plotRatio', 'Ratio', 'Ratio');
 defaultPlotDirectiveFactory('plotKolmogorov', 'Kolmogorov', 'Kolmogorov');

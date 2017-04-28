@@ -62,6 +62,7 @@ var source = {
                     'js/custom_angular_modules/*/controllers/*.js',
                     'js/custom_angular_modules/*/directives/*.js',
                     'js/custom_angular_modules/*/services/*.js',
+                    'js/custom_angular_modules/*/values/*.js',
                     // Main app
                     'js/init.js',
                     'js/classes/*.js',

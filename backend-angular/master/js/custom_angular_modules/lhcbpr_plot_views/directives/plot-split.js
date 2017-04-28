@@ -1,4 +1,4 @@
-lhcbprPlotModule.directive("plotSplit", function() {
+lhcbprPlotModule.directive("plotSplit", ["defaultTemplateDir", function(defaultTemplateDir) {
   return {
     restrict: 'E',
     scope: {
@@ -8,9 +8,7 @@ lhcbprPlotModule.directive("plotSplit", function() {
       test: '=',
       url: '='
     },
-    // TODO make this a less magic folder path, possibly by adding a method to
-    // the lhcbprPlotModule or something
-    templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/plotSplit.html',
+    templateUrl: defaultTemplateDir+'plot-split.html',
     controllerAs: "ctrl",
     controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
 
@@ -21,7 +19,7 @@ lhcbprPlotModule.directive("plotSplit", function() {
       this.getFilesFromResources = resourceParser.getFilesFromResources;
     }]
   };
-});
+}]);
 lhcbprPlotModule.config(['plotViewsProvider', function(plotViewsProvider) {
   plotViewsProvider.registerPlotView('plotSplit', 'Split');
 }]);

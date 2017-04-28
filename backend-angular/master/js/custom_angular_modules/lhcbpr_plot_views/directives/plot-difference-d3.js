@@ -1,13 +1,11 @@
-lhcbprPlotModule.directive("plotDifferenceD3", function() {
+lhcbprPlotModule.directive("plotDifferenceD3", ["defaultTemplateDir", function(defaultTemplateDir) {
   return {
     restrict: 'E',
     scope: {
       graphs: '&',
       url: '='
     },
-    // TODO make this a less magic folder path, possibly by adding a method to
-    // the lhcbprPlotModule or something
-    templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/plot-difference-d3.html',
+    templateUrl: defaultTemplateDir+'plot-difference-d3.html',
     controllerAs: "ctrl",
     controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
       this.getObjectsToPlot = function(payload) {
@@ -23,7 +21,7 @@ lhcbprPlotModule.directive("plotDifferenceD3", function() {
       };
     }]
   };
-});
+}]);
 lhcbprPlotModule.config(['plotViewsProvider', function(plotViewsProvider) {
   plotViewsProvider.registerPlotView("plotDifferenceD3", "Difference (with d3)");
 }]);
