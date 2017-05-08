@@ -58,11 +58,17 @@ var source = {
              app: [
                     // Custom modules
                     'js/custom_angular_modules/*/init.js',
+                    'ts/custom_angular_modules/*/init.ts',
                     'js/custom_angular_modules/*/providers/*.js',
                     'js/custom_angular_modules/*/controllers/*.js',
                     'js/custom_angular_modules/*/directives/*.js',
                     'js/custom_angular_modules/*/services/*.js',
                     'js/custom_angular_modules/*/values/*.js',
+                    'ts/custom_angular_modules/*/providers/*.ts',
+                    'ts/custom_angular_modules/*/controllers/*.ts',
+                    'ts/custom_angular_modules/*/directives/*.ts',
+                    'ts/custom_angular_modules/*/services/*.ts',
+                    'ts/custom_angular_modules/*/values/*.ts',
                     // Main app
                     'js/init.js',
                     'js/classes/*.js',
@@ -74,7 +80,8 @@ var source = {
                     'js/filters/*.js',
                     'modules/*/js/init.js'
                   ],
-             watch: ['js/**/*.js', 'modules/**/*.js']
+             // watch: ['js/**/*.js', 'modules/**/*.js']
+             watch: ['js/**/*.js', 'modules/**/*.js', 'ts/**/*.ts']
            },
   templates:
       {
