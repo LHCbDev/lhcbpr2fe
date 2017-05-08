@@ -9,6 +9,7 @@
   "devDependencies": {
     "css-flip": "git://github.com/geedmo/css-flip",
     "gulp": "^3.9.1",
+    "gulp-typescript": "^3.1.6",
     "gulp-angular-htmlify": "^0.4.0",
     "gulp-changed": "^1.1.0",
     "gulp-clean-css": "^2.0.11",

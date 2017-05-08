@@ -16,7 +16,7 @@ var gulp = require('gulp'), changed = require('gulp-changed'),
     PluginError = gutil.PluginError, prettify = require('gulp-html-prettify'),
     rename = require('gulp-rename'), sourcemaps = require('gulp-sourcemaps'),
     through = require('through2'), uglify = require('gulp-uglify'),
-    w3cjs = require('gulp-w3cjs');
+    w3cjs = require('gulp-w3cjs'), ts = require('gulp-typescript');
 // ============================================================================
 
 // ignore everything that begins with underscore
@@ -140,7 +140,13 @@ gulp.task('scripts:app', function() {
       }).pipe(gulp.dest(build.scripts.app.dir));
   return gulp.src(source.scripts.app)
       .pipe(params.sourcemaps ? sourcemaps.init() : gutil.noop())
-      .pipe(concat(build.scripts.app.main))
+      // .pipe(concat(build.scripts.app.main))
+      .pipe(ts({
+        noImplicitAny: true,
+        noEmitOnError: false,
+        allowJs: true,
+        out: build.scripts.app.main
+      }))
       .pipe(gulp.dest(build.scripts.app.dir))
       .on('end', function() {
         var script = build.scripts.app.dir + '/app.js';
