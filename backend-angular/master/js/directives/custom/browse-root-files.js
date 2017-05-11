@@ -44,10 +44,10 @@ App.directive('browseRootFiles', [function () {
           });
         };
 
-        var createMenuNode = function(name, fileName, hasChildren, payload) {
+        var createMenuNode = function(name, resourceName, hasChildren, payload) {
           var retObj = {
             name: name,
-            fileName: fileName,
+            resourceName: resourceName,
             isExpanded: false
           };
           if(hasChildren) {
@@ -74,63 +74,71 @@ App.directive('browseRootFiles', [function () {
            * it into something more reasonable to navigate in javascript.
            *
            * If it does not, this is a bug!
+           *
+           * filesObj is something like:
+           * {
+           *   "ROOT file": // the file structure in JSON
+           * }
+           *
+           * Where "ROOT file" is the name of the resource (e.g. resourceParser.getName(resource))
            */
 
-            var parsed = [];
-            var i;
-            var j;
-            var fileName;
-            for(fileName in filesObj){
-              var paths = filesObj[fileName];
-              var resourcesMatchingRegExp = resourceParser.findResourcesWithRegexValue(
-                resources, new RegExp("^"+fileName+"$"));
-              parsed.push(createMenuNode(fileName, fileName, true));
+          var parsed = [];
+          var i;
+          var j;
+          var resourceName;
+          for(resourceName in filesObj){
+            var paths = filesObj[resourceName];
+            var resource = _.find(resources, function(value, ind) {
+              return resourceParser.getName(value) === resourceName;
+            });
+            parsed.push(createMenuNode(resourceName, resourceName, true));
 
-              for(i in paths) {
+            for(i in paths) {
 
-                var partialParsedPath = [parsed.length-1, "children"];
-                var path = paths[i];
-                var splitPath = path.split('/');
+              var partialParsedPath = [parsed.length-1, "children"];
+              var path = paths[i];
+              var splitPath = path.split('/');
 
-                // Remove falsy values like "" from splitPath
-                splitPath = _.remove(splitPath);
+              // Remove falsy values like "" from splitPath
+              splitPath = _.remove(splitPath);
 
-                for(j in splitPath) {
-                  var objName = splitPath[j];
-                  // Check if the obj is a directory
-                  // If this parsedPath does not exist, create it
-                  var existingObjs = _.filter(
-                    _.get(parsed, partialParsedPath),
-                    function(val, key, coll) {
-                      return typeof val === "object" && val.name === objName;
-                    });
+              for(j in splitPath) {
+                var objName = splitPath[j];
+                // Check if the obj is a directory
+                // If this parsedPath does not exist, create it
+                var existingObjs = _.filter(
+                  _.get(parsed, partialParsedPath),
+                  function(val, key, coll) {
+                    return typeof val === "object" && val.name === objName;
+                  });
 
-                  if(existingObjs.length === 1) {
-                    // Find it, add it
-                    partialParsedPath.push(_.indexOf(_.get(parsed, partialParsedPath), existingObjs[0]));
-                    if(_.includes(path, "/"+objName+"/")) {
-                      partialParsedPath.push("children");
-                    };
-                  } else if(existingObjs.length > 1) {
-                    console.error("Something has gone wrong!");
-                  } else {
-                    partialParsedPath.push(_.get(parsed, partialParsedPath).length);
-                    var isDirectory = _.includes(path, "/"+objName+"/");
-                    _.set(parsed, partialParsedPath, createMenuNode(
-                      objName,
-                      fileName,
-                      isDirectory,
-                      createPayload(
-                        resourcesMatchingRegExp,
-                        getPathUpToLevel(path, j)
-                      )
-                    ));
-                    if(isDirectory) {
-                      partialParsedPath.push("children");
-                    }
+                if(existingObjs.length === 1) {
+                  // Find it, add it
+                  partialParsedPath.push(_.indexOf(_.get(parsed, partialParsedPath), existingObjs[0]));
+                  if(_.includes(path, "/"+objName+"/")) {
+                    partialParsedPath.push("children");
+                  };
+                } else if(existingObjs.length > 1) {
+                  console.error("Something has gone wrong!");
+                } else {
+                  partialParsedPath.push(_.get(parsed, partialParsedPath).length);
+                  var isDirectory = _.includes(path, "/"+objName+"/");
+                  _.set(parsed, partialParsedPath, createMenuNode(
+                    objName,
+                    resourceName,
+                    isDirectory,
+                    createPayload(
+                      [resource],
+                      getPathUpToLevel(path, j)
+                    )
+                  ));
+                  if(isDirectory) {
+                    partialParsedPath.push("children");
                   }
-                };
-              }};
+                }
+              };
+            }};
 
           return parsed;
         };
@@ -152,18 +160,26 @@ App.directive('browseRootFiles', [function () {
             return resourceParser.getType(v) === "File";
           });
 
-          var objectOfResources = _.indexBy(rootFileResources, function(value) {
-            return resourceParser.getCommonValue(value);
+          // Next, make an object of filenames
+          //
+          // This is where the problems start. The browser assumes that all
+          // objects have the same filename. But they don't.
+          var objectOfNames = _.indexBy(rootFileResources, function(value) {
+            return resourceParser.getName(value);
           });
-          var objectOfPromises = _.mapValues(objectOfResources, function(value) {
+          var objectOfPromises = _.mapValues(objectOfNames, function(value, ind, coll) {
             return rootResources.lookupSingleFileResourceContents(value);
           });
 
           $q.all(objectOfPromises).then (function(response) {
+            // OK, so, now we are using attribute names instead of filenames.
+
             // Before it goes in, figure out which plots/files exist in all tests
             // HACK strip the job number from the filename.
             // TODO remove this hack with proper logic!
             var regex = /^\d+?\//;
+            // Problems.
+            // TODO the key is now the name of the resource, not the filename
             var key;
             var newResponse = {};
             for(key in response) {

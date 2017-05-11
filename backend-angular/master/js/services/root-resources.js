@@ -82,6 +82,9 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', 'resourceParser', '$q', f
 
   };
 
+  // TODO consider renaming this. It works as long as the files are comparable,
+  // not if they have the same name. E.g. if they have the same ROOT TDirectory
+  // structure inside, but their filenames are different
   this.lookupSingleFileResourceContents = function(resource) {
     /**
      * This function takes a file resource and returns the objects found in it,
@@ -91,13 +94,14 @@ App.service('rootResources', ['$http', 'BUILD_PARAMS', 'resourceParser', '$q', f
       console.error("Resource is no of type File!");
       return undefined;
     }
-    var fileName = resourceParser.getCommonValue(resource);
+    // var fileName = resourceParser.getCommonValue(resource);
     var jobIds = resourceParser.getJobIds(resource);
 
-    var i;
-    var fileLocations = _.map(jobIds, function(value) {
-      return value + "/" + fileName;
-    });
+    // var i;
+    // var fileLocations = _.map(jobIds, function(value) {
+    //   return value + "/" + fileName;
+    // });
+    var fileLocations = resourceParser.getFilesFromResource(resource);
 
     // TODO find better name
     var filesRootObjects = _.mapValues(_.indexBy(fileLocations), function(value) {
