@@ -12,8 +12,14 @@ lhcbprPlotModule.directive('drawRootObjectsSame', function() {
         templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/drawRootObject.html',
         controllerAs: "ctrl",
         controller: [
-            'BUILD_PARAMS', '$scope', '$element', '$timeout', 'objectStore',
-            function(BUILD_PARAMS: any, $scope: any, $element: any, $timeout: any, objectStore: object) {
+            'BUILD_PARAMS', '$scope', '$element',
+            function(BUILD_PARAMS: any, $scope: any, $element: any) {
+
+                let length = $scope.objectsToPlot().length;
+                if(length !== 2) {
+                    $scope.problemWithPlotting = "Wrong number of plots given (2 expected, "+length+" given.)"
+                }
+
                 $scope.BUILD_PARAMS = BUILD_PARAMS;
 
                 let pad = $element.children()[0];
