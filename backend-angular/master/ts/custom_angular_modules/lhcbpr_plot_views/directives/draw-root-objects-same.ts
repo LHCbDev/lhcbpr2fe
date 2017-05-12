@@ -11,72 +11,42 @@ lhcbprPlotModule.directive('drawRootObjectsSame', function() {
         // TODO change if needed
         templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/drawRootObject.html',
         controllerAs: "ctrl",
-        controller: ['BUILD_PARAMS', '$scope', '$element', function(BUILD_PARAMS, $scope, $element) {
-            $scope.BUILD_PARAMS = BUILD_PARAMS;
-            $scope.plottablesToPlot = [];
+        controller: [
+            'BUILD_PARAMS', '$scope', '$element', '$timeout', 'objectStore',
+            function(BUILD_PARAMS: any, $scope: any, $element: any, $timeout: any, objectStore: object) {
+                $scope.BUILD_PARAMS = BUILD_PARAMS;
 
-            // TODO make interface for o
-            for(let o of $scope.objectsToPlot()) {
-                JSROOT.OpenFile("/api/media/jobs/"+o.fileLocation, function(file) {
-                    file.ReadObject(o.objectLocation, function(plottable) {
-                        $scope.plottablesToPlot.push(plottable);
+                let pad = $element.children()[0];
+
+                JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[0].fileLocation, (f: any) => {
+                    f.ReadObject($scope.objectsToPlot()[0].objectLocation, (plotOne: any) => {
+                        JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[1].fileLocation, (f: any) => {
+                            f.ReadObject($scope.objectsToPlot()[1].objectLocation, (plotTwo: any) => {
+                                let plots = [plotOne, plotTwo];
+
+                                if(_.every(plots, (v: string) => _.startsWith(v._typename, "TGraph"))) {
+                                    let multiGraph = JSROOT.CreateTMultiGraph.apply(this, plots);
+                                    JSROOT.draw(pad, multiGraph);
+                                } else if(_.every(plots, (v: string) => _.startsWith( v._typename, "TH1"))) {
+                                    let plot_index = 1;
+                                    for(let plot_index in plots) {
+                                        // plot.fName = plot.fName + "__" + plotect.fileLocation.replace(/\//g, "__");
+                                        // TODO make a service/function to cycle through colors
+                                        plots[plot_index].fLineColor = plot_index + 1;
+                                        plots[plot_index].fSetMarkerColor = plot_index + 1;
+                                        plots[plot_index] = JSROOT.JSONR_unref(plots[plot_index]);
+                                        JSROOT.draw(pad, plots[plot_index], "same");
+                                        plot_index++;
+                                    }
+                                } else {
+                                    // TODO make more informative
+                                    $scope.problemWithPlotting = "Incompatible types selected: "
+                                        +JSON.stringify(_.map($scope.plottablesToPlot, (v: string) => v._typename));
+                                }
+                            })
+                        })
                     })
                 })
-            };
-
-            $scope.$watch(
-                (scope) => scope.plottablesToPlot,
-                function(newValue, oldValue) {
-                    debugger;
-                    if(newValue.length === $scope.objectsToPlot().length) {
-                        let pad = $element.children()[0];
-                        pad.setAttribute('style', 'width: '+$scope.width+'; height: '+$scope.height+';');
-
-                        if(_.every(newValue, (v: string) => _.startsWith(v._typename, "TGraph"))) {
-                            let mygraph = JSROOT.CreateTMultiGraph.apply(this, $scope.plottablesToPlot);
-                            JSROOT.draw(pad, mygraph);
-                        } else if(_.every(newValue, (v: string) => _.startsWith( v._typename, "TH1"))) {
-                            let obj_index = 1;
-                            for(let obj of $scope.plottablesToPlot) {
-                                // obj.fName = obj.fName + "__" + object.fileLocation.replace(/\//g, "__");
-                                // TODO make a service/function to cycle through colors
-                                obj.fLineColor = obj_index + 1;
-                                obj.fSetMarkerColor = obj_index + 1;
-                                obj = JSROOT.JSONR_unref(obj);
-                                JSROOT.draw(pad, obj, "same");
-                                obj_index++;
-                            }
-                        } else {
-                            // TODO make more informative
-                            $scope.problemWithPlotting = "Incompatible types selected: "
-                                +JSON.stringify(_.map($scope.plottablesToPlot, (v: string) => v._typename));
-                        }
-                    }
-                    // else still loading...
-                }
-            )
-        }],
-    // link: function(scope, element) {
-    //     var pad = element.children()[0];
-    //     pad.innerHTML = "";
-    //     pad.setAttribute('style', 'width: '+scope.width+'; height: '+scope.height+';');
-    //     var obj_index = 1;
-    //     // TODO figure out how to implement with promises
-    //     for(let object of scope.objectsToPlot()) {
-    //         JSROOT.OpenFile("/api/media/jobs/"+object.fileLocation, function(file) {
-    //             console.debug("Opened file: "+JSON.stringify(file, null, 2))
-    //             file.ReadObject(object.objectLocation, function(obj) {
-    //                 console.debug("Opened object: "+JSON.stringify(obj, null, 2))
-    //                 obj.fName = obj.fName + "__" + object.fileLocation.replace(/\//g, "__");
-    //                 // TODO make a service/function to cycle through colors
-    //                 obj.fLineColor = obj_index + 1;
-    //                 obj.fSetMarkerColor = obj_index + 1;
-    //                 obj = JSROOT.JSONR_unref(obj);
-    //                 JSROOT.draw(pad, obj, "same");
-    //                 obj_index++;
-    //             });
-    //         });
-    //     }
-    // };
+            }],
     };
 });
