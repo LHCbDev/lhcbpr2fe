@@ -1,4 +1,4 @@
-div(ng-hide="problemWithPlotting")
+div(ng-attr-style="width: {{width}}; height: {{height}};" ng-hide="problemWithPlotting")
   div
 .alert.alert-danger(ng-if="problemWithPlotting")
   | {{ problemWithPlotting }}
