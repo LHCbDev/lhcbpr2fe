@@ -79,7 +79,7 @@ App.directive('searchJobs', ["lhcbprResources", '$location', function(lhcbprReso
 				if(scope.filterOptions !== 'false'){
 					scope.optionsFiltered = false;
 					lhcbprResources.all("active/applications/" + scope.app.id + "/options").getList(
-						{versions: scope.versionsIds.join()}
+						{options: scope.optionsIds.join()}
 					).then(function(options){
 						scope.options = [];
 						scope.optionsIds = []
