@@ -9,7 +9,7 @@ lhcbprPlotModule.directive("plotSame", ["defaultTemplateDir", function(defaultTe
     controllerAs: "ctrl",
     controller: ['$scope', 'resourceParser', function($scope, resourceParser) {
 
-      this.getObjectsToPlot = function(payload) {
+      this.getObjectsToPlot = function(payload: any) {
         var fileNames = resourceParser.getFilesFromResources(payload.resources);
         var locationInFile = payload.locationInFile;
         return _.map(fileNames, function(value) {
@@ -22,6 +22,6 @@ lhcbprPlotModule.directive("plotSame", ["defaultTemplateDir", function(defaultTe
     }]
   };
 }]);
-lhcbprPlotModule.config(['plotViewsProvider', function(plotViewsProvider) {
+lhcbprPlotModule.config(['plotViewsProvider', function(plotViewsProvider: any) {
   plotViewsProvider.registerPlotView("plotSame", "Superimposed");
 }]);
