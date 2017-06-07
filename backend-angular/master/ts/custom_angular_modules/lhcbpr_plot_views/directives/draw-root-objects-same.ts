@@ -1,3 +1,15 @@
+// Promises, promises...
+
+// So, the plan here is to make promises from the callback code that JSROOT
+// uses. This will mean I can compare X plots instead of just 2 hard coded
+// plots.
+//
+// I found this blog post which looks promising:
+// http://derpturkey.com/promise-callback-pattern-for-javascript/
+// Better link:
+// https://docs.angularjs.org/api/ng/service/$q
+
+
 // TODO figure out how to not repeat code
 lhcbprPlotModule.directive('drawRootObjectsSame', function() {
     JSROOT.source_dir = 'app/vendor/jsroot/';
@@ -12,8 +24,25 @@ lhcbprPlotModule.directive('drawRootObjectsSame', function() {
         templateUrl: 'app/views/custom_angular_modules/lhcbpr_plot_views/drawRootObject.html',
         controllerAs: "ctrl",
         controller: [
-            'BUILD_PARAMS', '$scope', '$element',
-            function(BUILD_PARAMS: any, $scope: any, $element: any) {
+            'BUILD_PARAMS', '$scope', '$element', '$q', '$timeout',
+            function(BUILD_PARAMS: any, $scope: any, $element: any, $q: any, $timeout: any) {
+
+                // TODO make that f a function proper, once I work out the signature for JSROOT
+                // functions
+                function makePromise(func: any, firstArg: string): any {
+                    // Create a promise from a JSROOT callback function
+                    //
+                    // args are applied to the JSROOT function using _.apply
+                    let deferred = $q.defer();
+                    console.debug("Made a deferred promise...")
+
+                    func(firstArg, function(x: any): any {
+                        console.debug("Fulfilling the JSROOT callback.")
+                        deferred.resolve(x);
+                    })
+
+                    return deferred.promise;
+                }
 
                 let length = $scope.objectsToPlot().length;
                 if(length !== 2) {
@@ -24,7 +53,11 @@ lhcbprPlotModule.directive('drawRootObjectsSame', function() {
 
                 let pad = $element.children()[0];
 
-                JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[0].fileLocation, (f: any) => {
+                // Promises...
+                let filePromise: any = makePromise(JSROOT.OpenFile, "/api/media/jobs/"+$scope.objectsToPlot()[0].fileLocation);
+                // JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[0].fileLocation, (f: any) => {
+                filePromise.then( (f: any) => {
+                    debugger;
                     f.ReadObject($scope.objectsToPlot()[0].objectLocation, (plotOne: any) => {
                         JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[1].fileLocation, (f: any) => {
                             f.ReadObject($scope.objectsToPlot()[1].objectLocation, (plotTwo: any) => {
