@@ -44,45 +44,46 @@ lhcbprPlotModule.directive('drawRootObjectsSame', function() {
                     return deferred.promise;
                 }
 
-                let length = $scope.objectsToPlot().length;
-                if(length !== 2) {
-                    $scope.problemWithPlotting = "Wrong number of plots given (2 expected, "+length+" given.)"
-                }
-
                 $scope.BUILD_PARAMS = BUILD_PARAMS;
 
                 let pad = $element.children()[0];
 
                 // Promises...
-                let filePromise: any = makePromise(JSROOT.OpenFile, "/api/media/jobs/"+$scope.objectsToPlot()[0].fileLocation);
-                // JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[0].fileLocation, (f: any) => {
-                filePromise.then( (f: any) => {
-                    debugger;
-                    f.ReadObject($scope.objectsToPlot()[0].objectLocation, (plotOne: any) => {
-                        JSROOT.OpenFile("/api/media/jobs/"+$scope.objectsToPlot()[1].fileLocation, (f: any) => {
-                            f.ReadObject($scope.objectsToPlot()[1].objectLocation, (plotTwo: any) => {
-                                let plots = [plotOne, plotTwo];
+                // let filePromise: any = makePromise(JSROOT.OpenFile, "/api/media/jobs/"+$scope.objectsToPlot()[0].fileLocation);
 
-                                if(_.every(plots, (v: any) => _.startsWith(v._typename, "TGraph"))) {
-                                    let multiGraph = JSROOT.CreateTMultiGraph.apply(this, plots);
-                                    JSROOT.draw(pad, multiGraph);
-                                } else if(_.every(plots, (v: any) => _.startsWith( v._typename, "TH1"))) {
-                                    let plot_index: string;
-                                    for(plot_index in plots) {
-                                        // plot.fName = plot.fName + "__" + plotect.fileLocation.replace(/\//g, "__");
-                                        // TODO make a service/function to cycle through colors
-                                        plots[plot_index].fLineColor = parseInt(plot_index) + 1;
-                                        plots[plot_index].fSetMarkerColor = parseInt(plot_index) + 1;
-                                        plots[plot_index] = JSROOT.JSONR_unref(plots[plot_index]);
-                                        JSROOT.draw(pad, plots[plot_index], "same");
-                                    }
-                                } else {
-                                    // TODO make more informative
-                                    $scope.problemWithPlotting = "Incompatible types selected: "
-                                        +JSON.stringify(_.map($scope.plottablesToPlot, (v: any) => v._typename));
-                                }
-                            })
-                        })
+                let filePromises: any[] = _.map($scope.objectsToPlot(), (x: any) => {
+                    return makePromise(JSROOT.OpenFile, "/api/media/jobs/"+x.fileLocation);
+                });
+
+                $q.all(filePromises).then(function(files: any[]) {
+                    let plotPromises: any[] = _.map(
+                        files,
+                        (file: any, index: number) => {
+                            return makePromise(
+                                file.ReadObject.bind(file),
+                                $scope.objectsToPlot()[index].objectLocation)
+                        }
+                    );
+                    $q.all(plotPromises).then((plots: any[]) => {
+                        if(_.every(plots, (v: any) => _.startsWith(v._typename, "TGraph"))) {
+                            let multiGraph = JSROOT.CreateTMultiGraph.apply(this, plots);
+                            JSROOT.draw(pad, multiGraph);
+                        } else if(_.every(plots, (v: any) => _.startsWith( v._typename, "TH1"))) {
+                            let plot_index: string;
+                            for(plot_index in plots) {
+                                // plot.fName = plot.fName + "__" + plotect.fileLocation.replace(/\//g, "__");
+                                // TODO make a service/function to cycle through colors
+                                plots[plot_index].fLineColor = parseInt(plot_index) + 1;
+                                plots[plot_index].fSetMarkerColor = parseInt(plot_index) + 1;
+                                plots[plot_index] = JSROOT.JSONR_unref(plots[plot_index]);
+                                JSROOT.draw(pad, plots[plot_index], "same");
+                            }
+                        } else {
+                            // TODO make more informative
+                            $scope.problemWithPlotting = "Incompatible types selected: "
+                                +JSON.stringify(_.map($scope.plottablesToPlot, (v: any) => v._typename));
+                        }
+                        // })
                     })
                 })
             }],
