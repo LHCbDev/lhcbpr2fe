@@ -25,6 +25,7 @@ App.controller('TrendController', [
     $scope.options = undefined;
     $scope.versions = undefined;
     $scope.platforms = undefined;
+    $scope.hosts = undefined;
     $scope.attrFilter = '';
     $scope.loading = false;
     $scope.noData = true;
@@ -48,6 +49,7 @@ App.controller('TrendController', [
                 options: $scope.options.join(','),
                 versions: $scope.versions.join(','),
                 platforms: $scope.platforms.join(','),
+                hosts: $scope.hosts.join(','),
                 page: params.page(),
                 page_size: params.count()
               };
@@ -84,6 +86,7 @@ App.controller('TrendController', [
       $scope.options = params.options;
       $scope.versions = params.versions;
       $scope.platforms = params.platforms;
+      $scope.hosts = params.hosts;
 
       $scope.attrFilter = '';
 

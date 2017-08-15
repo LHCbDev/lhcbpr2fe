@@ -28,6 +28,13 @@
               input(type="checkbox", checklist-model="platformsIds", checklist-value="platform.id", checklist-change="searchJobs()")
               span.fa.fa-check
               | {{platform.name}} ({{platform.count}})        
+        .form-group(ng-show="filterHosts !== 'false' && hosts")
+          label Hosts
+          .c-checkbox.checkbox.needsclick(ng-repeat="host in hosts")
+            label
+              input(type="checkbox", checklist-model="hostsIds", checklist-value="host.id", checklist-change="searchJobs()")
+              span.fa.fa-check
+              | {{host.name}} ({{host.count}})        
         
         div(ng-show="filterVersions !== 'false' && versions")
           .form-group
